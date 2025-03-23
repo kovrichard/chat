@@ -16,7 +16,7 @@ export default function ConversationPage() {
   const params = useParams();
   const conversationId = params.id as string;
 
-  const { state } = useChatStore();
+  const { state, addMessage } = useChatStore();
   const conversation = state.conversations.find((c) => c.id === conversationId);
   const isNewConversation = conversation?.messages.length === 1;
   const initialMessage = conversation?.messages[0] || "";
@@ -25,6 +25,9 @@ export default function ConversationPage() {
     useChat({
       id: conversationId,
       initialMessages: isNewConversation ? [] : conversation?.messages || [],
+      onFinish: (message) => {
+        addMessage(message.content, "assistant");
+      },
     });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -69,6 +72,7 @@ export default function ConversationPage() {
 
   const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    addMessage(input, "user");
     handleSubmit(e);
     setUserScrolled(false); // Reset user scroll when sending a new message
   };
@@ -76,6 +80,7 @@ export default function ConversationPage() {
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
+      addMessage(input, "user");
       handleSubmit(e as any);
       setUserScrolled(false); // Reset user scroll when sending a new message
     }

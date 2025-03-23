@@ -1,12 +1,15 @@
 "use client";
 
-import { Button, LinkButton } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/ChatContext";
 import { MessageSquare, Plus } from "lucide-react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 
 export function ChatSidebar() {
-  const { state, selectConversation } = useChatStore();
+  const { id } = useParams();
+  const { state } = useChatStore();
 
   return (
     <div>
@@ -18,14 +21,12 @@ export function ChatSidebar() {
       </div>
       <div className="flex-1 overflow-auto p-2">
         {state.conversations.map((chat) => (
-          <button
+          <Link
             key={chat.id}
-            onClick={() => selectConversation(chat.id)}
+            href={`/chat/${chat.id}`}
             className={cn(
               "flex w-full flex-col items-start gap-1 rounded-lg p-3 text-left text-sm transition-colors",
-              state.selectedConversationId === chat.id
-                ? "bg-accent text-accent-foreground"
-                : "hover:bg-muted"
+              id === chat.id ? "bg-accent text-accent-foreground" : "hover:bg-muted"
             )}
           >
             <div className="flex w-full items-center gap-2">
@@ -35,7 +36,7 @@ export function ChatSidebar() {
             <p className="text-xs text-muted-foreground truncate w-full">
               {chat?.messages[chat?.messages.length - 1]?.content}
             </p>
-          </button>
+          </Link>
         ))}
       </div>
     </div>
