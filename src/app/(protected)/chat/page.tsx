@@ -2,7 +2,6 @@
 
 import { MessageContent } from "@/components/message-content";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/ChatContext";
 import { useChat } from "@ai-sdk/react";
