@@ -8,7 +8,7 @@ import { chatReducer, initialChatState } from "./chatReducer";
 interface ChatContextType {
   state: ChatState;
   addMessage: (content: string, role: "user" | "assistant") => void;
-  createConversation: (title: string) => void;
+  createConversation: (title: string, firstMessage?: string) => string;
   selectConversation: (conversationId: string) => void;
   deleteConversation: (conversationId: string) => void;
 }
@@ -37,19 +37,31 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const createConversation = (title: string) => {
+  const createConversation = (title: string, firstMessage?: string) => {
+    const id = uuidv4();
     const conversation: Conversation = {
-      id: uuidv4(),
+      id,
       title,
       messages: [],
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
 
+    if (firstMessage) {
+      conversation.messages.push({
+        id: uuidv4(),
+        content: firstMessage,
+        role: "user",
+        timestamp: Date.now(),
+      });
+    }
+
     dispatch({
       type: "CREATE_CONVERSATION",
       payload: { conversation },
     });
+
+    return id;
   };
 
   const selectConversation = (conversationId: string) => {

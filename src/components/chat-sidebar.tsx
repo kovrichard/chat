@@ -1,23 +1,20 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button, LinkButton } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/ChatContext";
 import { MessageSquare, Plus } from "lucide-react";
 
 export function ChatSidebar() {
-  const { state, createConversation, selectConversation } = useChatStore();
+  const { state, selectConversation } = useChatStore();
 
   return (
     <div>
       <div className="p-4">
-        <Button
-          onClick={() => createConversation("New Chat")}
-          className="w-full justify-start gap-2"
-        >
+        <LinkButton href="/chat" className="w-full justify-start gap-2">
           <Plus className="h-4 w-4" />
           New Chat
-        </Button>
+        </LinkButton>
       </div>
       <div className="flex-1 overflow-auto p-2">
         {state.conversations.map((chat) => (
