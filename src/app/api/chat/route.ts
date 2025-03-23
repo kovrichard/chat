@@ -1,5 +1,5 @@
 import { groq } from "@ai-sdk/groq";
-import { streamText } from "ai";
+import { smoothStream, streamText } from "ai";
 
 export const maxDuration = 30;
 
@@ -10,6 +10,9 @@ export async function POST(req: Request) {
     model: groq("llama-3.3-70b-versatile"),
     messages,
     maxSteps: 5,
+    experimental_transform: smoothStream({
+      delayInMs: 15,
+    }),
   });
 
   return result.toDataStreamResponse();

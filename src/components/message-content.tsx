@@ -24,16 +24,24 @@ export function MessageContent({
           code({ node, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || "");
             return match ? (
-              <SyntaxHighlighter
-                // @ts-ignore
-                style={atomDark}
-                language={match[1]}
-                PreTag="div"
-                className="rounded-md border border-zinc-700 my-2"
-                {...props}
-              >
-                {String(children).replace(/\n$/, "")}
-              </SyntaxHighlighter>
+              <div className="relative my-2">
+                <div className="overflow-x-auto">
+                  <SyntaxHighlighter
+                    // @ts-ignore
+                    style={atomDark}
+                    language={match[1]}
+                    PreTag="div"
+                    className="rounded-md border border-zinc-700"
+                    customStyle={{
+                      margin: 0,
+                      borderRadius: "0.375rem",
+                    }}
+                    {...props}
+                  >
+                    {String(children).replace(/\n$/, "")}
+                  </SyntaxHighlighter>
+                </div>
+              </div>
             ) : (
               <code className="bg-zinc-800 px-1 py-0.5 rounded text-sm" {...props}>
                 {children}

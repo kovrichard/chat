@@ -59,7 +59,7 @@ export default function ConversationPage() {
     if (!chatContainerRef.current) return;
 
     const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
-    const isScrolledToBottom = Math.abs(scrollHeight - scrollTop - clientHeight) < 10;
+    const isScrolledToBottom = Math.abs(scrollHeight - scrollTop - clientHeight) < 50;
 
     setUserScrolled(!isScrolledToBottom);
   };
@@ -100,16 +100,15 @@ export default function ConversationPage() {
         onScroll={handleScroll}
         className="flex-1 overflow-y-auto overflow-x-auto p-4 space-y-4"
       >
-        <div className="max-w-full w-full">
+        <div className="flex flex-col max-w-5xl mx-auto">
           {messages.map((message) => (
             <div
               key={message.id}
               className={cn(
                 "mb-4",
-                message.role === "user" ? "ml-auto" : "mr-auto",
                 message.role === "user"
-                  ? "max-w-[60%] min-w-[100px]"
-                  : "max-w-full w-fit min-w-[100px]"
+                  ? "ml-auto max-w-[60%] min-w-[100px]"
+                  : "mr-auto max-w-full w-full"
               )}
             >
               <MessageContent content={message.content} role={message.role} />
@@ -121,7 +120,10 @@ export default function ConversationPage() {
 
       {/* Input Form */}
       <div className="flex-none p-4 border-t bg-background">
-        <form onSubmit={handleSendMessage} className="flex w-full items-end gap-2">
+        <form
+          onSubmit={handleSendMessage}
+          className="flex w-full max-w-5xl mx-auto items-end gap-2"
+        >
           <TextareaAutosize
             placeholder="Enter your message (Shift + Enter for new line)"
             value={input}

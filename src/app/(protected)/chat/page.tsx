@@ -44,7 +44,10 @@ export default function ChatPage() {
 
       {/* Input Form */}
       <div className="flex-none p-4 border-t bg-background">
-        <form onSubmit={handleSubmit} className="flex w-full items-end gap-2">
+        <form
+          onSubmit={handleSubmit}
+          className="flex w-full max-w-5xl mx-auto items-end gap-2"
+        >
           <TextareaAutosize
             placeholder="Type your message... (Shift + Enter for new line)"
             value={input}
