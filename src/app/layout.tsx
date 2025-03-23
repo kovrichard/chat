@@ -51,7 +51,7 @@ export default function RootLayout({
       <body
         className={cn(inter.className, "flex flex-col min-h-svh min-w-80 justify-center")}
       >
-        <ThemeProvider attribute="class" defaultTheme="light" disableTransitionOnChange>
+        <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
           {children}
           <Toaster />
         </ThemeProvider>

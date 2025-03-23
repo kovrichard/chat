@@ -5,21 +5,20 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
-import Image from "next/image";
-import Link from "next/link";
+import { ChatSidebar } from "./chat-sidebar";
 import { SignOut } from "./signout-button";
 
 export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="pl-[22px] py-3.5">
-        <Link href="/dashboard" className="flex items-center gap-2">
-          <Image src="/icon.svg" alt="Catalyst" width={28} height={28} />
-          Catalyst
-        </Link>
+        <SidebarTrigger />
       </SidebarHeader>
-      <SidebarContent />
+      <SidebarContent>
+        <ChatSidebar />
+      </SidebarContent>
       <SidebarFooter className="p-3.5">
         <SidebarMenu>
           <SidebarMenuItem>
