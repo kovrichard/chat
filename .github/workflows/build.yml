@@ -1,0 +1,35 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      # Public
+
+      ## General
+      NEXT_PUBLIC_AUTHORITY: https://catalyst.richardkovacs.dev
+
+      ## Auth
+      NEXT_PUBLIC_AUTH_REDIRECT_URL: /dashboard
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun.js
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+      
+      - name: Lint project
+        run: bun run lint-check && bun run type-check
+      
+      - name: Build project
+        run: bun run build
