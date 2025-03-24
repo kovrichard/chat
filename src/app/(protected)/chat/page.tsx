@@ -8,6 +8,13 @@ import { FormEvent, KeyboardEvent } from "react";
 import { useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 
+const examples = [
+  "105 degrees Fahrenheit to Celsius",
+  "Where do llamas live naturally?",
+  "What is the smallest country in Africa?",
+  "How can you help me?",
+];
+
 export default function ChatPage() {
   const [input, setInput] = useState("");
   const { createConversation } = useChatStore();
@@ -34,11 +41,24 @@ export default function ChatPage() {
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] min-w-[320px]">
       <div className="flex-1 flex items-center justify-center p-4">
-        <div className="max-w-2xl w-full text-center space-y-4">
-          <h1 className="text-4xl font-bold">Chat Assistant</h1>
-          <p className="text-muted-foreground">
-            Start a new conversation by typing your message below.
-          </p>
+        <div className="max-w-xl w-full space-y-4">
+          <h1 className="text-4xl font-bold">Chat with me</h1>
+          <ul className="flex flex-col">
+            {examples.map((example) => (
+              <li
+                key={example}
+                className="border-b py-1.5 last:border-b-0 text-muted-foreground"
+              >
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start"
+                  onClick={() => setInput(example)}
+                >
+                  {example}
+                </Button>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
