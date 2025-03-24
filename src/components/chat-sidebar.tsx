@@ -6,6 +6,7 @@ import { useChatStore } from "@/store/ChatContext";
 import { MessageSquare, Plus } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { AnimatedTitle } from "./ui/animated-title";
 
 export function ChatSidebar() {
   const { id } = useParams();
@@ -31,7 +32,7 @@ export function ChatSidebar() {
           >
             <div className="flex w-full items-center gap-2">
               <MessageSquare className="h-4 w-4" />
-              <span className="font-medium truncate flex-1">{chat.title}</span>
+              <AnimatedTitle text={chat.title} />
             </div>
             <p className="text-xs text-muted-foreground truncate w-full">
               {chat?.messages[chat?.messages.length - 1]?.content}
