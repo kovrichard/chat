@@ -2,6 +2,7 @@
 
 import { MessageContent } from "@/components/message-content";
 import { Button } from "@/components/ui/button";
+import { LoadingDots } from "@/components/ui/loading-dots";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/ChatContext";
 import { useChat } from "@ai-sdk/react";
@@ -107,13 +108,14 @@ export default function ConversationPage() {
               className={cn(
                 "mb-4",
                 message.role === "user"
-                  ? "ml-auto max-w-[60%] min-w-[100px]"
+                  ? "ml-auto max-w-[60%]"
                   : "mr-auto max-w-full w-full"
               )}
             >
               <MessageContent content={message.content} role={message.role} />
             </div>
           ))}
+          {status === "submitted" && <LoadingDots className="text-muted-foreground" />}
           <div ref={messagesEndRef} />
         </div>
       </div>
