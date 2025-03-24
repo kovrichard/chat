@@ -1,12 +1,11 @@
 "use client";
 
+import InputForm from "@/components/input-form";
 import { Button } from "@/components/ui/button";
 import { useChatStore } from "@/store/ChatContext";
-import { Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormEvent, KeyboardEvent } from "react";
 import { useState } from "react";
-import TextareaAutosize from "react-textarea-autosize";
 
 const examples = [
   "105 degrees Fahrenheit to Celsius",
@@ -64,22 +63,12 @@ export default function ChatPage() {
 
       {/* Input Form */}
       <div className="flex-none p-4 border-t bg-background">
-        <form
-          onSubmit={handleSubmit}
-          className="flex w-full max-w-5xl mx-auto items-end gap-2"
-        >
-          <TextareaAutosize
-            placeholder="Type your message... (Shift + Enter for new line)"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            rows={1}
-            className="flex min-h-10 max-h-80 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm resize-none"
-          />
-          <Button type="submit" size="icon" className="shrink-0">
-            <Send size={16} />
-          </Button>
-        </form>
+        <InputForm
+          input={input}
+          handleChange={(e) => setInput(e.target.value)}
+          handleSubmit={handleSubmit}
+          handleKeyDown={handleKeyDown}
+        />
       </div>
     </div>
   );

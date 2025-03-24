@@ -1,16 +1,13 @@
 "use client";
 
+import InputForm from "@/components/input-form";
 import { MessageContent } from "@/components/message-content";
-import { Button } from "@/components/ui/button";
 import { LoadingDots } from "@/components/ui/loading-dots";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/ChatContext";
 import { useChat } from "@ai-sdk/react";
-import { IconPlayerStop } from "@tabler/icons-react";
-import { Send } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
-import TextareaAutosize from "react-textarea-autosize";
 
 export default function ConversationPage() {
   const router = useRouter();
@@ -135,28 +132,14 @@ export default function ConversationPage() {
 
       {/* Input Form */}
       <div className="flex-none p-4 border-t bg-background">
-        <form
-          onSubmit={handleSendMessage}
-          className="flex w-full max-w-5xl mx-auto items-end gap-2"
-        >
-          <TextareaAutosize
-            placeholder="Enter your message (Shift + Enter for new line)"
-            value={input}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            rows={1}
-            className="flex min-h-10 max-h-80 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm resize-none"
-          />
-          {status === "submitted" || status === "streaming" ? (
-            <Button type="submit" size="icon" onClick={() => stop()}>
-              <IconPlayerStop size={16} />
-            </Button>
-          ) : (
-            <Button type="submit" size="icon" className="shrink-0">
-              <Send size={16} />
-            </Button>
-          )}
-        </form>
+        <InputForm
+          input={input}
+          handleChange={handleInputChange}
+          handleSubmit={handleSendMessage}
+          handleKeyDown={handleKeyDown}
+          status={status}
+          handleStop={stop}
+        />
       </div>
     </div>
   );
