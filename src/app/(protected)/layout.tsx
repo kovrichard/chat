@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar";
+import { TopLeftMenu } from "@/components/top-left-menu";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { ChatProvider } from "@/store/ChatContext";
 import { cookies } from "next/headers";
@@ -16,7 +17,10 @@ export default async function Layout({
     <SidebarProvider defaultOpen={defaultOpen}>
       <ChatProvider>
         <AppSidebar />
-        <SidebarInset>{children}</SidebarInset>
+        <SidebarInset>
+          <TopLeftMenu />
+          {children}
+        </SidebarInset>
       </ChatProvider>
     </SidebarProvider>
   );
