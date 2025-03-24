@@ -104,7 +104,7 @@ export default function ConversationPage() {
   }, [conversation, router]);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] min-w-[320px]">
+    <div className="flex flex-col h-screen min-w-[320px]">
       {/* Messages */}
       <div
         ref={chatContainerRef}
@@ -131,16 +131,14 @@ export default function ConversationPage() {
       </div>
 
       {/* Input Form */}
-      <div className="flex-none p-4 border-t bg-background">
-        <InputForm
-          input={input}
-          handleChange={handleInputChange}
-          handleSubmit={handleSendMessage}
-          handleKeyDown={handleKeyDown}
-          status={status}
-          handleStop={stop}
-        />
-      </div>
+      <InputForm
+        input={input}
+        handleChange={handleInputChange}
+        handleSubmit={handleSendMessage}
+        handleKeyDown={handleKeyDown}
+        status={status}
+        handleStop={stop}
+      />
     </div>
   );
 }

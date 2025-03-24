@@ -38,7 +38,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] min-w-[320px]">
+    <div className="flex flex-col h-screen min-w-[320px]">
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="max-w-xl w-full space-y-4">
           <h1 className="text-4xl font-bold">Chat with me</h1>
@@ -62,14 +62,12 @@ export default function ChatPage() {
       </div>
 
       {/* Input Form */}
-      <div className="flex-none p-4 border-t bg-background">
-        <InputForm
-          input={input}
-          handleChange={(e) => setInput(e.target.value)}
-          handleSubmit={handleSubmit}
-          handleKeyDown={handleKeyDown}
-        />
-      </div>
+      <InputForm
+        input={input}
+        handleChange={(e) => setInput(e.target.value)}
+        handleSubmit={handleSubmit}
+        handleKeyDown={handleKeyDown}
+      />
     </div>
   );
 }

@@ -26,27 +26,29 @@ export default function InputForm({
   handleStop,
 }: InputFormProps) {
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex w-full max-w-5xl mx-auto items-end gap-2"
-    >
-      <TextareaAutosize
-        placeholder="(Shift + Enter for new line)"
-        value={input}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        rows={1}
-        className="flex min-h-10 max-h-80 w-full rounded-md border border-input bg-background px-3 py-2 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-sm resize-none"
-      />
-      {status === "submitted" || status === "streaming" ? (
-        <Button type="submit" size="icon" onClick={() => handleStop?.()}>
-          <IconPlayerStop size={16} />
-        </Button>
-      ) : (
-        <Button type="submit" size="icon" className="shrink-0">
-          <Send size={16} />
-        </Button>
-      )}
-    </form>
+    <div className="flex-none p-4 border-t bg-background">
+      <form
+        onSubmit={handleSubmit}
+        className="flex w-full max-w-5xl mx-auto items-end gap-2"
+      >
+        <TextareaAutosize
+          placeholder="(Shift + Enter for new line)"
+          value={input}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          rows={1}
+          className="flex min-h-10 max-h-80 w-full rounded-md border border-input bg-background px-3 py-2 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-sm resize-none"
+        />
+        {status === "submitted" || status === "streaming" ? (
+          <Button type="submit" size="icon" onClick={() => handleStop?.()}>
+            <IconPlayerStop size={16} />
+          </Button>
+        ) : (
+          <Button type="submit" size="icon" className="shrink-0">
+            <Send size={16} />
+          </Button>
+        )}
+      </form>
+    </div>
   );
 }
