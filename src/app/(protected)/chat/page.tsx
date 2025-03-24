@@ -18,7 +18,7 @@ export default function ChatPage() {
     if (!input.trim()) return;
 
     // Create a new conversation with the input as first message
-    const conversationId = createConversation(input.split("\n")[0].slice(0, 30), input);
+    const conversationId = createConversation("New Chat", input);
 
     // Redirect to the conversation page
     router.push(`/chat/${conversationId}`);

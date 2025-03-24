@@ -31,6 +31,16 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
       };
     }
 
+    case "SET_CONVERSATION_TITLE": {
+      const { conversationId, title } = action.payload;
+      return {
+        ...state,
+        conversations: state.conversations.map((conv) =>
+          conv.id === conversationId ? { ...conv, title } : conv
+        ),
+      };
+    }
+
     case "SELECT_CONVERSATION": {
       return {
         ...state,

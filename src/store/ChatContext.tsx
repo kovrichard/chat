@@ -9,6 +9,7 @@ interface ChatContextType {
   state: ChatState;
   addMessage: (content: string, role: "user" | "assistant") => void;
   createConversation: (title: string, firstMessage?: string) => string;
+  setConversationTitle: (conversationId: string, title: string) => void;
   selectConversation: (conversationId: string) => void;
   deleteConversation: (conversationId: string) => void;
 }
@@ -64,6 +65,13 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     return id;
   };
 
+  const setConversationTitle = (conversationId: string, title: string) => {
+    dispatch({
+      type: "SET_CONVERSATION_TITLE",
+      payload: { conversationId, title },
+    });
+  };
+
   const selectConversation = (conversationId: string) => {
     dispatch({
       type: "SELECT_CONVERSATION",
@@ -84,6 +92,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         state,
         addMessage,
         createConversation,
+        setConversationTitle,
         selectConversation,
         deleteConversation,
       }}

@@ -17,7 +17,7 @@ export default function ConversationPage() {
   const params = useParams();
   const conversationId = params.id as string;
 
-  const { state, addMessage } = useChatStore();
+  const { state, addMessage, setConversationTitle } = useChatStore();
   const conversation = state.conversations.find((c) => c.id === conversationId);
   const isNewConversation = conversation?.messages.length === 1;
   const initialMessage = conversation?.messages[0] || "";
@@ -28,6 +28,19 @@ export default function ConversationPage() {
       initialMessages: isNewConversation ? [] : conversation?.messages || [],
       onFinish: (message) => {
         addMessage(message.content, "assistant");
+
+        if (isNewConversation) {
+          const titleMessages = [conversation.messages[0], message];
+
+          fetch("/api/title", {
+            method: "POST",
+            body: JSON.stringify({ messages: titleMessages }),
+          })
+            .then((res) => res.text())
+            .then((text) => {
+              setConversationTitle(conversationId, text);
+            });
+        }
       },
     });
 

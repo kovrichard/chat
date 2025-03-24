@@ -21,5 +21,6 @@ export interface ChatState {
 export type ChatAction =
   | { type: "ADD_MESSAGE"; payload: { conversationId: string; message: Message } }
   | { type: "CREATE_CONVERSATION"; payload: { conversation: Conversation } }
+  | { type: "SET_CONVERSATION_TITLE"; payload: { conversationId: string; title: string } }
   | { type: "SELECT_CONVERSATION"; payload: { conversationId: string } }
   | { type: "DELETE_CONVERSATION"; payload: { conversationId: string } };
