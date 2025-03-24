@@ -12,14 +12,14 @@ export function ChatSidebar() {
   const { state } = useChatStore();
 
   return (
-    <div>
-      <div className="p-4">
-        <LinkButton href="/chat" className="w-full justify-start gap-2">
+    <div className="flex flex-col h-full gap-4">
+      <div>
+        <LinkButton href="/chat" className="w-full gap-2">
           <Plus className="h-4 w-4" />
           New Chat
         </LinkButton>
       </div>
-      <div className="flex-1 overflow-auto p-2">
+      <div className="flex flex-col flex-1 overflow-auto gap-1">
         {state.conversations.map((chat) => (
           <Link
             key={chat.id}

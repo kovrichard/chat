@@ -16,7 +16,7 @@ export function AppSidebar() {
       <SidebarHeader className="pl-[22px] py-3.5">
         <SidebarTrigger />
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="px-3.5">
         <ChatSidebar />
       </SidebarContent>
       <SidebarFooter className="p-3.5">
