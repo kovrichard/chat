@@ -4,20 +4,21 @@ import InputForm from "@/components/input-form";
 import { Button } from "@/components/ui/button";
 import { useChatStore } from "@/store/ChatContext";
 import { useRouter } from "next/navigation";
-import { FormEvent, KeyboardEvent } from "react";
+import { FormEvent, KeyboardEvent, useRef } from "react";
 import { useState } from "react";
 
 const examples = [
-  "105 degrees Fahrenheit to Celsius",
-  "Where do llamas live naturally?",
-  "What is the smallest country in Africa?",
-  "How can you help me?",
+  "105 degrees Fahrenheit to Celsius ",
+  "Where do llamas live naturally? ",
+  "What is the smallest country in Africa? ",
+  "How can you help me? ",
 ];
 
 export default function ChatPage() {
   const [input, setInput] = useState("");
   const { createConversation } = useChatStore();
   const router = useRouter();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,6 +38,18 @@ export default function ChatPage() {
     }
   };
 
+  const handleExampleClick = (example: string) => {
+    setInput(example);
+    // Focus the textarea and place cursor at the end after a short delay to ensure the state has updated
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+        const length = example.length;
+        textareaRef.current.setSelectionRange(length, length);
+      }
+    }, 0);
+  };
+
   return (
     <div className="flex flex-col h-screen min-w-[320px]">
       <div className="flex-1 flex items-center justify-center p-4">
@@ -51,7 +64,7 @@ export default function ChatPage() {
                 <Button
                   variant="ghost"
                   className="w-full justify-start"
-                  onClick={() => setInput(example)}
+                  onClick={() => handleExampleClick(example)}
                 >
                   {example}
                 </Button>
@@ -63,6 +76,7 @@ export default function ChatPage() {
 
       {/* Input Form */}
       <InputForm
+        ref={textareaRef}
         input={input}
         handleChange={(e) => setInput(e.target.value)}
         handleSubmit={handleSubmit}
