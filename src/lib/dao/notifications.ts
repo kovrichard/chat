@@ -1,3 +1,5 @@
+import "server-only";
+
 import { getUserFromSession } from "@/lib/dao/users";
 import prisma from "@/lib/prisma";
 
