@@ -41,28 +41,6 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
       };
     }
 
-    case "SELECT_CONVERSATION": {
-      return {
-        ...state,
-        selectedConversationId: action.payload.conversationId,
-      };
-    }
-
-    case "DELETE_CONVERSATION": {
-      const { conversationId } = action.payload;
-      const newConversations = state.conversations.filter(
-        (conv) => conv.id !== conversationId
-      );
-      return {
-        ...state,
-        conversations: newConversations,
-        selectedConversationId:
-          state.selectedConversationId === conversationId
-            ? newConversations[0]?.id ?? null
-            : state.selectedConversationId,
-      };
-    }
-
     default:
       return state;
   }

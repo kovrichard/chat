@@ -12,8 +12,6 @@ interface ChatContextType {
   addMessage: (content: string, role: "user" | "assistant") => Promise<void>;
   createConversation: (title: string, firstMessage?: string) => Promise<string>;
   setConversationTitle: (conversationId: string, title: string) => Promise<void>;
-  selectConversation: (conversationId: string) => void;
-  deleteConversation: (conversationId: string) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -82,20 +80,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const selectConversation = (conversationId: string) => {
-    dispatch({
-      type: "SELECT_CONVERSATION",
-      payload: { conversationId },
-    });
-  };
-
-  const deleteConversation = (conversationId: string) => {
-    dispatch({
-      type: "DELETE_CONVERSATION",
-      payload: { conversationId },
-    });
-  };
-
   return (
     <ChatContext.Provider
       value={{
@@ -103,8 +87,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         addMessage,
         createConversation,
         setConversationTitle,
-        selectConversation,
-        deleteConversation,
       }}
     >
       {children}
