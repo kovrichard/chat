@@ -16,7 +16,7 @@ jobs:
       NEXT_PUBLIC_AUTHORITY: https://catalyst.richardkovacs.dev
 
       ## Auth
-      NEXT_PUBLIC_AUTH_REDIRECT_URL: /dashboard
+      NEXT_PUBLIC_AUTH_REDIRECT_URL: /chat
 
     steps:
       - name: Checkout code

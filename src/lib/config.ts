@@ -17,7 +17,7 @@ const schema = z.object({
   // Stripe
   stripeSecretKey: z.string().default(""),
   stripeWebhookSecret: z.string().default(""),
-  stripePortalReturnUrl: z.string().default("http://localhost:3000/dashboard"),
+  stripePortalReturnUrl: z.string().default("http://localhost:3000/chat"),
 });
 
 const envVars = {

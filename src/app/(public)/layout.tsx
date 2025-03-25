@@ -23,7 +23,7 @@ export default async function Layout({
           Catalyst
         </Link>
         {session ? (
-          <Link href="/dashboard">
+          <Link href="/chat">
             <Button>Dashboard</Button>
           </Link>
         ) : (
