@@ -1,15 +1,17 @@
 "use client";
 
+import { saveConversation, saveConversationTitle } from "@/lib/actions/conversations";
+import { saveMessage } from "@/lib/actions/messages";
 import React, { createContext, useContext, useReducer, ReactNode } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { ChatAction, ChatState, Conversation, Message } from "../types/chat";
+import { ChatState, PartialConversation, PartialMessage } from "../types/chat";
 import { chatReducer, initialChatState } from "./chatReducer";
 
 interface ChatContextType {
   state: ChatState;
-  addMessage: (content: string, role: "user" | "assistant") => void;
-  createConversation: (title: string, firstMessage?: string) => string;
-  setConversationTitle: (conversationId: string, title: string) => void;
+  addMessage: (content: string, role: "user" | "assistant") => Promise<void>;
+  createConversation: (title: string, firstMessage?: string) => Promise<string>;
+  setConversationTitle: (conversationId: string, title: string) => Promise<void>;
   selectConversation: (conversationId: string) => void;
   deleteConversation: (conversationId: string) => void;
 }
@@ -19,15 +21,18 @@ const ChatContext = createContext<ChatContextType | undefined>(undefined);
 export function ChatProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(chatReducer, initialChatState);
 
-  const addMessage = (content: string, role: "user" | "assistant") => {
+  const addMessage = async (content: string, role: "user" | "assistant") => {
     if (!state.selectedConversationId) return;
 
-    const message: Message = {
+    const message: PartialMessage = {
       id: uuidv4(),
       content,
       role,
-      timestamp: Date.now(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
+
+    await saveMessage(message, state.selectedConversationId);
 
     dispatch({
       type: "ADD_MESSAGE",
@@ -38,14 +43,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const createConversation = (title: string, firstMessage?: string) => {
+  const createConversation = async (title: string, firstMessage?: string) => {
     const id = uuidv4();
-    const conversation: Conversation = {
+    const conversation: PartialConversation = {
       id,
       title,
       messages: [],
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     if (firstMessage) {
@@ -53,9 +58,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         id: uuidv4(),
         content: firstMessage,
         role: "user",
-        timestamp: Date.now(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
       });
     }
+
+    await saveConversation(conversation);
 
     dispatch({
       type: "CREATE_CONVERSATION",
@@ -65,7 +73,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     return id;
   };
 
-  const setConversationTitle = (conversationId: string, title: string) => {
+  const setConversationTitle = async (conversationId: string, title: string) => {
+    await saveConversationTitle(conversationId, title);
+
     dispatch({
       type: "SET_CONVERSATION_TITLE",
       payload: { conversationId, title },

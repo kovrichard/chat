@@ -23,8 +23,8 @@ export default function ConversationPage() {
     useChat({
       id: conversationId,
       initialMessages: isNewConversation ? [] : conversation?.messages || [],
-      onFinish: (message) => {
-        addMessage(message.content, "assistant");
+      onFinish: async (message) => {
+        await addMessage(message.content, "assistant");
 
         if (isNewConversation) {
           const titleMessages = [conversation.messages[0], message];
@@ -34,8 +34,8 @@ export default function ConversationPage() {
             body: JSON.stringify({ messages: titleMessages }),
           })
             .then((res) => res.text())
-            .then((text) => {
-              setConversationTitle(conversationId, text);
+            .then(async (text) => {
+              await setConversationTitle(conversationId, text);
             });
         }
       },
@@ -81,17 +81,17 @@ export default function ConversationPage() {
     }
   }, [messages, userScrolled]);
 
-  const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
+  const handleSendMessage = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    addMessage(input, "user");
+    await addMessage(input, "user");
     handleSubmit(e);
     setUserScrolled(false); // Reset user scroll when sending a new message
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = async (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      addMessage(input, "user");
+      await addMessage(input, "user");
       handleSubmit(e as any);
       setUserScrolled(false); // Reset user scroll when sending a new message
     }

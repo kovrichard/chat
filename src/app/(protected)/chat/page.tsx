@@ -20,21 +20,21 @@ export default function ChatPage() {
   const router = useRouter();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input.trim()) return;
 
     // Create a new conversation with the input as first message
-    const conversationId = createConversation("New Chat", input);
+    const conversationId = await createConversation("New Chat", input);
 
     // Redirect to the conversation page
     router.push(`/chat/${conversationId}`);
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = async (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSubmit(e as any);
+      await handleSubmit(e as any);
     }
   };
 

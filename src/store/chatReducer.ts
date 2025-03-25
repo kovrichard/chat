@@ -16,7 +16,7 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
             ? {
                 ...conv,
                 messages: [...conv.messages, message],
-                updatedAt: Date.now(),
+                updatedAt: new Date(),
               }
             : conv
         ),
