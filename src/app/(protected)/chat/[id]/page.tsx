@@ -40,6 +40,10 @@ export default function ConversationPage() {
             id: uuidv4(),
             content: message.content,
             role: "assistant",
+            reasoning:
+              message.parts?.[0]?.type === "reasoning"
+                ? message.parts[0].reasoning
+                : null,
             createdAt: new Date(),
             updatedAt: new Date(),
           },
@@ -106,6 +110,7 @@ export default function ConversationPage() {
         id: uuidv4(),
         content: input,
         role: "user",
+        reasoning: null,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -123,6 +128,7 @@ export default function ConversationPage() {
           id: uuidv4(),
           content: input,
           role: "user",
+          reasoning: null,
           createdAt: new Date(),
           updatedAt: new Date(),
         },

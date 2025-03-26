@@ -22,6 +22,7 @@ export async function GET(
           id: true,
           content: true,
           role: true,
+          reasoning: true,
         },
       },
     },

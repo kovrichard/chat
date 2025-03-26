@@ -2,6 +2,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -39,6 +40,9 @@ export function ThinkingIndicator({ reasoning }: ThinkingIndicatorProps) {
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Thought Process</SheetTitle>
+          <SheetDescription className="sr-only">
+            Steps taken to generate the response
+          </SheetDescription>
         </SheetHeader>
         <ScrollArea className="h-[calc(100vh-4rem)] mt-4">
           <div className="max-w-none text-muted-foreground text-sm">{reasoning}</div>

@@ -18,7 +18,30 @@ export function useConversations() {
 export function useConversation(id: string) {
   return useQuery({
     queryKey: conversationKeys.detail(id),
-    queryFn: () => fetch(`/api/conversations/${id}`).then((res) => res.json()),
+    queryFn: () =>
+      fetch(`/api/conversations/${id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          let parts = [];
+          if (data.reasoning) {
+            parts.push({
+              type: "reasoning",
+              reasoning: data.reasoning,
+            });
+          }
+
+          if (data.content) {
+            parts.push({
+              type: "text",
+              text: data.content,
+            });
+          }
+
+          return {
+            ...data,
+            parts: parts,
+          };
+        }),
   });
 }
 

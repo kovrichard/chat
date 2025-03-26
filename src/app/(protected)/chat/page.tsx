@@ -33,6 +33,7 @@ export default function ChatPage() {
           id: uuidv4(),
           content: input,
           role: "user" as const,
+          reasoning: null,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
