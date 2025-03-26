@@ -8,6 +8,7 @@ const allowedModels = {
   "4o-mini": openai("gpt-4o-mini"),
   "o3-mini": openai("o3-mini"),
   "llama-3.3": groq("llama-3.3-70b-versatile"),
+  "deepseek-r1": groq("deepseek-r1-distill-llama-70b"),
 };
 
 export async function POST(req: Request) {
@@ -22,10 +23,15 @@ export async function POST(req: Request) {
     model,
     messages,
     maxSteps: 5,
+    providerOptions: {
+      groq: {
+        reasoningFormat: "parsed",
+      },
+    },
     experimental_transform: smoothStream({
       delayInMs: 15,
     }),
   });
 
-  return result.toDataStreamResponse();
+  return result.toDataStreamResponse({ sendReasoning: true });
 }

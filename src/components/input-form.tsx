@@ -62,6 +62,9 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
                   <DropdownMenuItem onClick={() => setModel("llama-3.3")}>
                     llama-3.3
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setModel("deepseek-r1")}>
+                    deepseek-r1
+                  </DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>

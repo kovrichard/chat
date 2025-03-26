@@ -162,7 +162,7 @@ export default function ConversationPage() {
                   : "mr-auto max-w-full w-full"
               )}
             >
-              <MessageContent content={message.content} role={message.role} />
+              <MessageContent message={message} />
             </div>
           ))}
           {status === "submitted" && <LoadingDots className="text-muted-foreground" />}
