@@ -7,12 +7,22 @@ import prisma from "@/lib/prisma";
 import { PartialMessage } from "@/types/chat";
 
 export async function saveMessage(message: PartialMessage, conversationId: string) {
-  await getUserFromSession();
+  const user = await getUserFromSession();
 
   const newMessage = await prisma.message.create({
     data: {
       ...message,
       conversationId,
+    },
+  });
+
+  await prisma.conversation.update({
+    where: {
+      id: conversationId,
+      userId: user.id,
+    },
+    data: {
+      lastMessageAt: new Date(),
     },
   });
 

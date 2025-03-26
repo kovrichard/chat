@@ -24,7 +24,7 @@ export async function GET() {
       },
     },
     orderBy: {
-      createdAt: "desc",
+      lastMessageAt: "desc",
     },
   });
 

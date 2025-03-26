@@ -39,6 +39,7 @@ export default function ChatPage() {
       ],
       createdAt: new Date(),
       updatedAt: new Date(),
+      lastMessageAt: new Date(),
     };
 
     await createConversation.mutateAsync(conversation);
