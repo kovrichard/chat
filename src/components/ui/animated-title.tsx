@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface AnimatedTitleProps {
   text: string;
@@ -8,12 +8,29 @@ interface AnimatedTitleProps {
 }
 
 export function AnimatedTitle({ text, className, delay = 50 }: AnimatedTitleProps) {
-  const [displayedText, setDisplayedText] = useState("");
+  const [displayedText, setDisplayedText] = useState(text);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const previousTextRef = useRef(text);
+  const hasAnimatedRef = useRef(false);
 
   useEffect(() => {
-    setDisplayedText("");
-    setCurrentIndex(0);
+    // Only animate if:
+    // 1. The text has changed
+    // 2. The previous text was "New Chat" (or empty)
+    // 3. We haven't animated this title before
+    if (
+      text !== previousTextRef.current &&
+      (previousTextRef.current === "New Chat" || previousTextRef.current === "") &&
+      !hasAnimatedRef.current
+    ) {
+      setDisplayedText("");
+      setCurrentIndex(0);
+      hasAnimatedRef.current = true;
+    } else {
+      setDisplayedText(text);
+      setCurrentIndex(text.length);
+    }
+    previousTextRef.current = text;
   }, [text]);
 
   useEffect(() => {
