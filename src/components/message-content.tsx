@@ -11,7 +11,11 @@ export function MessageContent({
 }) {
   if (role === "user") {
     return (
-      <div className="bg-muted rounded-lg p-4 whitespace-pre-wrap" data-role="user">
+      <div
+        className="bg-muted rounded-lg p-4 whitespace-pre-wrap break-words"
+        data-role="user"
+        style={{ wordBreak: "break-word" }}
+      >
         {content}
       </div>
     );
