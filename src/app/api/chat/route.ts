@@ -4,11 +4,17 @@ import { smoothStream, streamText } from "ai";
 
 export const maxDuration = 30;
 
+const allowedModels = ["gpt-4o-mini", "o3-mini"];
+
 export async function POST(req: Request) {
-  const { messages } = await req.json();
+  const { messages, model } = await req.json();
+
+  if (!allowedModels.includes(model)) {
+    return new Response("Invalid model", { status: 400 });
+  }
 
   const result = streamText({
-    model: openai("gpt-4o-mini"),
+    model: openai(model),
     messages,
     maxSteps: 5,
     experimental_transform: smoothStream({

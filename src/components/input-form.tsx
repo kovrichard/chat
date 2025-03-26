@@ -1,10 +1,19 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useModelStore } from "@/lib/stores/model-store";
 import { IconPlayerStop } from "@tabler/icons-react";
 import { Send } from "lucide-react";
 import { ChangeEvent, FormEvent, KeyboardEvent, forwardRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 interface InputFormProps {
   input: string;
@@ -19,6 +28,8 @@ interface InputFormProps {
 
 const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
   ({ input, handleChange, handleSubmit, handleKeyDown, status, handleStop }, ref) => {
+    const { model, setModel } = useModelStore();
+
     return (
       <div className="flex-none p-4">
         <form
@@ -35,12 +46,27 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
             className="flex min-h-10 max-h-80 w-full bg-transparent placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 text-sm resize-none"
           />
           <div className="flex items-end w-full gap-2">
-            <p className="text-sm text-muted-foreground">GPT-4o-mini</p>
+            <DropdownMenu>
+              <DropdownMenuTrigger className="text-sm text-muted-foreground">
+                {model}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="ml-8">
+                <DropdownMenuLabel>Models</DropdownMenuLabel>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem onClick={() => setModel("gpt-4o-mini")}>
+                    gpt-4o-mini
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setModel("o3-mini")}>
+                    o3-mini
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
             {status === "submitted" || status === "streaming" ? (
               <Button
                 type="submit"
                 size="icon"
-                className="shrink-0 ml-auto"
+                className="shrink-0 ml-auto size-9"
                 onClick={() => handleStop?.()}
               >
                 <IconPlayerStop size={16} />

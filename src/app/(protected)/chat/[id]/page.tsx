@@ -8,6 +8,7 @@ import {
   useConversation,
   useUpdateConversationTitle,
 } from "@/lib/queries/conversations";
+import { useModelStore } from "@/lib/stores/model-store";
 import { cn } from "@/lib/utils";
 import { useChat } from "@ai-sdk/react";
 import { useParams, useRouter } from "next/navigation";
@@ -24,11 +25,15 @@ export default function ConversationPage() {
   const initialMessage = conversation?.messages?.[0];
   const addMessage = useAddMessage();
   const updateTitle = useUpdateConversationTitle();
+  const { model } = useModelStore();
 
   const { messages, input, setInput, handleInputChange, handleSubmit, status, stop } =
     useChat({
       id: conversationId,
       initialMessages: isNewConversation ? [] : conversation?.messages || [],
+      body: {
+        model,
+      },
       onFinish: async (message) => {
         await addMessage.mutateAsync({
           message: {
