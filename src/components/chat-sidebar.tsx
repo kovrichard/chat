@@ -45,10 +45,6 @@ export function ChatSidebar() {
   const { id } = useParams();
   const { data: conversations = [], isLoading } = useConversations();
 
-  if (isLoading) {
-    return <div className="flex items-center justify-center h-full">Loading...</div>;
-  }
-
   const groupedConversations = groupConversationsByTime(conversations);
 
   return (
@@ -60,40 +56,57 @@ export function ChatSidebar() {
         </LinkButton>
       </div>
       <div className="flex flex-col flex-1 overflow-auto gap-1">
-        {groupedConversations.today.length > 0 && (
-          <>
-            <h3 className="text-xs font-medium text-muted-foreground px-3 py-1">Today</h3>
-            {groupedConversations.today.map((chat: PartialConversation) => (
-              <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
-            ))}
-          </>
-        )}
-        {groupedConversations.yesterday.length > 0 && (
-          <>
+        {isLoading ? (
+          <div className="flex flex-col gap-1">
             <h3 className="text-xs font-medium text-muted-foreground px-3 py-1">
-              Yesterday
+              Loading...
             </h3>
-            {groupedConversations.yesterday.map((chat: PartialConversation) => (
-              <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="h-14 rounded-md bg-muted animate-pulse m-1" />
             ))}
-          </>
-        )}
-        {groupedConversations.lastWeek.length > 0 && (
+          </div>
+        ) : (
           <>
-            <h3 className="text-xs font-medium text-muted-foreground px-3 py-1">
-              Previous 7 days
-            </h3>
-            {groupedConversations.lastWeek.map((chat: PartialConversation) => (
-              <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
-            ))}
-          </>
-        )}
-        {groupedConversations.older.length > 0 && (
-          <>
-            <h3 className="text-xs font-medium text-muted-foreground px-3 py-1">Older</h3>
-            {groupedConversations.older.map((chat: PartialConversation) => (
-              <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
-            ))}
+            {groupedConversations.today.length > 0 && (
+              <>
+                <h3 className="text-xs font-medium text-muted-foreground px-3 py-1">
+                  Today
+                </h3>
+                {groupedConversations.today.map((chat: PartialConversation) => (
+                  <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
+                ))}
+              </>
+            )}
+            {groupedConversations.yesterday.length > 0 && (
+              <>
+                <h3 className="text-xs font-medium text-muted-foreground px-3 py-1">
+                  Yesterday
+                </h3>
+                {groupedConversations.yesterday.map((chat: PartialConversation) => (
+                  <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
+                ))}
+              </>
+            )}
+            {groupedConversations.lastWeek.length > 0 && (
+              <>
+                <h3 className="text-xs font-medium text-muted-foreground px-3 py-1">
+                  Previous 7 days
+                </h3>
+                {groupedConversations.lastWeek.map((chat: PartialConversation) => (
+                  <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
+                ))}
+              </>
+            )}
+            {groupedConversations.older.length > 0 && (
+              <>
+                <h3 className="text-xs font-medium text-muted-foreground px-3 py-1">
+                  Older
+                </h3>
+                {groupedConversations.older.map((chat: PartialConversation) => (
+                  <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
+                ))}
+              </>
+            )}
           </>
         )}
       </div>
