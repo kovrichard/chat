@@ -12,6 +12,7 @@ export async function GET() {
     select: {
       id: true,
       title: true,
+      lastMessageAt: true,
       messages: {
         select: {
           id: true,
