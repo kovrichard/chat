@@ -6,6 +6,6 @@ type ModelStore = {
 };
 
 export const useModelStore = create<ModelStore>((set) => ({
-  model: "gpt-4o-mini",
+  model: "4o-mini",
   setModel: (model) => set({ model }),
 }));

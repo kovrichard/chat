@@ -54,10 +54,13 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
                 <DropdownMenuLabel>Models</DropdownMenuLabel>
                 <DropdownMenuGroup>
                   <DropdownMenuItem onClick={() => setModel("gpt-4o-mini")}>
-                    gpt-4o-mini
+                    4o-mini
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setModel("o3-mini")}>
                     o3-mini
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setModel("llama-3.3")}>
+                    llama-3.3
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
