@@ -59,10 +59,18 @@ export function ChatSidebar() {
         {isLoading ? (
           <div className="flex flex-col gap-1">
             <h3 className="text-xs font-medium text-muted-foreground px-3 py-1">
-              Loading...
+              Just a moment...
             </h3>
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-14 rounded-md bg-muted animate-pulse m-1" />
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="rounded-md p-3">
+                <div className="flex flex-col items-start gap-2">
+                  <div className="flex w-full items-center gap-2">
+                    <div className="size-4 rounded-full bg-muted animate-pulse" />
+                    <div className="h-4 w-28 rounded-full bg-muted animate-pulse" />
+                  </div>
+                  <div className="h-4 w-full rounded-full bg-muted animate-pulse" />
+                </div>
+              </div>
             ))}
           </div>
         ) : (

@@ -18,7 +18,7 @@ export function AppSidebar() {
       <SidebarContent className="px-3.5">
         <ChatSidebar />
       </SidebarContent>
-      <SidebarFooter className="p-3.5">
+      <SidebarFooter className="p-4">
         <SidebarMenu>
           <SidebarMenuItem>
             <SignOut />
