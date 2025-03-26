@@ -1,8 +1,9 @@
 "use client";
 
 import { LinkButton } from "@/components/ui/button";
+import { useConversations } from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
-import { useChatStore } from "@/store/ChatContext";
+import { PartialConversation } from "@/types/chat";
 import { MessageSquare, Plus } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -10,7 +11,11 @@ import { AnimatedTitle } from "./ui/animated-title";
 
 export function ChatSidebar() {
   const { id } = useParams();
-  const { state } = useChatStore();
+  const { data: conversations = [], isLoading } = useConversations();
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center h-full">Loading...</div>;
+  }
 
   return (
     <div className="flex flex-col h-full gap-4">
@@ -21,7 +26,7 @@ export function ChatSidebar() {
         </LinkButton>
       </div>
       <div className="flex flex-col flex-1 overflow-auto gap-1">
-        {state.conversations.map((chat) => (
+        {conversations.map((chat: PartialConversation) => (
           <Link
             key={chat.id}
             href={`/chat/${chat.id}`}
@@ -34,9 +39,11 @@ export function ChatSidebar() {
               <MessageSquare className="h-4 w-4" />
               <AnimatedTitle text={chat.title} />
             </div>
-            <p className="text-xs text-muted-foreground truncate w-full">
-              {chat?.messages[chat?.messages.length - 1]?.content}
-            </p>
+            {chat?.messages?.length > 0 && (
+              <p className="text-xs text-muted-foreground truncate w-full">
+                {chat.messages[chat.messages.length - 1]?.content}
+              </p>
+            )}
           </Link>
         ))}
       </div>

@@ -3,39 +3,54 @@
 import InputForm from "@/components/input-form";
 import { MessageContent } from "@/components/message-content";
 import { LoadingDots } from "@/components/ui/loading-dots";
+import {
+  useAddMessage,
+  useConversation,
+  useUpdateConversationTitle,
+} from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
-import { useChatStore } from "@/store/ChatContext";
 import { useChat } from "@ai-sdk/react";
 import { useParams, useRouter } from "next/navigation";
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 export default function ConversationPage() {
   const router = useRouter();
   const params = useParams();
   const conversationId = params.id as string;
 
-  const { state, addMessage, setConversationTitle } = useChatStore();
-  const conversation = state.conversations.find((c) => c.id === conversationId);
-  const isNewConversation = conversation?.messages.length === 1;
-  const initialMessage = conversation?.messages[0] || "";
+  const { data: conversation, isLoading } = useConversation(conversationId);
+  const isNewConversation = conversation?.messages?.length === 1;
+  const initialMessage = conversation?.messages?.[0];
+  const addMessage = useAddMessage();
+  const updateTitle = useUpdateConversationTitle();
 
   const { messages, input, setInput, handleInputChange, handleSubmit, status, stop } =
     useChat({
       id: conversationId,
       initialMessages: isNewConversation ? [] : conversation?.messages || [],
       onFinish: async (message) => {
-        await addMessage(message.content, "assistant");
+        await addMessage.mutateAsync({
+          message: {
+            id: uuidv4(),
+            content: message.content,
+            role: "assistant",
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+          conversationId,
+        });
 
         if (isNewConversation) {
-          const titleMessages = [conversation.messages[0], message];
+          const titleMessages = [initialMessage, message];
 
           fetch("/api/title", {
             method: "POST",
             body: JSON.stringify({ messages: titleMessages }),
           })
             .then((res) => res.text())
-            .then(async (text) => {
-              await setConversationTitle(conversationId, text);
+            .then((title) => {
+              updateTitle.mutateAsync({ conversationId, title });
             });
         }
       },
@@ -49,18 +64,16 @@ export default function ConversationPage() {
   // Handle initial message if present
   useEffect(() => {
     if (initialMessage && !initialMessageSent.current && isNewConversation) {
-      console.log("initialMessage", initialMessage);
-      console.log("isNewConversation", isNewConversation);
       setInput(initialMessage.content);
       initialMessageSent.current = true;
     }
-  }, [initialMessage, isNewConversation]);
+  }, [initialMessage, isNewConversation, setInput]);
 
   useEffect(() => {
-    if (isNewConversation) {
+    if (isNewConversation && initialMessageSent.current) {
       handleSubmit();
     }
-  }, [isNewConversation, initialMessageSent.current]);
+  }, [isNewConversation, initialMessageSent.current, handleSubmit]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -83,25 +96,47 @@ export default function ConversationPage() {
 
   const handleSendMessage = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await addMessage(input, "user");
+    await addMessage.mutateAsync({
+      message: {
+        id: uuidv4(),
+        content: input,
+        role: "user",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      conversationId,
+    });
     handleSubmit(e);
-    setUserScrolled(false); // Reset user scroll when sending a new message
+    setUserScrolled(false);
   };
 
   const handleKeyDown = async (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      await addMessage(input, "user");
+      await addMessage.mutateAsync({
+        message: {
+          id: uuidv4(),
+          content: input,
+          role: "user",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        conversationId,
+      });
       handleSubmit(e as any);
-      setUserScrolled(false); // Reset user scroll when sending a new message
+      setUserScrolled(false);
     }
   };
 
   useEffect(() => {
-    if (!conversation) {
+    if (!isLoading && !conversation) {
       router.push("/chat");
     }
-  }, [conversation, router]);
+  }, [conversation, isLoading, router]);
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  }
 
   return (
     <div className="flex flex-col h-screen min-w-[320px]">

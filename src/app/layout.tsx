@@ -4,6 +4,7 @@ import "./globals.css";
 import Analytics from "@/components/analytics";
 import { canonicalUrl, metaDescription, metaTitle, openGraph } from "@/lib/metadata";
 import publicConf from "@/lib/public-config";
+import { QueryProvider } from "@/lib/query-client";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "next-themes";
 import React from "react";
@@ -51,10 +52,12 @@ export default function RootLayout({
       <body
         className={cn(inter.className, "flex flex-col min-h-svh min-w-80 justify-center")}
       >
-        <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
-          {children}
-          <Toaster />
-        </ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );

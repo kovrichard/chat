@@ -2,10 +2,10 @@
 
 import InputForm from "@/components/input-form";
 import { Button } from "@/components/ui/button";
-import { useChatStore } from "@/store/ChatContext";
+import { useCreateConversation } from "@/lib/queries/conversations";
 import { useRouter } from "next/navigation";
-import { FormEvent, KeyboardEvent, useRef } from "react";
-import { useState } from "react";
+import { FormEvent, KeyboardEvent, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 const examples = [
   "105 degrees Fahrenheit to Celsius ",
@@ -16,31 +16,44 @@ const examples = [
 
 export default function ChatPage() {
   const [input, setInput] = useState("");
-  const { createConversation } = useChatStore();
   const router = useRouter();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const createConversation = useCreateConversation();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input.trim()) return;
 
-    // Create a new conversation with the input as first message
-    const conversationId = await createConversation("New Chat", input);
+    const conversationId = uuidv4();
+    const conversation = {
+      id: conversationId,
+      title: "New Chat",
+      messages: [
+        {
+          id: uuidv4(),
+          content: input,
+          role: "user" as const,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-    // Redirect to the conversation page
+    await createConversation.mutateAsync(conversation);
     router.push(`/chat/${conversationId}`);
   };
 
-  const handleKeyDown = async (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      await handleSubmit(e as any);
+      handleSubmit(e as any);
     }
   };
 
   const handleExampleClick = (example: string) => {
     setInput(example);
-    // Focus the textarea and place cursor at the end after a short delay to ensure the state has updated
     setTimeout(() => {
       if (textareaRef.current) {
         textareaRef.current.focus();
