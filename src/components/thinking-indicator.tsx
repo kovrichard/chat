@@ -16,18 +16,30 @@ interface ThinkingIndicatorProps {
 export function ThinkingIndicator({ reasoning }: ThinkingIndicatorProps) {
   const [isReasoning, setIsReasoning] = useState(true);
   const prevReasoningRef = useRef(reasoning);
+  const timeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
+    // Clear any existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    // Only update if reasoning has actually changed
     if (reasoning !== prevReasoningRef.current) {
       setIsReasoning(true);
       prevReasoningRef.current = reasoning;
-    } else {
-      // Use a small delay to ensure we don't show "finished" too early
-      const timer = setTimeout(() => {
-        setIsReasoning(false);
-      }, 1000);
-      return () => clearTimeout(timer);
     }
+
+    // Set a timeout to mark reasoning as finished
+    timeoutRef.current = setTimeout(() => {
+      setIsReasoning(false);
+    }, 1000);
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, [reasoning]);
 
   return (
