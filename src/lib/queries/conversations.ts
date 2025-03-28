@@ -78,25 +78,30 @@ export function useAddMessage() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       message,
-      conversationId,
-    }: { message: PartialMessage; conversationId: string }) =>
-      saveMessage(message, conversationId),
-    onSuccess: (updatedConversation, { conversationId }) => {
-      // Invalidate the conversation query to refetch with the new message
+    }: {
+      message: PartialMessage;
+      conversationId: string;
+    }) => {
+      // Just return the message for optimistic updates
+      return message;
+    },
+    onSuccess: (message, { conversationId }) => {
+      // Update the conversation query to add the new message
       queryClient.setQueryData(conversationKeys.detail(conversationId), (old: any) => ({
         ...old,
-        messages: [...old.messages, updatedConversation],
+        messages: [...(old.messages || []), message],
       }));
 
+      // Update the conversation in the list cache
       queryClient.setQueryData(
         conversationKeys.all,
         (old: PartialConversation[] | undefined) => {
-          if (!old) return [updatedConversation];
+          if (!old) return [{ id: conversationId, messages: [message] }];
           return old.map((conv) =>
             conv.id === conversationId
-              ? { ...conv, messages: [...conv.messages, updatedConversation] }
+              ? { ...conv, messages: [...(conv.messages || []), message] }
               : conv
           );
         }

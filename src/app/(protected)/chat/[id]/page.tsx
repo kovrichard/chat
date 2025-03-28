@@ -23,8 +23,8 @@ export default function ConversationPage() {
   const { data: conversation, isLoading } = useConversation(conversationId);
   const isNewConversation = conversation?.messages?.length === 1;
   const initialMessage = conversation?.messages?.[0];
-  const addMessage = useAddMessage();
   const updateTitle = useUpdateConversationTitle();
+  const addMessage = useAddMessage();
   const { model } = useModelStore();
 
   const { messages, input, setInput, handleInputChange, handleSubmit, status, stop } =
@@ -35,12 +35,10 @@ export default function ConversationPage() {
         model,
         conversationId,
       },
-      onFinish: async (message) => {
-        await addMessage.mutateAsync({
+      onFinish: (message) => {
+        addMessage.mutateAsync({
           message: {
-            id: uuidv4(),
-            content: message.content,
-            role: "assistant",
+            ...message,
             reasoning:
               message.parts?.[0]?.type === "reasoning"
                 ? message.parts[0].reasoning
@@ -73,11 +71,11 @@ export default function ConversationPage() {
 
   // Handle initial message if present
   useEffect(() => {
-    if (initialMessage && !initialMessageSent.current && isNewConversation) {
+    if (!initialMessageSent.current && isNewConversation) {
       setInput(initialMessage.content);
       initialMessageSent.current = true;
     }
-  }, [initialMessage, isNewConversation, setInput]);
+  }, [isNewConversation, setInput]);
 
   useEffect(() => {
     if (isNewConversation && initialMessageSent.current) {
@@ -106,6 +104,17 @@ export default function ConversationPage() {
 
   const handleSendMessage = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    await addMessage.mutateAsync({
+      message: {
+        id: uuidv4(),
+        content: input,
+        role: "user",
+        reasoning: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      conversationId,
+    });
     handleSubmit(e);
     setUserScrolled(false);
   };
@@ -113,6 +122,17 @@ export default function ConversationPage() {
   const handleKeyDown = async (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
+      await addMessage.mutateAsync({
+        message: {
+          id: uuidv4(),
+          content: input,
+          role: "user",
+          reasoning: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        conversationId,
+      });
       handleSubmit(e as any);
       setUserScrolled(false);
     }

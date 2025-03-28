@@ -18,9 +18,6 @@ export async function saveConversation(conversation: PartialConversation) {
           id: user.id,
         },
       },
-      messages: {
-        create: conversation.messages,
-      },
     },
   });
 

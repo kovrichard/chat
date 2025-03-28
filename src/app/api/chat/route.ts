@@ -1,4 +1,8 @@
-import { saveUserMessage } from "@/lib/dao/messages";
+import {
+  OnFinishResult,
+  saveResultAsAssistantMessage,
+  saveUserMessage,
+} from "@/lib/dao/messages";
 import { groq } from "@ai-sdk/groq";
 import { openai } from "@ai-sdk/openai";
 import { smoothStream, streamText } from "ai";
@@ -35,6 +39,9 @@ export async function POST(req: Request) {
     experimental_transform: smoothStream({
       delayInMs: 15,
     }),
+    onFinish: async (result: OnFinishResult) => {
+      await saveResultAsAssistantMessage(result, conversationId);
+    },
   });
 
   return result.toDataStreamResponse({ sendReasoning: true });
