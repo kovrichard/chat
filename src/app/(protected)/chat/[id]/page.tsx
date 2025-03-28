@@ -33,6 +33,7 @@ export default function ConversationPage() {
       initialMessages: isNewConversation ? [] : conversation?.messages || [],
       body: {
         model,
+        conversationId,
       },
       onFinish: async (message) => {
         await addMessage.mutateAsync({
@@ -105,17 +106,6 @@ export default function ConversationPage() {
 
   const handleSendMessage = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await addMessage.mutateAsync({
-      message: {
-        id: uuidv4(),
-        content: input,
-        role: "user",
-        reasoning: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      conversationId,
-    });
     handleSubmit(e);
     setUserScrolled(false);
   };
@@ -123,17 +113,6 @@ export default function ConversationPage() {
   const handleKeyDown = async (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      await addMessage.mutateAsync({
-        message: {
-          id: uuidv4(),
-          content: input,
-          role: "user",
-          reasoning: null,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        conversationId,
-      });
       handleSubmit(e as any);
       setUserScrolled(false);
     }

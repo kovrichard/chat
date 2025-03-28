@@ -1,3 +1,4 @@
+import { saveUserMessage } from "@/lib/dao/messages";
 import { groq } from "@ai-sdk/groq";
 import { openai } from "@ai-sdk/openai";
 import { smoothStream, streamText } from "ai";
@@ -12,12 +13,15 @@ const allowedModels = {
 };
 
 export async function POST(req: Request) {
-  const { messages, model: modelId } = await req.json();
+  const { messages, model: modelId, conversationId } = await req.json();
   const model = allowedModels[modelId as keyof typeof allowedModels];
 
   if (!model) {
     return new Response("Invalid model", { status: 400 });
   }
+
+  const lastMessage = messages[messages.length - 1];
+  await saveUserMessage(lastMessage.content, conversationId);
 
   const result = streamText({
     model,
