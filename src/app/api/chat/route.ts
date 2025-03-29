@@ -23,7 +23,7 @@ const allowedModels = {
   "deepseek-r1": groq("deepseek-r1-distill-llama-70b"),
 };
 
-function getProviderOptions(model: string) {
+function _getProviderOptions(model: string) {
   if (model === "deepseek-r1") {
     return {
       groq: { reasoningFormat: "parsed" },
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
     model,
     messages,
     maxSteps: 5,
-    providerOptions: getProviderOptions(modelId),
+    // providerOptions: getProviderOptions(modelId),
     experimental_transform: smoothStream({
       delayInMs: 15,
     }),
