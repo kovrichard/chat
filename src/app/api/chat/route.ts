@@ -5,16 +5,20 @@ import {
 } from "@/lib/dao/messages";
 import { getUserFromSession } from "@/lib/dao/users";
 import { AnthropicProviderOptions, anthropic } from "@ai-sdk/anthropic";
+import { createAzure } from "@ai-sdk/azure";
 import { google } from "@ai-sdk/google";
 import { groq } from "@ai-sdk/groq";
-import { openai } from "@ai-sdk/openai";
 import { smoothStream, streamText } from "ai";
 
 export const maxDuration = 30;
 
+const azure = createAzure({
+  apiVersion: "2024-12-01-preview",
+});
+
 const allowedModels = {
-  "4o-mini": openai("gpt-4o-mini"),
-  "o3-mini": openai("o3-mini"),
+  "4o-mini": azure("gpt-4o-mini"),
+  "o3-mini": azure("o3-mini"),
   "claude-3-7-sonnet": anthropic("claude-3-7-sonnet-20250219"),
   "claude-3-7-sonnet-reasoning": anthropic("claude-3-7-sonnet-20250219"),
   "claude-3-5-sonnet": anthropic("claude-3-5-sonnet-20240620"),
@@ -62,10 +66,13 @@ export async function POST(req: Request) {
     maxSteps: 5,
     providerOptions: getProviderOptions(modelId),
     experimental_transform: smoothStream({
-      delayInMs: 15,
+      delayInMs: 10,
     }),
     onFinish: async (result: OnFinishResult) => {
       await saveResultAsAssistantMessage(result, id);
+    },
+    onError: (error) => {
+      console.error(error);
     },
   });
 
