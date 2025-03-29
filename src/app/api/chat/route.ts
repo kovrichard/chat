@@ -17,7 +17,7 @@ const allowedModels = {
   "claude-3-7-sonnet": anthropic("claude-3-7-sonnet-20250219"),
   "claude-3-5-sonnet": anthropic("claude-3-5-sonnet-20240620"),
   "claude-3-5-haiku": anthropic("claude-3-5-haiku-20241022"),
-  "gemini-2.0-flash": google("gemini-2.0-flash"),
+  "gemini-2.0-flash": google("gemini-2.0-flash", { useSearchGrounding: true }),
   "gemini-2.0-flash-lite": google("gemini-2.0-flash-lite"),
   "llama-3.3": groq("llama-3.3-70b-versatile"),
   "deepseek-r1": groq("deepseek-r1-distill-llama-70b"),
