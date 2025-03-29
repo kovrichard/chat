@@ -20,9 +20,9 @@ export function MessageContent({ message }: { message: Message }) {
   if (message.role === "assistant") {
     return (
       <div className="flex flex-col items-start gap-4" data-role="assistant">
-        {/* {message.parts?.[0]?.type === "reasoning" && (
+        {message.parts?.[0]?.type === "reasoning" && (
           <ThinkingIndicator reasoning={message.parts[0].reasoning} />
-        )} */}
+        )}
         <div className="flex flex-col items-start gap-1">
           <ReactMarkdown
             components={{
