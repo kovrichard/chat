@@ -157,22 +157,21 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
                   className="space-y-2"
                 >
                   {providers.map((provider) => (
-                    <>
-                      <DropdownMenuGroup key={provider.name}>
-                        <DropdownMenuLabel className="text-xs font-medium text-muted-foreground flex items-center gap-2">
-                          <provider.icon />
-                          {provider.name}
-                        </DropdownMenuLabel>
-                        {provider.models.map((model) => (
-                          <DropdownMenuRadioItem
-                            value={model.id}
-                            className="text-sm cursor-pointer"
-                          >
-                            {model.name}
-                          </DropdownMenuRadioItem>
-                        ))}
-                      </DropdownMenuGroup>
-                    </>
+                    <DropdownMenuGroup key={provider.name}>
+                      <DropdownMenuLabel className="text-xs font-medium text-muted-foreground flex items-center gap-2">
+                        <provider.icon />
+                        {provider.name}
+                      </DropdownMenuLabel>
+                      {provider.models.map((model) => (
+                        <DropdownMenuRadioItem
+                          key={model.id}
+                          value={model.id}
+                          className="text-sm cursor-pointer"
+                        >
+                          {model.name}
+                        </DropdownMenuRadioItem>
+                      ))}
+                    </DropdownMenuGroup>
                   ))}
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
