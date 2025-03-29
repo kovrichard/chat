@@ -1,9 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useUpdateConversationModel } from "@/lib/queries/conversations";
 import { useModelStore } from "@/lib/stores/model-store";
 import { IconPlayerStop } from "@tabler/icons-react";
 import { Send } from "lucide-react";
+import { useParams } from "next/navigation";
 import { ChangeEvent, FormEvent, KeyboardEvent, forwardRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import {
@@ -31,7 +33,18 @@ interface InputFormProps {
 
 const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
   ({ input, handleChange, handleSubmit, handleKeyDown, status, handleStop }, ref) => {
+    const params = useParams();
+    const conversationId = params.id as string;
     const { model, setModel } = useModelStore();
+    const updateModel = useUpdateConversationModel();
+
+    const handleModelChange = (value: string) => {
+      setModel(value);
+
+      if (conversationId) {
+        updateModel.mutateAsync({ conversationId, model: value });
+      }
+    };
 
     return (
       <div className="flex-none p-4">
@@ -59,7 +72,7 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
                 <DropdownMenuRadioGroup
                   defaultValue="4o-mini"
                   value={model}
-                  onValueChange={setModel}
+                  onValueChange={handleModelChange}
                 >
                   <DropdownMenuLabel>OpenAI</DropdownMenuLabel>
                   <DropdownMenuRadioItem value="4o-mini">4o-mini</DropdownMenuRadioItem>

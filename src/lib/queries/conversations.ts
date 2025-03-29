@@ -1,4 +1,8 @@
-import { saveConversation, saveConversationTitle } from "@/lib/actions/conversations";
+import {
+  saveConversation,
+  saveConversationModel,
+  saveConversationTitle,
+} from "@/lib/actions/conversations";
 import { PartialConversation } from "@/types/chat";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Message } from "ai";
@@ -70,6 +74,21 @@ export function useUpdateConversationTitle() {
           );
         }
       );
+    },
+  });
+}
+
+export function useUpdateConversationModel() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ conversationId, model }: { conversationId: string; model: string }) =>
+      saveConversationModel(conversationId, model),
+    onSuccess: (updatedConversation, { conversationId }) => {
+      queryClient.setQueryData(conversationKeys.detail(conversationId), (old: any) => ({
+        ...old,
+        model: updatedConversation.model,
+      }));
     },
   });
 }
