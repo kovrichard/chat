@@ -3,6 +3,7 @@
 import InputForm from "@/components/input-form";
 import { Button } from "@/components/ui/button";
 import { useCreateConversation } from "@/lib/queries/conversations";
+import { useModelStore } from "@/lib/stores/model-store";
 import { PartialConversation } from "@/types/chat";
 import { useRouter } from "next/navigation";
 import { FormEvent, KeyboardEvent, useRef, useState } from "react";
@@ -20,6 +21,7 @@ export default function ChatPage() {
   const router = useRouter();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const createConversation = useCreateConversation();
+  const { model } = useModelStore();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,6 +31,7 @@ export default function ChatPage() {
     const conversation: PartialConversation = {
       id: conversationId,
       title: "New Chat",
+      model: model,
       messages: [
         {
           content: input,

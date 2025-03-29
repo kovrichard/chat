@@ -13,6 +13,7 @@ export async function saveConversation(conversation: PartialConversation) {
     data: {
       id: conversation.id,
       title: conversation.title,
+      model: conversation.model,
       user: {
         connect: {
           id: user.id,

@@ -49,6 +49,7 @@ model Conversation {
   id                String   @id @default(uuid())
   title             String
   messages          Message[]
+  model             String
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId            Int      @map("user_id")
   createdAt         DateTime @default(now()) @map("created_at")

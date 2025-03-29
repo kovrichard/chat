@@ -17,6 +17,7 @@ export async function GET(
     select: {
       id: true,
       title: true,
+      model: true,
       messages: {
         select: {
           id: true,

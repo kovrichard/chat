@@ -25,7 +25,7 @@ export default function ConversationPage() {
   const initialMessage = conversation?.messages?.[0];
   const updateTitle = useUpdateConversationTitle();
   const addMessage = useAddMessage();
-  const { model } = useModelStore();
+  const { model, setModel } = useModelStore();
 
   const { messages, input, setInput, handleInputChange, handleSubmit, status, stop } =
     useChat({
@@ -125,6 +125,10 @@ export default function ConversationPage() {
   useEffect(() => {
     if (!isLoading && !conversation) {
       router.push("/chat");
+    }
+
+    if (conversation?.model) {
+      setModel(conversation.model);
     }
   }, [conversation, isLoading, router]);
 
