@@ -133,7 +133,15 @@ export default function ConversationPage() {
   }, [conversation, isLoading, router]);
 
   if (isLoading) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="flex gap-2">
+          <div className="size-4 bg-muted rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+          <div className="size-4 bg-muted rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+          <div className="size-4 bg-muted rounded-full animate-bounce"></div>
+        </div>
+      </div>
+    );
   }
 
   return (
