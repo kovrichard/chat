@@ -14,7 +14,8 @@
     "format": "biome format --write ./src",
     "prepare": "husky",
     "postinstall": "prisma generate",
-    "migrate": "prisma migrate dev"
+    "migrate": "prisma migrate dev",
+    "db-push": "prisma db push"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

@@ -18,6 +18,9 @@ jobs:
       ## Auth
       NEXT_PUBLIC_AUTH_REDIRECT_URL: /chat
 
+      ## Connections
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -33,3 +36,6 @@ jobs:
       
       - name: Build project
         run: bun run build
+
+      - name: Migrate database
+        run: bun run db-push
