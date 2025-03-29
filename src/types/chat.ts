@@ -1,6 +1,6 @@
 import { Conversation, Message } from "@prisma/client";
 
-type PartialMessage = Omit<Message, "id" | "conversationId" | "createdAt" | "updatedAt">;
+type PartialMessage = Omit<Message, "conversationId" | "createdAt" | "updatedAt">;
 
 export type PartialConversation = Omit<
   Conversation & { messages: PartialMessage[] },

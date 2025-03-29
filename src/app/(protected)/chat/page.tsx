@@ -34,6 +34,7 @@ export default function ChatPage() {
       model: model,
       messages: [
         {
+          id: uuidv4(),
           content: input,
           role: "user" as const,
           reasoning: null,

@@ -3,6 +3,7 @@ import {
   saveResultAsAssistantMessage,
   saveUserMessage,
 } from "@/lib/dao/messages";
+import { getUserFromSession } from "@/lib/dao/users";
 import { AnthropicProviderOptions, anthropic } from "@ai-sdk/anthropic";
 import { google } from "@ai-sdk/google";
 import { groq } from "@ai-sdk/groq";
@@ -41,15 +42,19 @@ function getProviderOptions(model: string) {
 }
 
 export async function POST(req: Request) {
-  const { messages, model: modelId, conversationId } = await req.json();
+  await getUserFromSession();
+
+  const { id, messages, model: modelId, firstMessage } = await req.json();
   const model = allowedModels[modelId as keyof typeof allowedModels];
 
   if (!model) {
     return new Response("Invalid model", { status: 400 });
   }
 
-  const lastMessage = messages[messages.length - 1];
-  await saveUserMessage(lastMessage.content, conversationId);
+  if (!firstMessage) {
+    const lastMessage = messages[messages.length - 1];
+    await saveUserMessage(lastMessage.content, id);
+  }
 
   const result = streamText({
     model,
@@ -60,7 +65,7 @@ export async function POST(req: Request) {
       delayInMs: 15,
     }),
     onFinish: async (result: OnFinishResult) => {
-      await saveResultAsAssistantMessage(result, conversationId);
+      await saveResultAsAssistantMessage(result, id);
     },
   });
 
