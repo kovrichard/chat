@@ -6,7 +6,7 @@ import { useCreateConversation } from "@/lib/queries/conversations";
 import { useModelStore } from "@/lib/stores/model-store";
 import { PartialConversation } from "@/types/chat";
 import { useRouter } from "next/navigation";
-import { FormEvent, KeyboardEvent, useRef, useState } from "react";
+import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 const examples = [
@@ -21,7 +21,7 @@ export default function ChatPage() {
   const router = useRouter();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const createConversation = useCreateConversation();
-  const { model } = useModelStore();
+  const { model, setModel } = useModelStore();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -63,6 +63,10 @@ export default function ChatPage() {
       }
     }, 0);
   };
+
+  useEffect(() => {
+    setModel("4o-mini");
+  }, []);
 
   return (
     <div className="flex flex-col h-screen min-w-[320px]">
