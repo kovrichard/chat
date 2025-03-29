@@ -26,24 +26,39 @@ export function useConversation(id: string) {
       fetch(`/api/conversations/${id}`)
         .then((res) => res.json())
         .then((data) => {
-          let parts = [];
-          if (data.reasoning) {
-            parts.push({
-              type: "reasoning",
-              reasoning: data.reasoning,
-            });
-          }
+          const messages = data.messages.map((message: any) => {
+            let parts = [];
+            if (message.reasoning) {
+              let details = [];
+              if (message.signature) {
+                details.push({
+                  type: "text",
+                  text: message.reasoning,
+                  signature: message.signature,
+                });
+              }
 
-          if (data.content) {
-            parts.push({
-              type: "text",
-              text: data.content,
-            });
-          }
+              parts.push({
+                type: "reasoning",
+                reasoning: message.reasoning,
+                details: details,
+              });
+            }
+
+            if (message.content) {
+              parts.push({
+                type: "text",
+                text: message.content,
+              });
+            }
+            message.parts = parts;
+
+            return message;
+          });
 
           return {
             ...data,
-            parts: parts,
+            messages: messages,
           };
         }),
   });

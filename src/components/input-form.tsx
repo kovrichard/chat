@@ -64,6 +64,11 @@ const providers = [
         name: "Claude 3.7 Sonnet",
       },
       {
+        id: "claude-3-7-sonnet-reasoning",
+        name: "Claude 3.7 Sonnet Reasoning",
+        features: [reasoning],
+      },
+      {
         id: "claude-3-5-sonnet",
         name: "Claude 3.5 Sonnet",
       },
@@ -110,6 +115,13 @@ const providers = [
     ],
   },
 ];
+
+function getModelName(modelId: string) {
+  const model = providers
+    .flatMap((provider) => provider.models)
+    .find((m) => m.id === modelId);
+  return model?.name;
+}
 
 interface InputFormProps {
   input: string;
@@ -160,7 +172,7 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
                   size="sm"
                   className="-ml-2 -mb-2 text-sm text-muted-foreground hover:text-primary"
                 >
-                  {model}
+                  {getModelName(model)}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-72">

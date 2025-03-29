@@ -3,9 +3,21 @@ import "server-only";
 import { getUserFromSession } from "@/lib/dao/users";
 import prisma from "@/lib/prisma";
 
+type ReasoningDetail =
+  | {
+      type: "text";
+      text: string;
+      signature?: string;
+    }
+  | {
+      type: "redacted";
+      data: string;
+    };
+
 export type OnFinishResult = {
   text: string;
   reasoning?: string;
+  reasoningDetails?: ReasoningDetail[];
 };
 
 export async function saveResultAsAssistantMessage(
@@ -13,9 +25,12 @@ export async function saveResultAsAssistantMessage(
   conversationId: string
 ) {
   const reasoning = result.reasoning;
+  const signature = result.reasoningDetails?.find(
+    (detail) => detail.type === "text"
+  )?.signature;
   const content = result.text;
 
-  await saveMessage(content, "assistant", conversationId, reasoning);
+  await saveMessage(content, "assistant", conversationId, reasoning, signature);
 }
 
 export async function saveUserMessage(content: string, conversationId: string) {
@@ -26,7 +41,8 @@ async function saveMessage(
   content: string,
   role: string,
   conversationId: string,
-  reasoning?: string
+  reasoning?: string,
+  signature?: string
 ) {
   const user = await getUserFromSession();
 
@@ -36,6 +52,7 @@ async function saveMessage(
       role,
       reasoning,
       conversationId,
+      signature,
     },
   });
 

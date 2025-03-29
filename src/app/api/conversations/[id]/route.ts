@@ -24,6 +24,10 @@ export async function GET(
           content: true,
           role: true,
           reasoning: true,
+          signature: true,
+        },
+        orderBy: {
+          createdAt: "asc",
         },
       },
     },

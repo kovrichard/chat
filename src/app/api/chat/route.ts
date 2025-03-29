@@ -3,7 +3,7 @@ import {
   saveResultAsAssistantMessage,
   saveUserMessage,
 } from "@/lib/dao/messages";
-import { anthropic } from "@ai-sdk/anthropic";
+import { AnthropicProviderOptions, anthropic } from "@ai-sdk/anthropic";
 import { google } from "@ai-sdk/google";
 import { groq } from "@ai-sdk/groq";
 import { openai } from "@ai-sdk/openai";
@@ -15,6 +15,7 @@ const allowedModels = {
   "4o-mini": openai("gpt-4o-mini"),
   "o3-mini": openai("o3-mini"),
   "claude-3-7-sonnet": anthropic("claude-3-7-sonnet-20250219"),
+  "claude-3-7-sonnet-reasoning": anthropic("claude-3-7-sonnet-20250219"),
   "claude-3-5-sonnet": anthropic("claude-3-5-sonnet-20240620"),
   "claude-3-5-haiku": anthropic("claude-3-5-haiku-20241022"),
   "gemini-2.0-flash": google("gemini-2.0-flash", { useSearchGrounding: true }),
@@ -23,14 +24,20 @@ const allowedModels = {
   "deepseek-r1": groq("deepseek-r1-distill-llama-70b"),
 };
 
-function _getProviderOptions(model: string) {
+function getProviderOptions(model: string) {
+  const providerOptions: any = {};
+
   if (model === "deepseek-r1") {
-    return {
-      groq: { reasoningFormat: "parsed" },
-    };
+    providerOptions.groq = { reasoningFormat: "parsed" };
   }
 
-  return undefined;
+  if (model === "claude-3-7-sonnet-reasoning") {
+    providerOptions.anthropic = {
+      thinking: { type: "enabled", budgetTokens: 12000 },
+    } satisfies AnthropicProviderOptions;
+  }
+
+  return providerOptions;
 }
 
 export async function POST(req: Request) {
@@ -48,7 +55,7 @@ export async function POST(req: Request) {
     model,
     messages,
     maxSteps: 5,
-    // providerOptions: getProviderOptions(modelId),
+    providerOptions: getProviderOptions(modelId),
     experimental_transform: smoothStream({
       delayInMs: 15,
     }),
