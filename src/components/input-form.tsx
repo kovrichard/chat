@@ -12,6 +12,9 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
@@ -34,7 +37,7 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
       <div className="flex-none p-4">
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col w-full max-w-5xl mx-auto items-end border rounded-xl p-4"
+          className="flex flex-col w-full max-w-5xl mx-auto items-end border rounded-xl p-4 bg-card"
         >
           <TextareaAutosize
             ref={ref}
@@ -47,25 +50,29 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
           />
           <div className="flex items-end w-full gap-2">
             <DropdownMenu>
-              <DropdownMenuTrigger className="text-sm text-muted-foreground">
+              <DropdownMenuTrigger className="text-sm text-primary/70">
                 {model}
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="ml-8">
+              <DropdownMenuContent>
                 <DropdownMenuLabel>Models</DropdownMenuLabel>
-                <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={() => setModel("gpt-4o-mini")}>
-                    4o-mini
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setModel("o3-mini")}>
-                    o3-mini
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setModel("llama-3.3")}>
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup
+                  defaultValue="4o-mini"
+                  value={model}
+                  onValueChange={setModel}
+                >
+                  <DropdownMenuLabel>OpenAI</DropdownMenuLabel>
+                  <DropdownMenuRadioItem value="4o-mini">4o-mini</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="o3-mini">o3-mini</DropdownMenuRadioItem>
+                  <DropdownMenuLabel>Llama</DropdownMenuLabel>
+                  <DropdownMenuRadioItem value="llama-3.3">
                     llama-3.3
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setModel("deepseek-r1")}>
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuLabel>DeepSeek</DropdownMenuLabel>
+                  <DropdownMenuRadioItem value="deepseek-r1">
                     deepseek-r1
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
             {status === "submitted" || status === "streaming" ? (
