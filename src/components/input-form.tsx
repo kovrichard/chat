@@ -50,7 +50,7 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
       <div className="flex-none p-4">
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col w-full max-w-5xl mx-auto items-end border rounded-xl p-4 bg-card"
+          className="flex flex-col w-full max-w-5xl mx-auto items-end border rounded-2xl p-4 bg-card"
         >
           <TextareaAutosize
             ref={ref}
@@ -63,10 +63,12 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
           />
           <div className="flex items-end w-full gap-2">
             <DropdownMenu>
-              <DropdownMenuTrigger className="text-sm text-primary/70">
-                {model}
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="-ml-2 -mb-2">
+                  {model}
+                </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent align="start" className="w-48">
                 <DropdownMenuLabel>Models</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioGroup
