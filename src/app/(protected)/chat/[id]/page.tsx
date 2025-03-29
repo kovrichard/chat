@@ -100,7 +100,9 @@ export default function ConversationPage() {
     }
   }, [messages, userScrolled]);
 
-  const handleSendMessage = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSendMessage = async (
+    e: FormEvent<HTMLFormElement> | KeyboardEvent<HTMLTextAreaElement>
+  ) => {
     e.preventDefault();
     await addMessage.mutateAsync({
       message: {
@@ -116,17 +118,7 @@ export default function ConversationPage() {
 
   const handleKeyDown = async (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      await addMessage.mutateAsync({
-        message: {
-          id: uuidv4(),
-          content: input,
-          role: "user",
-        },
-        conversationId,
-      });
-      handleSubmit(e as any);
-      setUserScrolled(false);
+      handleSendMessage(e);
     }
   };
 
