@@ -8,6 +8,9 @@ import { Send } from "lucide-react";
 import { useParams } from "next/navigation";
 import { ChangeEvent, FormEvent, KeyboardEvent, forwardRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";
+import DeepSeek from "./icons/deepseek";
+import Meta from "./icons/meta";
+import OpenAI from "./icons/openai";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -50,7 +53,7 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
       <div className="flex-none p-4">
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col w-full max-w-5xl mx-auto items-end border rounded-2xl p-4 bg-card"
+          className="flex flex-col w-full max-w-5xl mx-auto items-end border rounded-xl p-4 bg-card"
         >
           <TextareaAutosize
             ref={ref}
@@ -64,29 +67,68 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
           <div className="flex items-end w-full gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="-ml-2 -mb-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="-ml-2 -mb-2 text-sm text-muted-foreground hover:text-primary"
+                >
                   {model}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-48">
-                <DropdownMenuLabel>Models</DropdownMenuLabel>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuLabel className="text-xs font-medium text-muted-foreground">
+                  Select Model
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioGroup
                   defaultValue="4o-mini"
                   value={model}
                   onValueChange={handleModelChange}
                 >
-                  <DropdownMenuLabel>OpenAI</DropdownMenuLabel>
-                  <DropdownMenuRadioItem value="4o-mini">4o-mini</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="o3-mini">o3-mini</DropdownMenuRadioItem>
-                  <DropdownMenuLabel>Llama</DropdownMenuLabel>
-                  <DropdownMenuRadioItem value="llama-3.3">
-                    llama-3.3
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuLabel>DeepSeek</DropdownMenuLabel>
-                  <DropdownMenuRadioItem value="deepseek-r1">
-                    deepseek-r1
-                  </DropdownMenuRadioItem>
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel className="text-xs font-medium text-muted-foreground flex items-center gap-2">
+                      <OpenAI />
+                      OpenAI
+                    </DropdownMenuLabel>
+                    <DropdownMenuRadioItem
+                      value="4o-mini"
+                      className="text-sm cursor-pointer"
+                    >
+                      4o-mini
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem
+                      value="o3-mini"
+                      className="text-sm cursor-pointer"
+                    >
+                      o3-mini
+                    </DropdownMenuRadioItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel className="text-xs font-medium text-muted-foreground flex items-center gap-2">
+                      <Meta />
+                      Llama
+                    </DropdownMenuLabel>
+                    <DropdownMenuRadioItem
+                      value="llama-3.3"
+                      className="text-sm cursor-pointer"
+                    >
+                      llama-3.3
+                    </DropdownMenuRadioItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel className="text-xs font-medium text-muted-foreground flex items-center gap-2">
+                      <DeepSeek />
+                      DeepSeek
+                    </DropdownMenuLabel>
+                    <DropdownMenuRadioItem
+                      value="deepseek-r1"
+                      className="text-sm cursor-pointer"
+                    >
+                      deepseek-r1
+                    </DropdownMenuRadioItem>
+                  </DropdownMenuGroup>
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
