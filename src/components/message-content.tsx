@@ -8,7 +8,7 @@ export function MessageContent({ message }: { message: Message }) {
   if (message.role === "user") {
     return (
       <div
-        className="bg-muted rounded-lg p-4 whitespace-pre-wrap break-words"
+        className="rounded-lg p-4 whitespace-pre-wrap break-words bg-secondary text-secondary-foreground"
         data-role="user"
         style={{ wordBreak: "break-word" }}
       >
