@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useUpdateConversationModel } from "@/lib/queries/conversations";
 import { useModelStore } from "@/lib/stores/model-store";
 import { IconPlayerStop } from "@tabler/icons-react";
-import { Send } from "lucide-react";
+import { Brain, Globe, Send } from "lucide-react";
 import { useParams } from "next/navigation";
 import { ChangeEvent, FormEvent, KeyboardEvent, forwardRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";
@@ -23,6 +23,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+
+const reasoning = {
+  name: "Reasoning",
+  description: "Reasoning model",
+  icon: Brain,
+  color: "text-yellow-500",
+};
+
+const search = {
+  name: "Search",
+  description: "Searches the web for information",
+  icon: Globe,
+  color: "text-blue-500",
+};
 
 const providers = [
   {
@@ -36,6 +51,7 @@ const providers = [
       {
         id: "o3-mini",
         name: "o3-mini",
+        features: [reasoning],
       },
     ],
   },
@@ -64,6 +80,7 @@ const providers = [
       {
         id: "gemini-2.0-flash",
         name: "Gemini 2.0 Flash",
+        features: [search],
       },
       {
         id: "gemini-2.0-flash-lite",
@@ -88,6 +105,7 @@ const providers = [
       {
         id: "deepseek-r1",
         name: "DeepSeek R1",
+        features: [reasoning],
       },
     ],
   },
@@ -145,7 +163,7 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
                   {model}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56">
+              <DropdownMenuContent align="start" className="w-72">
                 <DropdownMenuLabel className="text-xs font-medium text-muted-foreground">
                   Select Model
                 </DropdownMenuLabel>
@@ -168,7 +186,17 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
                           value={model.id}
                           className="text-sm cursor-pointer"
                         >
-                          {model.name}
+                          <div className="flex flex-1 items-center justify-between gap-2">
+                            <span>{model.name}</span>
+                            {model.features?.map((feature) => (
+                              <Tooltip key={feature.name}>
+                                <TooltipTrigger asChild>
+                                  <feature.icon size={16} className={feature.color} />
+                                </TooltipTrigger>
+                                <TooltipContent>{feature.description}</TooltipContent>
+                              </Tooltip>
+                            ))}
+                          </div>
                         </DropdownMenuRadioItem>
                       ))}
                     </DropdownMenuGroup>
