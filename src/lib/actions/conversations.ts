@@ -35,3 +35,14 @@ export async function saveConversationTitle(conversationId: string, title: strin
 
   return updatedConversation;
 }
+
+export async function saveConversationModel(conversationId: string, model: string) {
+  const user = await getUserFromSession();
+
+  const updatedConversation = await prisma.conversation.update({
+    where: { id: conversationId, userId: user.id },
+    data: { model },
+  });
+
+  return updatedConversation;
+}
