@@ -42,9 +42,7 @@ export default function ConversationPage() {
             reasoning:
               message.parts?.[0]?.type === "reasoning"
                 ? message.parts[0].reasoning
-                : null,
-            createdAt: new Date(),
-            updatedAt: new Date(),
+                : undefined,
           },
           conversationId,
         });
@@ -109,9 +107,6 @@ export default function ConversationPage() {
         id: uuidv4(),
         content: input,
         role: "user",
-        reasoning: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
       },
       conversationId,
     });
@@ -127,9 +122,6 @@ export default function ConversationPage() {
           id: uuidv4(),
           content: input,
           role: "user",
-          reasoning: null,
-          createdAt: new Date(),
-          updatedAt: new Date(),
         },
         conversationId,
       });

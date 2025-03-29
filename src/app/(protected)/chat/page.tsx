@@ -3,6 +3,7 @@
 import InputForm from "@/components/input-form";
 import { Button } from "@/components/ui/button";
 import { useCreateConversation } from "@/lib/queries/conversations";
+import { PartialConversation } from "@/types/chat";
 import { useRouter } from "next/navigation";
 import { FormEvent, KeyboardEvent, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -25,21 +26,16 @@ export default function ChatPage() {
     if (!input.trim()) return;
 
     const conversationId = uuidv4();
-    const conversation = {
+    const conversation: PartialConversation = {
       id: conversationId,
       title: "New Chat",
       messages: [
         {
-          id: uuidv4(),
           content: input,
           role: "user" as const,
           reasoning: null,
-          createdAt: new Date(),
-          updatedAt: new Date(),
         },
       ],
-      createdAt: new Date(),
-      updatedAt: new Date(),
       lastMessageAt: new Date(),
     };
 

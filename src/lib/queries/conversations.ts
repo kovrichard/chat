@@ -1,7 +1,7 @@
 import { saveConversation, saveConversationTitle } from "@/lib/actions/conversations";
-import { saveMessage } from "@/lib/actions/messages";
-import { PartialConversation, PartialMessage } from "@/types/chat";
+import { PartialConversation } from "@/types/chat";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Message } from "ai";
 
 const conversationKeys = {
   all: ["conversations"] as const,
@@ -81,7 +81,7 @@ export function useAddMessage() {
     mutationFn: async ({
       message,
     }: {
-      message: PartialMessage;
+      message: Message;
       conversationId: string;
     }) => {
       // Just return the message for optimistic updates
