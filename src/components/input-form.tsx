@@ -24,6 +24,75 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
+const providers = [
+  {
+    name: "OpenAI",
+    icon: OpenAI,
+    models: [
+      {
+        id: "4o-mini",
+        name: "GPT-4o mini",
+      },
+      {
+        id: "o3-mini",
+        name: "o3-mini",
+      },
+    ],
+  },
+  {
+    name: "Anthropic",
+    icon: Anthropic,
+    models: [
+      {
+        id: "claude-3-7-sonnet",
+        name: "Claude 3.7 Sonnet",
+      },
+      {
+        id: "claude-3-5-sonnet",
+        name: "Claude 3.5 Sonnet",
+      },
+      {
+        id: "claude-3-5-haiku",
+        name: "Claude 3.5 Haiku",
+      },
+    ],
+  },
+  {
+    name: "Google",
+    icon: Google,
+    models: [
+      {
+        id: "gemini-2.0-flash",
+        name: "Gemini 2.0 Flash",
+      },
+      {
+        id: "gemini-2.0-flash-lite",
+        name: "Gemini 2.0 Flash Lite",
+      },
+    ],
+  },
+  {
+    name: "Meta",
+    icon: Meta,
+    models: [
+      {
+        id: "llama-3.3",
+        name: "Llama 3.3",
+      },
+    ],
+  },
+  {
+    name: "DeepSeek",
+    icon: DeepSeek,
+    models: [
+      {
+        id: "deepseek-r1",
+        name: "DeepSeek R1",
+      },
+    ],
+  },
+];
+
 interface InputFormProps {
   input: string;
   handleChange: (
@@ -86,93 +155,25 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
                   value={model}
                   onValueChange={handleModelChange}
                 >
-                  <DropdownMenuGroup>
-                    <DropdownMenuLabel className="text-xs font-medium text-muted-foreground flex items-center gap-2">
-                      <OpenAI />
-                      OpenAI
-                    </DropdownMenuLabel>
-                    <DropdownMenuRadioItem
-                      value="4o-mini"
-                      className="text-sm cursor-pointer"
-                    >
-                      GPT-4o mini
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem
-                      value="o3-mini"
-                      className="text-sm cursor-pointer"
-                    >
-                      o3-mini
-                    </DropdownMenuRadioItem>
-                  </DropdownMenuGroup>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuGroup>
-                    <DropdownMenuLabel className="text-xs font-medium text-muted-foreground flex items-center gap-2">
-                      <Anthropic />
-                      Anthropic
-                    </DropdownMenuLabel>
-                    <DropdownMenuRadioItem
-                      value="claude-3-7-sonnet"
-                      className="text-sm cursor-pointer"
-                    >
-                      Claude 3.7 Sonnet
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem
-                      value="claude-3-5-sonnet"
-                      className="text-sm cursor-pointer"
-                    >
-                      Claude 3.5 Sonnet
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem
-                      value="claude-3-5-haiku"
-                      className="text-sm cursor-pointer"
-                    >
-                      Claude 3.5 Haiku
-                    </DropdownMenuRadioItem>
-                  </DropdownMenuGroup>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuGroup>
-                    <DropdownMenuLabel className="text-xs font-medium text-muted-foreground flex items-center gap-2">
-                      <Google />
-                      Google
-                    </DropdownMenuLabel>
-                    <DropdownMenuRadioItem
-                      value="gemini-2.0-flash"
-                      className="text-sm cursor-pointer"
-                    >
-                      Gemini 2.0 Flash
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem
-                      value="gemini-2.0-flash-lite"
-                      className="text-sm cursor-pointer"
-                    >
-                      Gemini 2.0 Flash Lite
-                    </DropdownMenuRadioItem>
-                  </DropdownMenuGroup>
-                  <DropdownMenuGroup>
-                    <DropdownMenuLabel className="text-xs font-medium text-muted-foreground flex items-center gap-2">
-                      <Meta />
-                      Meta
-                    </DropdownMenuLabel>
-                    <DropdownMenuRadioItem
-                      value="llama-3.3"
-                      className="text-sm cursor-pointer"
-                    >
-                      Llama 3.3
-                    </DropdownMenuRadioItem>
-                  </DropdownMenuGroup>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuGroup>
-                    <DropdownMenuLabel className="text-xs font-medium text-muted-foreground flex items-center gap-2">
-                      <DeepSeek />
-                      DeepSeek
-                    </DropdownMenuLabel>
-                    <DropdownMenuRadioItem
-                      value="deepseek-r1"
-                      className="text-sm cursor-pointer"
-                    >
-                      DeepSeek R1
-                    </DropdownMenuRadioItem>
-                  </DropdownMenuGroup>
+                  {providers.map((provider, index) => (
+                    <>
+                      <DropdownMenuGroup key={provider.name}>
+                        <DropdownMenuLabel className="text-xs font-medium text-muted-foreground flex items-center gap-2">
+                          <provider.icon />
+                          {provider.name}
+                        </DropdownMenuLabel>
+                        {provider.models.map((model) => (
+                          <DropdownMenuRadioItem
+                            value={model.id}
+                            className="text-sm cursor-pointer"
+                          >
+                            {model.name}
+                          </DropdownMenuRadioItem>
+                        ))}
+                      </DropdownMenuGroup>
+                      {index !== providers.length - 1 && <DropdownMenuSeparator />}
+                    </>
+                  ))}
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
