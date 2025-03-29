@@ -104,6 +104,11 @@ export default function ConversationPage() {
     e: FormEvent<HTMLFormElement> | KeyboardEvent<HTMLTextAreaElement>
   ) => {
     e.preventDefault();
+
+    if (input.trim() === "") {
+      return;
+    }
+
     await addMessage.mutateAsync({
       message: {
         id: uuidv4(),
