@@ -10,6 +10,7 @@ import { ChangeEvent, FormEvent, KeyboardEvent, forwardRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import Anthropic from "./icons/anthropic";
 import DeepSeek from "./icons/deepseek";
+import Google from "./icons/google";
 import Meta from "./icons/meta";
 import OpenAI from "./icons/openai";
 import {
@@ -129,6 +130,24 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
                     </DropdownMenuRadioItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel className="text-xs font-medium text-muted-foreground flex items-center gap-2">
+                      <Google />
+                      Google
+                    </DropdownMenuLabel>
+                    <DropdownMenuRadioItem
+                      value="gemini-2.0-flash"
+                      className="text-sm cursor-pointer"
+                    >
+                      Gemini 2.0 Flash
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem
+                      value="gemini-2.0-flash-lite"
+                      className="text-sm cursor-pointer"
+                    >
+                      Gemini 2.0 Flash Lite
+                    </DropdownMenuRadioItem>
+                  </DropdownMenuGroup>
                   <DropdownMenuGroup>
                     <DropdownMenuLabel className="text-xs font-medium text-muted-foreground flex items-center gap-2">
                       <Meta />
