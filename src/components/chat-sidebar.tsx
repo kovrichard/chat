@@ -77,7 +77,7 @@ export function ChatSidebar() {
           <>
             {groupedConversations.today.length > 0 && (
               <>
-                <h3 className="text-xs font-medium text-muted-foreground p-1">Today</h3>
+                <h3 className="text-xs font-medium text-primary/70 p-1">Today</h3>
                 {groupedConversations.today.map((chat: PartialConversation) => (
                   <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
                 ))}
@@ -85,9 +85,7 @@ export function ChatSidebar() {
             )}
             {groupedConversations.yesterday.length > 0 && (
               <>
-                <h3 className="text-xs font-medium text-muted-foreground p-1">
-                  Yesterday
-                </h3>
+                <h3 className="text-xs font-medium text-primary/70 p-1">Yesterday</h3>
                 {groupedConversations.yesterday.map((chat: PartialConversation) => (
                   <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
                 ))}
@@ -95,7 +93,7 @@ export function ChatSidebar() {
             )}
             {groupedConversations.lastWeek.length > 0 && (
               <>
-                <h3 className="text-xs font-medium text-muted-foreground p-1">
+                <h3 className="text-xs font-medium text-primary/70 p-1">
                   Previous 7 days
                 </h3>
                 {groupedConversations.lastWeek.map((chat: PartialConversation) => (
@@ -105,7 +103,7 @@ export function ChatSidebar() {
             )}
             {groupedConversations.older.length > 0 && (
               <>
-                <h3 className="text-xs font-medium text-muted-foreground p-1">Older</h3>
+                <h3 className="text-xs font-medium text-primary/70 p-1">Older</h3>
                 {groupedConversations.older.map((chat: PartialConversation) => (
                   <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
                 ))}
