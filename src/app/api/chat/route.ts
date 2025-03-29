@@ -3,6 +3,7 @@ import {
   saveResultAsAssistantMessage,
   saveUserMessage,
 } from "@/lib/dao/messages";
+import { anthropic } from "@ai-sdk/anthropic";
 import { groq } from "@ai-sdk/groq";
 import { openai } from "@ai-sdk/openai";
 import { smoothStream, streamText } from "ai";
@@ -12,6 +13,9 @@ export const maxDuration = 30;
 const allowedModels = {
   "4o-mini": openai("gpt-4o-mini"),
   "o3-mini": openai("o3-mini"),
+  "claude-3-7-sonnet": anthropic("claude-3-7-sonnet-20250219"),
+  "claude-3-5-sonnet": anthropic("claude-3-5-sonnet-20240620"),
+  "claude-3-5-haiku": anthropic("claude-3-5-haiku-20241022"),
   "llama-3.3": groq("llama-3.3-70b-versatile"),
   "deepseek-r1": groq("deepseek-r1-distill-llama-70b"),
 };

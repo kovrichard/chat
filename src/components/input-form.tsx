@@ -8,6 +8,7 @@ import { Send } from "lucide-react";
 import { useParams } from "next/navigation";
 import { ChangeEvent, FormEvent, KeyboardEvent, forwardRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";
+import Anthropic from "./icons/anthropic";
 import DeepSeek from "./icons/deepseek";
 import Meta from "./icons/meta";
 import OpenAI from "./icons/openai";
@@ -15,7 +16,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
@@ -94,7 +94,7 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
                       value="4o-mini"
                       className="text-sm cursor-pointer"
                     >
-                      4o-mini
+                      GPT-4o mini
                     </DropdownMenuRadioItem>
                     <DropdownMenuRadioItem
                       value="o3-mini"
@@ -106,14 +106,39 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
                     <DropdownMenuLabel className="text-xs font-medium text-muted-foreground flex items-center gap-2">
+                      <Anthropic />
+                      Anthropic
+                    </DropdownMenuLabel>
+                    <DropdownMenuRadioItem
+                      value="claude-3-7-sonnet"
+                      className="text-sm cursor-pointer"
+                    >
+                      Claude 3.7 Sonnet
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem
+                      value="claude-3-5-sonnet"
+                      className="text-sm cursor-pointer"
+                    >
+                      Claude 3.5 Sonnet
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem
+                      value="claude-3-5-haiku"
+                      className="text-sm cursor-pointer"
+                    >
+                      Claude 3.5 Haiku
+                    </DropdownMenuRadioItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel className="text-xs font-medium text-muted-foreground flex items-center gap-2">
                       <Meta />
-                      Llama
+                      Meta
                     </DropdownMenuLabel>
                     <DropdownMenuRadioItem
                       value="llama-3.3"
                       className="text-sm cursor-pointer"
                     >
-                      llama-3.3
+                      Llama 3.3
                     </DropdownMenuRadioItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
@@ -126,7 +151,7 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
                       value="deepseek-r1"
                       className="text-sm cursor-pointer"
                     >
-                      deepseek-r1
+                      DeepSeek R1
                     </DropdownMenuRadioItem>
                   </DropdownMenuGroup>
                 </DropdownMenuRadioGroup>
