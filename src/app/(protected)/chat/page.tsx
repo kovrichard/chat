@@ -37,6 +37,7 @@ export default function ChatPage() {
           content: input,
           role: "user" as const,
           reasoning: null,
+          signature: null,
         },
       ],
       lastMessageAt: new Date(),

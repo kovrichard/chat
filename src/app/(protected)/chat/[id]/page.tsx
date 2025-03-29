@@ -37,13 +37,7 @@ export default function ConversationPage() {
       },
       onFinish: (message) => {
         addMessage.mutateAsync({
-          message: {
-            ...message,
-            reasoning:
-              message.parts?.[0]?.type === "reasoning"
-                ? message.parts[0].reasoning
-                : undefined,
-          },
+          message,
           conversationId,
         });
 
