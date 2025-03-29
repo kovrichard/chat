@@ -154,8 +154,9 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
                   defaultValue="4o-mini"
                   value={model}
                   onValueChange={handleModelChange}
+                  className="space-y-2"
                 >
-                  {providers.map((provider, index) => (
+                  {providers.map((provider) => (
                     <>
                       <DropdownMenuGroup key={provider.name}>
                         <DropdownMenuLabel className="text-xs font-medium text-muted-foreground flex items-center gap-2">
@@ -171,7 +172,6 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
                           </DropdownMenuRadioItem>
                         ))}
                       </DropdownMenuGroup>
-                      {index !== providers.length - 1 && <DropdownMenuSeparator />}
                     </>
                   ))}
                 </DropdownMenuRadioGroup>
