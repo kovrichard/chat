@@ -165,7 +165,7 @@ export default function ConversationPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-svh">
         <div className="flex gap-2">
           <div className="size-4 bg-muted rounded-full animate-bounce [animation-delay:-0.3s]"></div>
           <div className="size-4 bg-muted rounded-full animate-bounce [animation-delay:-0.15s]"></div>
@@ -176,7 +176,7 @@ export default function ConversationPage() {
   }
 
   return (
-    <div className="flex flex-col h-screen min-w-[320px]">
+    <div className="flex flex-col h-svh min-w-[320px]">
       {/* Messages */}
       <div
         ref={chatContainerRef}

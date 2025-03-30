@@ -71,7 +71,7 @@ export default function ChatPage() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen min-w-[320px]">
+    <div className="flex flex-col h-svh min-w-[320px]">
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="max-w-xl w-full space-y-4">
           <h1 className="text-4xl font-bold">Chat with me</h1>
