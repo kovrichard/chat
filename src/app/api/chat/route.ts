@@ -58,16 +58,6 @@ export async function POST(req: Request) {
     return new Response("Invalid model", { status: 400 });
   }
 
-  if (!firstMessage) {
-    const lastMessage = messages[messages.length - 1];
-    const startSavingUserMessage = Date.now();
-    await saveUserMessage(lastMessage.content, id);
-    const endSavingUserMessage = Date.now();
-    console.log(
-      `User message saved in: ${endSavingUserMessage - startSavingUserMessage}ms`
-    );
-  }
-
   const result = streamText({
     model,
     messages,
@@ -77,6 +67,10 @@ export async function POST(req: Request) {
       delayInMs: 10,
     }),
     onFinish: async (result: OnFinishResult) => {
+      if (!firstMessage) {
+        const lastMessage = messages[messages.length - 1];
+        await saveUserMessage(lastMessage.content, id);
+      }
       await saveResultAsAssistantMessage(result, id);
     },
     onError: (error) => {
