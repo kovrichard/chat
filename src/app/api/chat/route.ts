@@ -46,7 +46,9 @@ function getProviderOptions(model: string) {
 }
 
 export async function POST(req: Request) {
+  const start = Date.now();
   await getUserFromSession();
+  const userFetched = Date.now();
 
   const { id, messages, model: modelId, firstMessage } = await req.json();
   const model = allowedModels[modelId as keyof typeof allowedModels];
@@ -75,6 +77,10 @@ export async function POST(req: Request) {
       console.error(error);
     },
   });
+
+  const end = Date.now();
+  console.log("Response time:", end - start);
+  console.log("User fetch time:", userFetched - start);
 
   return result.toDataStreamResponse({ sendReasoning: true });
 }
