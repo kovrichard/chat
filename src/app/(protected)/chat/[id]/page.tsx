@@ -9,17 +9,7 @@ import { useModelStore } from "@/lib/stores/model-store";
 import { cn } from "@/lib/utils";
 import { Message } from "ai";
 import { useParams, useRouter } from "next/navigation";
-import {
-  FormEvent,
-  KeyboardEvent,
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { v4 as uuidv4 } from "uuid";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // Memoized message component to prevent unnecessary rerenders
 const MessageItem = memo(({ message }: { message: Message }) => (
@@ -40,11 +30,9 @@ export default function ConversationPage() {
   const params = useParams();
   const conversationId = params.id as string;
   const { data: conversation, isLoading } = useConversation(conversationId);
-  const addMessage = useAddMessage();
   const { setModel } = useModelStore();
 
-  const { messages, input, handleSubmit, status, reload, setMessages, setInput } =
-    useChatContext();
+  const { messages, status, reload, setMessages, setInput } = useChatContext();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -78,28 +66,6 @@ export default function ConversationPage() {
       scrollToBottom();
     }
   }, [messages, userScrolled, scrollToBottom]);
-
-  const handleSendMessage = useCallback(
-    async (e: FormEvent<HTMLFormElement> | KeyboardEvent<HTMLTextAreaElement>) => {
-      e.preventDefault();
-
-      if (input.trim() === "") {
-        return;
-      }
-
-      await addMessage.mutateAsync({
-        message: {
-          id: uuidv4(),
-          content: input,
-          role: "user",
-        },
-        conversationId,
-      });
-      handleSubmit(e as FormEvent<HTMLFormElement>);
-      setUserScrolled(false);
-    },
-    [handleSubmit, input, conversationId, addMessage]
-  );
 
   useEffect(() => {
     if (!isLoading && !conversation) {
@@ -153,7 +119,7 @@ export default function ConversationPage() {
       </div>
 
       {/* Input Form */}
-      <InputForm handleSubmit={handleSendMessage} />
+      <InputForm />
     </div>
   );
 }

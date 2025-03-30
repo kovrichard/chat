@@ -18,35 +18,8 @@ const examples = [
 ];
 
 export default function ChatPage() {
-  const router = useRouter();
-  const createConversation = useCreateConversation();
-  const { model, setModel } = useModelStore();
-  const { input, handleInputChange } = useChatContext();
-
-  const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!input.trim()) return;
-
-    const conversationId = uuidv4();
-    const conversation: PartialConversation = {
-      id: conversationId,
-      title: "New Chat",
-      model: model,
-      messages: [
-        {
-          id: uuidv4(),
-          content: input,
-          role: "user" as const,
-          reasoning: null,
-          signature: null,
-        },
-      ],
-      lastMessageAt: new Date(),
-    };
-
-    createConversation.mutateAsync(conversation);
-    router.push(`/chat/${conversationId}`);
-  };
+  const { setModel } = useModelStore();
+  const { handleInputChange } = useChatContext();
 
   const handleExampleClick = (example: string) => {
     handleInputChange({
@@ -91,7 +64,7 @@ export default function ChatPage() {
       </div>
 
       {/* Input Form */}
-      <InputForm handleSubmit={handleSendMessage} />
+      <InputForm />
     </div>
   );
 }
