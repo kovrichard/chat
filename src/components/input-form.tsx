@@ -16,6 +16,7 @@ import TextareaAutosize from "react-textarea-autosize";
 const LazyAnthropic = dynamic(() => import("./icons/anthropic"));
 const LazyDeepSeek = dynamic(() => import("./icons/deepseek"));
 const LazyGoogle = dynamic(() => import("./icons/google"));
+const LazyXAI = dynamic(() => import("./icons/xai"));
 const LazyMeta = dynamic(() => import("./icons/meta"));
 const LazyOpenAI = dynamic(() => import("./icons/openai"));
 
@@ -100,6 +101,16 @@ const providers = [
       {
         id: "gemini-2.0-flash-lite",
         name: "Gemini 2.0 Flash Lite",
+      },
+    ],
+  },
+  {
+    name: "xAI",
+    icon: LazyXAI,
+    models: [
+      {
+        id: "grok-2-1212",
+        name: "Grok 2",
       },
     ],
   },

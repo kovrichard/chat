@@ -9,6 +9,7 @@ import { AnthropicProviderOptions, anthropic } from "@ai-sdk/anthropic";
 import { createAzure } from "@ai-sdk/azure";
 import { google } from "@ai-sdk/google";
 import { groq } from "@ai-sdk/groq";
+import { xai } from "@ai-sdk/xai";
 import { smoothStream, streamText } from "ai";
 
 export const maxDuration = 30;
@@ -26,6 +27,7 @@ const allowedModels = {
   "claude-3-5-haiku": anthropic("claude-3-5-haiku-20241022"),
   "gemini-2.0-flash": google("gemini-2.0-flash", { useSearchGrounding: true }),
   "gemini-2.0-flash-lite": google("gemini-2.0-flash-lite"),
+  "grok-2-1212": xai("grok-2-1212"),
   "llama-3.3": groq("llama-3.3-70b-versatile"),
   "deepseek-r1": groq("deepseek-r1-distill-llama-70b"),
 };
