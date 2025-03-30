@@ -169,6 +169,7 @@ function ConversationLink({
   return (
     <Link
       href={`/chat/${chat.id}`}
+      prefetch={true}
       className={cn(
         "flex w-full flex-col items-start gap-1 rounded-lg p-3 text-left text-sm transition-colors",
         currentId === chat.id ? "bg-accent text-accent-foreground" : "hover:bg-muted"
