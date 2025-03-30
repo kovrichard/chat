@@ -4,6 +4,7 @@ import {
   saveResultAsAssistantMessage,
   saveUserMessage,
 } from "@/lib/dao/messages";
+import { decrementFreeMessages, getUserFromSession } from "@/lib/dao/users";
 import { AnthropicProviderOptions, anthropic } from "@ai-sdk/anthropic";
 import { createAzure } from "@ai-sdk/azure";
 import { google } from "@ai-sdk/google";
@@ -47,9 +48,13 @@ function getProviderOptions(model: string) {
 
 export async function POST(req: Request) {
   const start = Date.now();
-  await auth();
+  const user = await getUserFromSession();
   const userFetched = Date.now();
   console.log(`User fetched in: ${userFetched - start}ms`);
+
+  if (user.subscription === "free" && user.freeMessages <= 0) {
+    return new Response("Out of free messages", { status: 400 });
+  }
 
   const { id, messages, model: modelId, firstMessage } = await req.json();
   const model = allowedModels[modelId as keyof typeof allowedModels];
@@ -72,6 +77,9 @@ export async function POST(req: Request) {
         await saveUserMessage(lastMessage.content, id);
       }
       await saveResultAsAssistantMessage(result, id);
+      if (user.subscription === "free") {
+        await decrementFreeMessages(user.id);
+      }
     },
     onError: (error) => {
       console.error(error);

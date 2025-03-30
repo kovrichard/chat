@@ -6,6 +6,7 @@ import React, { createContext, useContext, ReactNode } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useAddMessage } from "../queries/conversations";
 import { useUpdateConversationTitle } from "../queries/conversations";
+import { queryClient } from "../query-client";
 import { useModelStore } from "../stores/model-store";
 
 type ChatStatus = "submitted" | "streaming" | "ready" | "error";
@@ -52,6 +53,8 @@ export function ChatProvider({
     initialMessages,
     body: { model },
     onFinish: (message: Message) => {
+      queryClient.invalidateQueries({ queryKey: ["subscription"] });
+
       addMessage.mutateAsync({
         message,
         conversationId: id,

@@ -16,7 +16,16 @@ export async function getUserByEmail(email: string) {
   return user;
 }
 
-export const getUserFromSession = cache(async (): Promise<Partial<User>> => {
+type SessionUser = {
+  id: number;
+  name: string;
+  email: string;
+  picture: string;
+  subscription: string;
+  freeMessages: number;
+};
+
+export const getUserFromSession = cache(async (): Promise<SessionUser> => {
   const session = await auth();
 
   if (!session) {
@@ -27,18 +36,21 @@ export const getUserFromSession = cache(async (): Promise<Partial<User>> => {
     where: {
       email: session.user?.email || "",
     },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      picture: true,
+      subscription: true,
+      freeMessages: true,
+    },
   });
 
   if (!user) {
     return redirect("/login");
   }
 
-  return {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    picture: user.picture,
-  };
+  return user;
 });
 
 export async function saveUser(profile: {
@@ -57,4 +69,11 @@ export async function saveUser(profile: {
   });
 
   return user;
+}
+
+export async function decrementFreeMessages(userId: number) {
+  await prisma.user.update({
+    where: { id: userId },
+    data: { freeMessages: { decrement: 1 } },
+  });
 }

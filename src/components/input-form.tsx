@@ -20,6 +20,7 @@ const LazyMeta = dynamic(() => import("./icons/meta"));
 const LazyOpenAI = dynamic(() => import("./icons/openai"));
 
 import { PartialConversation } from "@/types/chat";
+import { useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -142,6 +143,13 @@ const InputForm = forwardRef<HTMLTextAreaElement>((_, ref) => {
   const createConversation = useCreateConversation();
   const addMessage = useAddMessage();
   const { input, handleInputChange, handleSubmit, status, stop } = useChatContext();
+  const { data: subscription } = useQuery({
+    queryKey: ["subscription"],
+    queryFn: async () => {
+      const response = await fetch("/api/subscription");
+      return response.json();
+    },
+  });
 
   const handleModelChange = (value: string) => {
     setModel(value);
@@ -213,13 +221,13 @@ const InputForm = forwardRef<HTMLTextAreaElement>((_, ref) => {
           rows={1}
           className="flex min-h-10 max-h-80 w-full bg-transparent placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 text-sm resize-none"
         />
-        <div className="flex items-end w-full gap-2">
+        <div className="flex items-center w-full gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 size="sm"
-                className="-ml-2 -mb-2 text-sm text-muted-foreground hover:text-primary"
+                className="-ml-2 -mb-2 self-end text-sm text-muted-foreground hover:text-primary"
               >
                 {getModelName(model)}
               </Button>
@@ -265,17 +273,34 @@ const InputForm = forwardRef<HTMLTextAreaElement>((_, ref) => {
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>
+          <div className="flex items-center ml-auto">
+            {subscription && (
+              <Button
+                variant="ghost"
+                type="button"
+                className="text-sm text-muted-foreground h-9"
+              >
+                {subscription.freeMessages <= 0 ? (
+                  <span>Out of free messages</span>
+                ) : subscription.freeMessages === 1 ? (
+                  <span>{subscription.freeMessages} free message left</span>
+                ) : (
+                  <span>{subscription.freeMessages} free messages left</span>
+                )}
+              </Button>
+            )}
+          </div>
           {status === "submitted" || status === "streaming" ? (
             <Button
               type="submit"
               size="icon"
-              className="shrink-0 ml-auto size-9"
+              className="shrink-0 size-9"
               onClick={() => stop()}
             >
               <IconPlayerStop size={16} />
             </Button>
           ) : (
-            <Button type="submit" size="icon" className="shrink-0 ml-auto size-9">
+            <Button type="submit" size="icon" className="shrink-0 size-9">
               <Send size={16} />
             </Button>
           )}
