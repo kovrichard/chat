@@ -7,13 +7,15 @@ import { useModelStore } from "@/lib/stores/model-store";
 import { IconPlayerStop } from "@tabler/icons-react";
 import { Brain, Globe, Send } from "lucide-react";
 import { useParams } from "next/navigation";
-import { ChangeEvent, FormEvent, KeyboardEvent, forwardRef } from "react";
+import { ChangeEvent, FormEvent, KeyboardEvent, forwardRef, lazy } from "react";
 import TextareaAutosize from "react-textarea-autosize";
-import Anthropic from "./icons/anthropic";
-import DeepSeek from "./icons/deepseek";
-import Google from "./icons/google";
-import Meta from "./icons/meta";
-import OpenAI from "./icons/openai";
+const LazyAnthropic = dynamic(() => import("./icons/anthropic"));
+const LazyDeepSeek = dynamic(() => import("./icons/deepseek"));
+const LazyGoogle = dynamic(() => import("./icons/google"));
+const LazyMeta = dynamic(() => import("./icons/meta"));
+const LazyOpenAI = dynamic(() => import("./icons/openai"));
+
+import dynamic from "next/dynamic";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,7 +45,7 @@ const search = {
 const providers = [
   {
     name: "OpenAI",
-    icon: OpenAI,
+    icon: LazyOpenAI,
     models: [
       {
         id: "4o-mini",
@@ -58,7 +60,7 @@ const providers = [
   },
   {
     name: "Anthropic",
-    icon: Anthropic,
+    icon: LazyAnthropic,
     models: [
       {
         id: "claude-3-7-sonnet",
@@ -81,7 +83,7 @@ const providers = [
   },
   {
     name: "Google",
-    icon: Google,
+    icon: LazyGoogle,
     models: [
       {
         id: "gemini-2.0-flash",
@@ -96,7 +98,7 @@ const providers = [
   },
   {
     name: "Meta",
-    icon: Meta,
+    icon: LazyMeta,
     models: [
       {
         id: "llama-3.3",
@@ -106,7 +108,7 @@ const providers = [
   },
   {
     name: "DeepSeek",
-    icon: DeepSeek,
+    icon: LazyDeepSeek,
     models: [
       {
         id: "deepseek-r1",
