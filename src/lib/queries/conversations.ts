@@ -125,21 +125,25 @@ export function useAddMessage() {
   return useMutation({
     mutationFn: async ({
       message,
+      conversationId,
     }: {
       message: Message;
       conversationId: string;
     }) => {
-      // Just return the message for optimistic updates
-      return message;
-    },
-    onSuccess: (message, { conversationId }) => {
-      // Update the conversation query to add the new message
+      // Optimistically update the cache
+      const optimisticMessage = {
+        ...message,
+        id: message.id,
+        createdAt: message.createdAt,
+      };
+
+      // Update conversation detail cache
       queryClient.setQueryData(conversationKeys.detail(conversationId), (old: any) => ({
         ...old,
-        messages: [...(old.messages || []), message],
+        messages: [...(old.messages || []), optimisticMessage],
       }));
 
-      // Update the conversation in the list cache
+      // Update conversation list cache
       queryClient.setQueryData(conversationKeys.list(1), (old: any) => {
         if (!old) return old;
         return {
@@ -148,12 +152,25 @@ export function useAddMessage() {
             ...page,
             conversations: page.conversations.map((conv: PartialConversation) =>
               conv.id === conversationId
-                ? { ...conv, messages: [...(conv.messages || []), message] }
+                ? {
+                    ...conv,
+                    messages: [...(conv.messages || []), optimisticMessage],
+                    lastMessageAt: optimisticMessage.createdAt,
+                  }
                 : conv
             ),
           })),
         };
       });
+
+      return optimisticMessage;
+    },
+    onError: (_, { conversationId }) => {
+      // Revert optimistic updates on error
+      queryClient.invalidateQueries({
+        queryKey: conversationKeys.detail(conversationId),
+      });
+      queryClient.invalidateQueries({ queryKey: conversationKeys.list(1) });
     },
   });
 }
@@ -172,16 +189,30 @@ export function useCreateConversation() {
       // Snapshot the previous value
       const previousConversations = queryClient.getQueryData(conversationKeys.list(1));
 
+      // Optimistically update the conversation detail
       queryClient.setQueryData(
         conversationKeys.detail(newConversation.id),
         newConversation
       );
 
-      // Return a context object with the snapshotted value
+      // Optimistically update the conversation list
+      queryClient.setQueryData(conversationKeys.list(1), (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: [
+            {
+              conversations: [newConversation, ...(old.pages[0]?.conversations || [])],
+            },
+            ...old.pages.slice(1),
+          ],
+        };
+      });
+
       return { previousConversations };
     },
     onError: (_err, newConversation, context) => {
-      // If the mutation fails, use the context returned from onMutate to roll back
+      // Revert optimistic updates on error
       if (context?.previousConversations) {
         queryClient.setQueryData(conversationKeys.list(1), context.previousConversations);
       }
@@ -190,7 +221,7 @@ export function useCreateConversation() {
       });
     },
     onSettled: () => {
-      // Always refetch after error or success to ensure we have the latest data
+      // Refetch to ensure consistency
       queryClient.invalidateQueries({ queryKey: conversationKeys.list(1) });
     },
   });
