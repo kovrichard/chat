@@ -81,7 +81,7 @@ export function ChatSidebar() {
   return (
     <div className="flex flex-col h-full gap-4">
       <div>
-        <LinkButton href="/chat" className="w-full gap-2">
+        <LinkButton href="/chat" className="w-full gap-2" prefetch>
           <Plus className="h-4 w-4" />
           New Chat
         </LinkButton>
@@ -169,7 +169,7 @@ function ConversationLink({
   return (
     <Link
       href={`/chat/${chat.id}`}
-      prefetch={true}
+      prefetch
       className={cn(
         "flex w-full flex-col items-start gap-1 rounded-lg p-3 text-left text-sm transition-colors",
         currentId === chat.id ? "bg-accent text-accent-foreground" : "hover:bg-muted"
