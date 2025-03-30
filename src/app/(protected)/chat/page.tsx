@@ -31,7 +31,7 @@ export default function ChatPage() {
   const { model, setModel } = useModelStore();
   const { input, handleInputChange } = useChatContext();
 
-  const handleSendMessage = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input.trim()) return;
 
@@ -52,7 +52,7 @@ export default function ChatPage() {
       lastMessageAt: new Date(),
     };
 
-    await createConversation.mutateAsync(conversation);
+    createConversation.mutateAsync(conversation);
     router.push(`/chat/${conversationId}`);
   };
 
