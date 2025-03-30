@@ -49,6 +49,7 @@ export async function POST(req: Request) {
   const start = Date.now();
   await getUserFromSession();
   const userFetched = Date.now();
+  console.log(`User fetched in: ${userFetched - start}ms`);
 
   const { id, messages, model: modelId, firstMessage } = await req.json();
   const model = allowedModels[modelId as keyof typeof allowedModels];
@@ -59,7 +60,12 @@ export async function POST(req: Request) {
 
   if (!firstMessage) {
     const lastMessage = messages[messages.length - 1];
+    const startSavingUserMessage = Date.now();
     await saveUserMessage(lastMessage.content, id);
+    const endSavingUserMessage = Date.now();
+    console.log(
+      `User message saved in: ${endSavingUserMessage - startSavingUserMessage}ms`
+    );
   }
 
   const result = streamText({
@@ -79,8 +85,7 @@ export async function POST(req: Request) {
   });
 
   const end = Date.now();
-  console.log("Response time:", end - start);
-  console.log("User fetch time:", userFetched - start);
+  console.log(`Response time: ${end - start}ms`);
 
   return result.toDataStreamResponse({ sendReasoning: true });
 }
