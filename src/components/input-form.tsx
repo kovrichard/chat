@@ -160,6 +160,7 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
           className="flex flex-col w-full max-w-5xl mx-auto items-end border rounded-xl p-4 bg-card"
         >
           <TextareaAutosize
+            id="message-input"
             ref={ref}
             placeholder="(Shift + Enter for new line)"
             value={input}

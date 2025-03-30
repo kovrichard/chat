@@ -7,14 +7,7 @@ import { useCreateConversation } from "@/lib/queries/conversations";
 import { useModelStore } from "@/lib/stores/model-store";
 import { PartialConversation } from "@/types/chat";
 import { useRouter } from "next/navigation";
-import {
-  ChangeEvent,
-  FormEvent,
-  KeyboardEvent,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { ChangeEvent, FormEvent, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 const examples = [
@@ -26,7 +19,6 @@ const examples = [
 
 export default function ChatPage() {
   const router = useRouter();
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const createConversation = useCreateConversation();
   const { model, setModel } = useModelStore();
   const { input, handleInputChange } = useChatContext();
@@ -61,10 +53,11 @@ export default function ChatPage() {
       target: { value: example },
     } as ChangeEvent<HTMLTextAreaElement>);
     setTimeout(() => {
-      if (textareaRef.current) {
-        textareaRef.current.focus();
+      const textarea = document.getElementById("message-input") as HTMLTextAreaElement;
+      if (textarea) {
+        textarea.focus();
         const length = example.length;
-        textareaRef.current.setSelectionRange(length, length);
+        textarea.setSelectionRange(length, length);
       }
     }, 0);
   };
@@ -98,7 +91,7 @@ export default function ChatPage() {
       </div>
 
       {/* Input Form */}
-      <InputForm ref={textareaRef} handleSubmit={handleSendMessage} />
+      <InputForm handleSubmit={handleSendMessage} />
     </div>
   );
 }
