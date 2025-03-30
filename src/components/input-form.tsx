@@ -158,7 +158,7 @@ const InputForm = forwardRef<HTMLTextAreaElement>((_, ref) => {
     }
   }
 
-  async function handleSendMessage(
+  function handleSendMessage(
     e: FormEvent<HTMLFormElement> | KeyboardEvent<HTMLTextAreaElement>
   ) {
     e.preventDefault();
@@ -182,10 +182,10 @@ const InputForm = forwardRef<HTMLTextAreaElement>((_, ref) => {
         lastMessageAt: new Date(),
       };
 
-      createConversation.mutateAsync(conversation);
+      createConversation.mutate(conversation);
       router.push(`/chat/${conversationId}`);
     } else {
-      await addMessage.mutateAsync({
+      addMessage.mutate({
         message: {
           id: uuidv4(),
           content: input,

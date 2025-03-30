@@ -156,9 +156,9 @@ export function useCreateConversation() {
 
   return useMutation({
     mutationFn: (conversation: PartialConversation) => saveConversation(conversation),
-    onMutate: async (newConversation) => {
-      // Cancel any outgoing refetches
-      await queryClient.cancelQueries({
+    onMutate: (newConversation) => {
+      // Cancel any outgoing refetches without awaiting
+      queryClient.cancelQueries({
         queryKey: conversationKeys.detail(newConversation.id),
       });
 
