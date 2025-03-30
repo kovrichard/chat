@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useChatContext } from "@/lib/contexts/chat-context";
 import { useUpdateConversationModel } from "@/lib/queries/conversations";
 import { useModelStore } from "@/lib/stores/model-store";
 import { IconPlayerStop } from "@tabler/icons-react";
@@ -124,22 +125,16 @@ function getModelName(modelId: string) {
 }
 
 interface InputFormProps {
-  input: string;
-  handleChange: (
-    e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
-  ) => void;
   handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
-  handleKeyDown: (e: KeyboardEvent<HTMLTextAreaElement>) => void;
-  handleStop?: () => void;
-  status?: string;
 }
 
 const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
-  ({ input, handleChange, handleSubmit, handleKeyDown, status, handleStop }, ref) => {
+  ({ handleSubmit }, ref) => {
     const params = useParams();
     const conversationId = params.id as string;
     const { model, setModel } = useModelStore();
     const updateModel = useUpdateConversationModel();
+    const { input, handleInputChange, status, stop } = useChatContext();
 
     const handleModelChange = (value: string) => {
       setModel(value);
@@ -148,6 +143,13 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
         updateModel.mutateAsync({ conversationId, model: value });
       }
     };
+
+    function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSubmit(e as any);
+      }
+    }
 
     return (
       <div className="flex-none p-4">
@@ -159,7 +161,7 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
             ref={ref}
             placeholder="(Shift + Enter for new line)"
             value={input}
-            onChange={handleChange}
+            onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             rows={1}
             className="flex min-h-10 max-h-80 w-full bg-transparent placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 text-sm resize-none"
@@ -221,7 +223,7 @@ const InputForm = forwardRef<HTMLTextAreaElement, InputFormProps>(
                 type="submit"
                 size="icon"
                 className="shrink-0 ml-auto size-9"
-                onClick={() => handleStop?.()}
+                onClick={() => stop()}
               >
                 <IconPlayerStop size={16} />
               </Button>

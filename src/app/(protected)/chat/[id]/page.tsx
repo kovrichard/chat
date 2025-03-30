@@ -3,14 +3,10 @@
 import InputForm from "@/components/input-form";
 import { MessageContent } from "@/components/message-content";
 import { LoadingDots } from "@/components/ui/loading-dots";
-import {
-  useAddMessage,
-  useConversation,
-  useUpdateConversationTitle,
-} from "@/lib/queries/conversations";
+import { useChatContext } from "@/lib/contexts/chat-context";
+import { useAddMessage, useConversation } from "@/lib/queries/conversations";
 import { useModelStore } from "@/lib/stores/model-store";
 import { cn } from "@/lib/utils";
-import { useChat } from "@ai-sdk/react";
 import { Message } from "ai";
 import { useParams, useRouter } from "next/navigation";
 import {
@@ -44,37 +40,11 @@ export default function ConversationPage() {
   const params = useParams();
   const conversationId = params.id as string;
   const { data: conversation, isLoading } = useConversation(conversationId);
-  const updateTitle = useUpdateConversationTitle();
   const addMessage = useAddMessage();
-  const { model, setModel } = useModelStore();
+  const { setModel } = useModelStore();
 
-  const { messages, input, handleInputChange, handleSubmit, status, stop, reload } =
-    useChat({
-      id: conversationId,
-      initialMessages: conversation?.messages || [],
-      body: {
-        model,
-      },
-      onFinish: (message: Message) => {
-        addMessage.mutateAsync({
-          message,
-          conversationId,
-        });
-
-        if (messages.length === 1) {
-          const titleMessages = [messages[0], message];
-
-          fetch("/api/title", {
-            method: "POST",
-            body: JSON.stringify({ messages: titleMessages }),
-          })
-            .then((res) => res.text())
-            .then((title) => {
-              updateTitle.mutateAsync({ conversationId, title });
-            });
-        }
-      },
-    });
+  const { messages, input, handleSubmit, status, reload, setMessages, setInput } =
+    useChatContext();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -85,6 +55,7 @@ export default function ConversationPage() {
   useEffect(() => {
     if (!hasReloaded.current && messages.length === 1) {
       hasReloaded.current = true;
+      setInput("");
       reload({ body: { firstMessage: true } });
     }
   }, [messages.length, reload]);
@@ -124,19 +95,10 @@ export default function ConversationPage() {
         },
         conversationId,
       });
-      handleSubmit(e);
+      handleSubmit(e as FormEvent<HTMLFormElement>);
       setUserScrolled(false);
     },
     [handleSubmit, input, conversationId, addMessage]
-  );
-
-  const handleKeyDown = useCallback(
-    async (e: KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        handleSendMessage(e);
-      }
-    },
-    [handleSendMessage]
   );
 
   useEffect(() => {
@@ -147,7 +109,11 @@ export default function ConversationPage() {
     if (conversation?.model) {
       setModel(conversation.model);
     }
-  }, [conversation, isLoading, router, setModel]);
+
+    if (conversation?.messages) {
+      setMessages(conversation.messages);
+    }
+  }, [conversation, isLoading, router, setModel, setMessages]);
 
   // Memoize the messages list to prevent unnecessary rerenders
   const messagesList = useMemo(
@@ -187,14 +153,7 @@ export default function ConversationPage() {
       </div>
 
       {/* Input Form */}
-      <InputForm
-        input={input}
-        handleChange={handleInputChange}
-        handleSubmit={handleSendMessage}
-        handleKeyDown={handleKeyDown}
-        status={status}
-        handleStop={stop}
-      />
+      <InputForm handleSubmit={handleSendMessage} />
     </div>
   );
 }

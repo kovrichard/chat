@@ -2,11 +2,19 @@
 
 import InputForm from "@/components/input-form";
 import { Button } from "@/components/ui/button";
+import { useChatContext } from "@/lib/contexts/chat-context";
 import { useCreateConversation } from "@/lib/queries/conversations";
 import { useModelStore } from "@/lib/stores/model-store";
 import { PartialConversation } from "@/types/chat";
 import { useRouter } from "next/navigation";
-import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  KeyboardEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { v4 as uuidv4 } from "uuid";
 
 const examples = [
@@ -17,13 +25,13 @@ const examples = [
 ];
 
 export default function ChatPage() {
-  const [input, setInput] = useState("");
   const router = useRouter();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const createConversation = useCreateConversation();
   const { model, setModel } = useModelStore();
+  const { input, handleInputChange } = useChatContext();
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSendMessage = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input.trim()) return;
 
@@ -48,15 +56,10 @@ export default function ChatPage() {
     router.push(`/chat/${conversationId}`);
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit(e as any);
-    }
-  };
-
   const handleExampleClick = (example: string) => {
-    setInput(example);
+    handleInputChange({
+      target: { value: example },
+    } as ChangeEvent<HTMLTextAreaElement>);
     setTimeout(() => {
       if (textareaRef.current) {
         textareaRef.current.focus();
@@ -95,13 +98,7 @@ export default function ChatPage() {
       </div>
 
       {/* Input Form */}
-      <InputForm
-        ref={textareaRef}
-        input={input}
-        handleChange={(e) => setInput(e.target.value)}
-        handleSubmit={handleSubmit}
-        handleKeyDown={handleKeyDown}
-      />
+      <InputForm ref={textareaRef} handleSubmit={handleSendMessage} />
     </div>
   );
 }
