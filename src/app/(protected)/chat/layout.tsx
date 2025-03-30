@@ -1,5 +1,6 @@
 "use client";
 
+import InputForm from "@/components/input-form";
 import { ChatProvider } from "@/lib/contexts/chat-context";
 import { useConversation } from "@/lib/queries/conversations";
 import { useParams } from "next/navigation";
@@ -12,7 +13,10 @@ export default function ChatLayout({ children }: { children: ReactNode }) {
 
   return (
     <ChatProvider id={conversationId} initialMessages={conversation?.messages}>
-      {children}
+      <div className="flex flex-col h-svh min-w-[320px]">
+        {children}
+        <InputForm />
+      </div>
     </ChatProvider>
   );
 }

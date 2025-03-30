@@ -1,10 +1,9 @@
 "use client";
 
-import InputForm from "@/components/input-form";
 import { MessageContent } from "@/components/message-content";
 import { LoadingDots } from "@/components/ui/loading-dots";
 import { useChatContext } from "@/lib/contexts/chat-context";
-import { useAddMessage, useConversation } from "@/lib/queries/conversations";
+import { useConversation } from "@/lib/queries/conversations";
 import { useModelStore } from "@/lib/stores/model-store";
 import { cn } from "@/lib/utils";
 import { Message } from "ai";
@@ -108,18 +107,12 @@ export default function ConversationPage() {
   }
 
   return (
-    <div className="flex flex-col h-svh min-w-[320px]">
-      {/* Messages */}
-      <div
-        ref={chatContainerRef}
-        onScroll={handleScroll}
-        className="flex-1 overflow-y-auto p-4 space-y-4"
-      >
-        {messagesList}
-      </div>
-
-      {/* Input Form */}
-      <InputForm />
+    <div
+      ref={chatContainerRef}
+      onScroll={handleScroll}
+      className="flex-1 overflow-y-auto p-4 space-y-4"
+    >
+      {messagesList}
     </div>
   );
 }
