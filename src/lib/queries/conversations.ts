@@ -11,6 +11,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { Message } from "ai";
+import { useMessageProcessor } from "../hooks/use-message-processor";
 
 const conversationKeys = {
   detail: (id: string) => ["conversations", id] as const,
@@ -34,47 +35,22 @@ export function useConversations(page = 1) {
 }
 
 export function useConversation(id: string) {
+  const { processMessages } = useMessageProcessor();
+
   return useQuery({
     queryKey: conversationKeys.detail(id),
-    queryFn: () =>
-      fetch(`/api/conversations/${id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          const messages = data.messages.map((message: any) => {
-            let parts = [];
-            if (message.reasoning) {
-              let details = [];
-              if (message.signature) {
-                details.push({
-                  type: "text",
-                  text: message.reasoning,
-                  signature: message.signature,
-                });
-              }
+    queryFn: async () => {
+      const response = await fetch(`/api/conversations/${id}`);
+      const data = await response.json();
 
-              parts.push({
-                type: "reasoning",
-                reasoning: message.reasoning,
-                details: details,
-              });
-            }
+      // Process messages in Web Worker
+      const processedMessages = await processMessages(data.messages);
 
-            if (message.content) {
-              parts.push({
-                type: "text",
-                text: message.content,
-              });
-            }
-            message.parts = parts;
-
-            return message;
-          });
-
-          return {
-            ...data,
-            messages: messages,
-          };
-        }),
+      return {
+        ...data,
+        messages: processedMessages,
+      };
+    },
   });
 }
 
