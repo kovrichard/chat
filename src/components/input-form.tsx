@@ -292,11 +292,11 @@ const InputForm = forwardRef<HTMLTextAreaElement>((_, ref) => {
                 className="text-sm text-muted-foreground h-9"
               >
                 {subscription.freeMessages <= 0 ? (
-                  <span>Out of free messages</span>
+                  <span>Out of messages</span>
                 ) : subscription.freeMessages === 1 ? (
-                  <span>{subscription.freeMessages} free message left</span>
+                  <span>{subscription.freeMessages} message left</span>
                 ) : (
-                  <span>{subscription.freeMessages} free messages left</span>
+                  <span>{subscription.freeMessages} messages left</span>
                 )}
               </Button>
             )}
