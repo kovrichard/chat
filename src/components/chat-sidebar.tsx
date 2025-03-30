@@ -7,6 +7,7 @@ import { PartialConversation } from "@/types/chat";
 import { MessageSquare, Plus } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useEffect, useRef } from "react";
 import { AnimatedTitle } from "./ui/animated-title";
 
 function groupConversationsByTime(conversations: PartialConversation[]) {
@@ -43,9 +44,39 @@ function groupConversationsByTime(conversations: PartialConversation[]) {
 
 export function ChatSidebar() {
   const { id } = useParams();
-  const { data: conversations = [], isLoading } = useConversations();
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useConversations();
+  const observerRef = useRef<IntersectionObserver>();
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
-  const groupedConversations = groupConversationsByTime(conversations);
+  // Flatten all pages of conversations
+  const allConversations = data?.pages.flatMap((page) => page.conversations) || [];
+  const groupedConversations = groupConversationsByTime(allConversations);
+
+  // Setup intersection observer for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (first.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+
+    observerRef.current = observer;
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   return (
     <div className="flex flex-col h-full gap-4">
@@ -109,6 +140,18 @@ export function ChatSidebar() {
                 ))}
               </>
             )}
+            {/* Load more trigger */}
+            <div ref={loadMoreRef} className="h-4 w-full">
+              {isFetchingNextPage && (
+                <div className="flex items-center justify-center p-2">
+                  <div className="flex gap-1">
+                    <div className="size-2 rounded-full bg-muted animate-bounce [animation-delay:-0.3s]"></div>
+                    <div className="size-2 rounded-full bg-muted animate-bounce [animation-delay:-0.15s]"></div>
+                    <div className="size-2 rounded-full bg-muted animate-bounce"></div>
+                  </div>
+                </div>
+              )}
+            </div>
           </>
         )}
       </div>

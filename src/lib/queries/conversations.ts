@@ -4,18 +4,32 @@ import {
   saveConversationTitle,
 } from "@/lib/actions/conversations";
 import { PartialConversation } from "@/types/chat";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { Message } from "ai";
 
 const conversationKeys = {
-  all: ["conversations"] as const,
-  detail: (id: string) => [...conversationKeys.all, id] as const,
+  detail: (id: string) => ["conversations", id] as const,
+  list: (page: number) => ["conversations", "list", page] as const,
 };
 
-export function useConversations() {
-  return useQuery({
-    queryKey: conversationKeys.all,
-    queryFn: () => fetch("/api/conversations").then((res) => res.json()),
+export function useConversations(page = 1) {
+  return useInfiniteQuery({
+    queryKey: conversationKeys.list(page),
+    queryFn: async ({ pageParam = 1 }) => {
+      const response = await fetch(`/api/conversations?page=${pageParam}&limit=15`);
+      const data = await response.json();
+      return {
+        conversations: data.conversations,
+        nextPage: data.hasMore ? pageParam + 1 : undefined,
+      };
+    },
+    getNextPageParam: (lastPage) => lastPage.nextPage,
+    initialPageParam: 1,
   });
 }
 
@@ -70,25 +84,22 @@ export function useUpdateConversationTitle() {
   return useMutation({
     mutationFn: ({ conversationId, title }: { conversationId: string; title: string }) =>
       saveConversationTitle(conversationId, title),
-    onSuccess: (updatedConversation, { conversationId }) => {
-      // Update the conversation in the detail cache
-      queryClient.setQueryData(conversationKeys.detail(conversationId), (old: any) => ({
-        ...old,
-        title: updatedConversation.title,
-      }));
-
-      // Update the conversation in the list cache
-      queryClient.setQueryData(
-        conversationKeys.all,
-        (old: PartialConversation[] | undefined) => {
-          if (!old) return [updatedConversation];
-          return old.map((conv) =>
-            conv.id === conversationId
-              ? { ...conv, title: updatedConversation.title }
-              : conv
-          );
-        }
-      );
+    onSuccess: (updatedConversation) => {
+      // Update the conversation in all pages of the infinite query
+      queryClient.setQueryData(conversationKeys.list(1), (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            conversations: page.conversations.map((conv: PartialConversation) =>
+              conv.id === updatedConversation.id
+                ? { ...conv, title: updatedConversation.title }
+                : conv
+            ),
+          })),
+        };
+      });
     },
   });
 }
@@ -129,17 +140,20 @@ export function useAddMessage() {
       }));
 
       // Update the conversation in the list cache
-      queryClient.setQueryData(
-        conversationKeys.all,
-        (old: PartialConversation[] | undefined) => {
-          if (!old) return [{ id: conversationId, messages: [message] }];
-          return old.map((conv) =>
-            conv.id === conversationId
-              ? { ...conv, messages: [...(conv.messages || []), message] }
-              : conv
-          );
-        }
-      );
+      queryClient.setQueryData(conversationKeys.list(1), (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            conversations: page.conversations.map((conv: PartialConversation) =>
+              conv.id === conversationId
+                ? { ...conv, messages: [...(conv.messages || []), message] }
+                : conv
+            ),
+          })),
+        };
+      });
     },
   });
 }
@@ -156,7 +170,7 @@ export function useCreateConversation() {
       });
 
       // Snapshot the previous value
-      const previousConversations = queryClient.getQueryData(conversationKeys.all);
+      const previousConversations = queryClient.getQueryData(conversationKeys.list(1));
 
       queryClient.setQueryData(
         conversationKeys.detail(newConversation.id),
@@ -169,7 +183,7 @@ export function useCreateConversation() {
     onError: (_err, newConversation, context) => {
       // If the mutation fails, use the context returned from onMutate to roll back
       if (context?.previousConversations) {
-        queryClient.setQueryData(conversationKeys.all, context.previousConversations);
+        queryClient.setQueryData(conversationKeys.list(1), context.previousConversations);
       }
       queryClient.removeQueries({
         queryKey: conversationKeys.detail(newConversation.id),
@@ -177,7 +191,7 @@ export function useCreateConversation() {
     },
     onSettled: () => {
       // Always refetch after error or success to ensure we have the latest data
-      queryClient.invalidateQueries({ queryKey: conversationKeys.all });
+      queryClient.invalidateQueries({ queryKey: conversationKeys.list(1) });
     },
   });
 }
