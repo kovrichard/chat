@@ -1,21 +1,7 @@
 import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
 
-const publicUrls = [
-  "/",
-  "/login",
-  "/register",
-  "/robots.txt",
-  "/sitemap.xml",
-  "/manifest.webmanifest",
-];
-
 export default auth((req) => {
-  if (!req.auth && !publicUrls.includes(req.nextUrl.pathname)) {
-    const newUrl = new URL("/login", req.nextUrl.origin);
-    return NextResponse.redirect(newUrl);
-  }
-
   if (!isAuthenticated(req)) {
     return new NextResponse("Authentication required", {
       status: 401,

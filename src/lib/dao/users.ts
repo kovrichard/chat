@@ -1,7 +1,6 @@
 import "server-only";
 
 import { auth } from "@/auth";
-import DBClient from "@/lib/prisma";
 import prisma from "@/lib/prisma";
 import { User } from "@prisma/client";
 import { redirect } from "next/navigation";
