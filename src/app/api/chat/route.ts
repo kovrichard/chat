@@ -1,9 +1,9 @@
+import { auth } from "@/auth";
 import {
   OnFinishResult,
   saveResultAsAssistantMessage,
   saveUserMessage,
 } from "@/lib/dao/messages";
-import { getUserFromSession } from "@/lib/dao/users";
 import { AnthropicProviderOptions, anthropic } from "@ai-sdk/anthropic";
 import { createAzure } from "@ai-sdk/azure";
 import { google } from "@ai-sdk/google";
@@ -47,7 +47,7 @@ function getProviderOptions(model: string) {
 
 export async function POST(req: Request) {
   const start = Date.now();
-  await getUserFromSession();
+  await auth();
   const userFetched = Date.now();
   console.log(`User fetched in: ${userFetched - start}ms`);
 
