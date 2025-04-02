@@ -202,3 +202,54 @@ export function useCreateConversation() {
     },
   });
 }
+
+export function useCreateConversationOptimistic() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (conversation: PartialConversation) => {
+      // This is a no-op since we're handling the actual creation in the chat endpoint
+      return Promise.resolve(conversation);
+    },
+    onMutate: (newConversation) => {
+      // Cancel any outgoing refetches without awaiting
+      queryClient.cancelQueries({
+        queryKey: conversationKeys.detail(newConversation.id),
+      });
+
+      // Snapshot the previous value
+      const previousConversations = queryClient.getQueryData(conversationKeys.list(1));
+
+      // Optimistically update the conversation detail
+      queryClient.setQueryData(
+        conversationKeys.detail(newConversation.id),
+        newConversation
+      );
+
+      // Optimistically update the conversation list
+      queryClient.setQueryData(conversationKeys.list(1), (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: [
+            {
+              conversations: [newConversation, ...(old.pages[0]?.conversations || [])],
+            },
+            ...old.pages.slice(1),
+          ],
+        };
+      });
+
+      return { previousConversations };
+    },
+    onError: (_err, newConversation, context) => {
+      // Revert optimistic updates on error
+      if (context?.previousConversations) {
+        queryClient.setQueryData(conversationKeys.list(1), context.previousConversations);
+      }
+      queryClient.removeQueries({
+        queryKey: conversationKeys.detail(newConversation.id),
+      });
+    },
+  });
+}

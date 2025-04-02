@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { saveConversation } from "@/lib/actions/conversations";
 import {
   OnFinishResult,
   saveResultAsAssistantMessage,
@@ -11,6 +12,7 @@ import { google } from "@ai-sdk/google";
 import { groq } from "@ai-sdk/groq";
 import { xai } from "@ai-sdk/xai";
 import { smoothStream, streamText } from "ai";
+import { v4 as uuidv4 } from "uuid";
 
 export const maxDuration = 30;
 
@@ -74,11 +76,35 @@ export async function POST(req: Request) {
       delayInMs: 10,
     }),
     onFinish: async (result: OnFinishResult) => {
-      if (!firstMessage) {
+      if (firstMessage) {
+        // This is a new conversation, create it with both messages
+        const conversation = {
+          id,
+          title: "New Chat",
+          model: modelId,
+          messages: [
+            {
+              ...messages[0],
+              parts: undefined,
+            },
+            {
+              id: uuidv4(),
+              content: result.text,
+              role: "assistant",
+              reasoning: result.reasoning || null,
+              signature: null,
+            },
+          ],
+          lastMessageAt: new Date(),
+        };
+
+        await saveConversation(conversation);
+      } else {
+        // This is an existing conversation, just save the messages
         const lastMessage = messages[messages.length - 1];
         await saveUserMessage(lastMessage.content, id);
+        await saveResultAsAssistantMessage(result, id);
       }
-      await saveResultAsAssistantMessage(result, id);
       if (user.subscription === "free") {
         await decrementFreeMessages(user.id);
       }

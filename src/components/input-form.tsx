@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useChatContext } from "@/lib/contexts/chat-context";
 import {
   useAddMessage,
-  useCreateConversation,
+  useCreateConversationOptimistic,
   useUpdateConversationModel,
 } from "@/lib/queries/conversations";
 import { useModelStore } from "@/lib/stores/model-store";
@@ -151,7 +151,7 @@ const InputForm = forwardRef<HTMLTextAreaElement>((_, ref) => {
   const conversationId = params.id as string;
   const { model, setModel } = useModelStore();
   const updateModel = useUpdateConversationModel();
-  const createConversation = useCreateConversation();
+  const createConversationOptimistic = useCreateConversationOptimistic();
   const addMessage = useAddMessage();
   const { input, handleInputChange, handleSubmit, status, stop } = useChatContext();
   const { data: subscription } = useQuery({
@@ -185,7 +185,7 @@ const InputForm = forwardRef<HTMLTextAreaElement>((_, ref) => {
 
     if (pathname === "/chat") {
       const conversationId = uuidv4();
-      const conversation: PartialConversation = {
+      const optimisticConversation: PartialConversation = {
         id: conversationId,
         title: "New Chat",
         model: model,
@@ -201,7 +201,7 @@ const InputForm = forwardRef<HTMLTextAreaElement>((_, ref) => {
         lastMessageAt: new Date(),
       };
 
-      createConversation.mutate(conversation);
+      createConversationOptimistic.mutate(optimisticConversation);
       router.push(`/chat/${conversationId}`);
     } else {
       addMessage.mutate({
