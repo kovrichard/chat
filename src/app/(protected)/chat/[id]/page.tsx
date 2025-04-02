@@ -1,12 +1,20 @@
 "use client";
 
 import { MessageContent } from "@/components/message-content";
+import { Button } from "@/components/ui/button";
 import { LoadingDots } from "@/components/ui/loading-dots";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useChatContext } from "@/lib/contexts/chat-context";
 import { useConversation } from "@/lib/queries/conversations";
 import { useModelStore } from "@/lib/stores/model-store";
 import { cn } from "@/lib/utils";
 import { Message } from "ai";
+import { RefreshCw } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -14,11 +22,28 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 const MessageItem = memo(({ message }: { message: Message }) => (
   <div
     className={cn(
-      "mb-4",
-      message.role === "user" ? "ml-auto max-w-[60%]" : "mr-auto max-w-full w-full"
+      "flex flex-col gap-1 group",
+      message.role === "user" ? "ml-auto max-w-[60%] items-end" : "mr-auto max-w-full"
     )}
   >
     <MessageContent message={message} />
+    <div className="flex flex-col items-start gap-1 text-muted-foreground">
+      <TooltipProvider>
+        <Tooltip delayDuration={0}>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="icon" className="size-8 p-0">
+              <RefreshCw
+                size={18}
+                className="opacity-0 group-hover:opacity-100 transition-opacity duration-100"
+              />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="text-xs">
+            <p>Regenerate response</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
   </div>
 ));
 
@@ -83,7 +108,7 @@ export default function ConversationPage() {
   // Memoize the messages list to prevent unnecessary rerenders
   const messagesList = useMemo(
     () => (
-      <div className="flex flex-col max-w-5xl mx-auto">
+      <div className="flex flex-col max-w-5xl mx-auto gap-4">
         {messages.map((message) => (
           <MessageItem key={message.id} message={message} />
         ))}
