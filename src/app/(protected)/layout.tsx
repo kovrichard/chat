@@ -20,8 +20,8 @@ export default async function Layout({
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
       <SidebarInset className="relative md:p-2 bg-sidebar">
-        <SidebarTrigger className="absolute top-4 left-4" />
-        <ThemeToggle className="absolute top-4 right-4" />
+        <SidebarTrigger className="absolute top-4 left-4 z-10" />
+        <ThemeToggle className="absolute top-4 right-4 z-10" />
         {children}
       </SidebarInset>
     </SidebarProvider>
