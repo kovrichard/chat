@@ -13,7 +13,7 @@ export default function ChatLayout({ children }: { children: ReactNode }) {
 
   return (
     <ChatProvider id={conversationId} initialMessages={conversation?.messages}>
-      <div className="flex flex-col h-svh min-w-[320px]">
+      <div className="flex flex-1 flex-col min-w-[320px] max-h-[calc(100svh-1rem)] bg-background rounded-xl">
         {children}
         <InputForm />
       </div>

@@ -11,15 +11,11 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
-export function TopLeftMenu() {
+export function ThemeToggle({ className }: { className?: string }) {
   const { setTheme } = useTheme();
 
   return (
-    <div
-      className={cn(
-        "fixed left-0 right-0 flex justify-end items-center flex-1 px-4 pt-3.5 z-10"
-      )}
-    >
+    <div className={className}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="rounded-full size-7">

@@ -3,6 +3,7 @@
 import { MessageContent } from "@/components/message-content";
 import { Button } from "@/components/ui/button";
 import { LoadingDots } from "@/components/ui/loading-dots";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Tooltip,
   TooltipContent,
@@ -108,7 +109,7 @@ export default function ConversationPage() {
   // Memoize the messages list to prevent unnecessary rerenders
   const messagesList = useMemo(
     () => (
-      <div className="flex flex-col max-w-5xl mx-auto gap-4">
+      <div className="flex flex-col max-w-5xl mx-auto gap-4 px-2">
         {messages.map((message) => (
           <MessageItem key={message.id} message={message} />
         ))}
@@ -132,12 +133,14 @@ export default function ConversationPage() {
   }
 
   return (
-    <div
+    <ScrollArea
       ref={chatContainerRef}
       onScroll={handleScroll}
-      className="flex-1 overflow-y-auto p-4 space-y-4"
+      className="relative h-[calc(100svh-1rem-110px)]"
     >
+      <div className="absolute top-0 left-0 right-0 max-w-5xl mx-auto h-6 bg-gradient-to-b from-background to-transparent pointer-events-none z-10" />
       {messagesList}
-    </div>
+      <div className="absolute bottom-0 left-0 right-0 max-w-5xl mx-auto h-6 bg-gradient-to-t from-background to-transparent pointer-events-none z-10" />
+    </ScrollArea>
   );
 }

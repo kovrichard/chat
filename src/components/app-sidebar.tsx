@@ -14,8 +14,8 @@ import { Button } from "./ui/button";
 
 export function AppSidebar() {
   return (
-    <Sidebar>
-      <SidebarHeader className="flex-col items-center gap-4 py-3.5 px-4">
+    <Sidebar className="border-none">
+      <SidebarHeader className="flex-col items-center gap-4 py-4 pl-4">
         <p className="text-lg font-bold flex-1 text-center">Chat</p>
         <Button asChild className="w-full gap-2">
           <Link href="/chat" prefetch>
@@ -24,12 +24,12 @@ export function AppSidebar() {
           </Link>
         </Button>
       </SidebarHeader>
-      <SidebarContent className="relative px-2">
+      <SidebarContent className="relative pl-2">
         <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-sidebar to-transparent pointer-events-none z-10" />
         <ChatSidebar />
         <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-sidebar to-transparent pointer-events-none z-10" />
       </SidebarContent>
-      <SidebarFooter className="p-4">
+      <SidebarFooter className="pl-4 py-4">
         <SidebarMenu>
           <SidebarMenuItem>
             <SignOut />

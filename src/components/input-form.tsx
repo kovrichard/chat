@@ -217,7 +217,7 @@ const InputForm = forwardRef<HTMLTextAreaElement>((_, ref) => {
   }
 
   return (
-    <div className="flex-none sm:pb-4 sm:px-4 pt-4">
+    <div className="flex-none sm:pb-4 sm:px-4">
       <form
         onSubmit={handleSendMessage}
         className="flex flex-col w-full max-w-5xl mx-auto items-end border rounded-t-xl sm:rounded-b-xl p-4 bg-card"

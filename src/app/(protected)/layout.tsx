@@ -1,5 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar";
-import { TopLeftMenu } from "@/components/top-left-menu";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { getUserFromSession } from "@/lib/dao/users";
 import { cookies } from "next/headers";
@@ -19,9 +19,9 @@ export default async function Layout({
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
-      <SidebarInset className="relative">
-        <SidebarTrigger className="absolute top-3.5 left-3.5" />
-        <TopLeftMenu />
+      <SidebarInset className="relative md:p-2 bg-sidebar">
+        <SidebarTrigger className="absolute top-4 left-4" />
+        <ThemeToggle className="absolute top-4 right-4" />
         {children}
       </SidebarInset>
     </SidebarProvider>
