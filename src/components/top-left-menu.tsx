@@ -10,7 +10,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { SidebarTrigger } from "./ui/sidebar";
 
 export function TopLeftMenu() {
   const { setTheme } = useTheme();
@@ -18,10 +17,9 @@ export function TopLeftMenu() {
   return (
     <div
       className={cn(
-        "fixed left-0 right-0 flex justify-between items-center flex-1 px-4 pt-3.5 z-10"
+        "fixed left-0 right-0 flex justify-end items-center flex-1 px-4 pt-3.5 z-10"
       )}
     >
-      <SidebarTrigger />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="rounded-full size-7">

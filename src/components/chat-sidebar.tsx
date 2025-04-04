@@ -1,6 +1,5 @@
 "use client";
 
-import { LinkButton } from "@/components/ui/button";
 import { useConversations } from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
 import { PartialConversation } from "@/types/chat";
@@ -9,6 +8,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { AnimatedTitle } from "./ui/animated-title";
+import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel } from "./ui/sidebar";
 
 function groupConversationsByTime(conversations: PartialConversation[]) {
   const now = new Date();
@@ -79,19 +79,13 @@ export function ChatSidebar() {
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   return (
-    <div className="flex flex-col h-full gap-4">
-      <div>
-        <LinkButton href="/chat" className="w-full gap-2" prefetch>
-          <Plus className="h-4 w-4" />
-          New Chat
-        </LinkButton>
-      </div>
-      <div className="flex flex-col flex-1 overflow-auto gap-1">
-        {isLoading ? (
-          <div className="flex flex-col gap-1">
-            <h3 className="text-xs font-medium text-muted-foreground p-1">
-              Just a moment...
-            </h3>
+    <div className="flex flex-col flex-1 overflow-auto no-scrollbar">
+      {isLoading ? (
+        <SidebarGroup className="flex flex-col gap-1">
+          <SidebarGroupLabel className="text-muted-foreground p-1">
+            Just a moment...
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
             {[...Array(5)].map((_, i) => (
               <div key={i} className="rounded-md p-3">
                 <div className="flex flex-col items-start gap-2">
@@ -103,58 +97,66 @@ export function ChatSidebar() {
                 </div>
               </div>
             ))}
-          </div>
-        ) : (
-          <>
-            {groupedConversations.today.length > 0 && (
-              <>
-                <h3 className="text-xs font-medium text-primary/70 p-1">Today</h3>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      ) : (
+        <>
+          {groupedConversations.today.length > 0 && (
+            <SidebarGroup>
+              <SidebarGroupLabel className="text-primary/70">Today</SidebarGroupLabel>
+              <SidebarGroupContent>
                 {groupedConversations.today.map((chat: PartialConversation) => (
                   <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
                 ))}
-              </>
-            )}
-            {groupedConversations.yesterday.length > 0 && (
-              <>
-                <h3 className="text-xs font-medium text-primary/70 p-1">Yesterday</h3>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          )}
+          {groupedConversations.yesterday.length > 0 && (
+            <SidebarGroup>
+              <SidebarGroupLabel className="text-primary/70">Yesterday</SidebarGroupLabel>
+              <SidebarGroupContent>
                 {groupedConversations.yesterday.map((chat: PartialConversation) => (
                   <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
                 ))}
-              </>
-            )}
-            {groupedConversations.lastWeek.length > 0 && (
-              <>
-                <h3 className="text-xs font-medium text-primary/70 p-1">
-                  Previous 7 days
-                </h3>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          )}
+          {groupedConversations.lastWeek.length > 0 && (
+            <SidebarGroup>
+              <SidebarGroupLabel className="text-primary/70">
+                Previous 7 days
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
                 {groupedConversations.lastWeek.map((chat: PartialConversation) => (
                   <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
                 ))}
-              </>
-            )}
-            {groupedConversations.older.length > 0 && (
-              <>
-                <h3 className="text-xs font-medium text-primary/70 p-1">Older</h3>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          )}
+          {groupedConversations.older.length > 0 && (
+            <SidebarGroup>
+              <SidebarGroupLabel className="text-primary/70">Older</SidebarGroupLabel>
+              <SidebarGroupContent>
                 {groupedConversations.older.map((chat: PartialConversation) => (
                   <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
                 ))}
-              </>
-            )}
-            {/* Load more trigger */}
-            <div ref={loadMoreRef} className="h-4 w-full">
-              {isFetchingNextPage && (
-                <div className="flex items-center justify-center p-2">
-                  <div className="flex gap-1">
-                    <div className="size-2 rounded-full bg-muted animate-bounce [animation-delay:-0.3s]"></div>
-                    <div className="size-2 rounded-full bg-muted animate-bounce [animation-delay:-0.15s]"></div>
-                    <div className="size-2 rounded-full bg-muted animate-bounce"></div>
-                  </div>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          )}
+          {/* Load more trigger */}
+          <div ref={loadMoreRef} className="h-4 w-full">
+            {isFetchingNextPage && (
+              <div className="flex items-center justify-center p-2">
+                <div className="flex gap-1">
+                  <div className="size-2 rounded-full bg-muted animate-bounce [animation-delay:-0.3s]"></div>
+                  <div className="size-2 rounded-full bg-muted animate-bounce [animation-delay:-0.15s]"></div>
+                  <div className="size-2 rounded-full bg-muted animate-bounce"></div>
                 </div>
-              )}
-            </div>
-          </>
-        )}
-      </div>
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }
