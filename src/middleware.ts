@@ -1,14 +1,13 @@
-import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
 
-export default auth((req) => {
+export function middleware(req: NextRequest) {
   if (!isAuthenticated(req)) {
     return new NextResponse("Authentication required", {
       status: 401,
       headers: { "WWW-Authenticate": "Basic" },
     });
   }
-});
+}
 
 function isAuthenticated(req: NextRequest) {
   const authUsername = process.env.AUTH_USERNAME;
