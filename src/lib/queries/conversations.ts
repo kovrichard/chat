@@ -40,6 +40,8 @@ export function useConversation(id: string) {
   return useQuery({
     queryKey: conversationKeys.detail(id),
     queryFn: async () => {
+      if (!id) return null;
+
       const response = await fetch(`/api/conversations/${id}`);
       const data = await response.json();
 
