@@ -244,7 +244,7 @@ const InputForm = forwardRef<HTMLTextAreaElement>((_, ref) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-72">
-              <DropdownMenuLabel className="text-xs font-medium text-muted-foreground">
+              <DropdownMenuLabel className="text-xs font-medium">
                 Select Model
               </DropdownMenuLabel>
               <DropdownMenuSeparator />

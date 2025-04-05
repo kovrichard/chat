@@ -182,7 +182,12 @@ function ConversationLink({
         <AnimatedTitle text={chat.title} />
       </div>
       {chat?.messages?.length > 0 && (
-        <p className="text-xs text-muted-foreground truncate w-full">
+        <p
+          className={cn(
+            "text-xs text-muted-foreground truncate w-full",
+            currentId === chat.id && "text-accent-foreground"
+          )}
+        >
           {chat.messages[chat.messages.length - 1]?.content}
         </p>
       )}
