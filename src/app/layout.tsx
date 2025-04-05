@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 import Analytics from "@/components/analytics";
 import conf from "@/lib/config";
@@ -10,7 +10,7 @@ import { ThemeProvider } from "next-themes";
 import React from "react";
 import { Toaster } from "sonner";
 
-const inter = Inter({ subsets: ["latin"] });
+const montserrat = Montserrat({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL(conf.host),
@@ -51,7 +51,7 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          inter.className,
+          montserrat.className,
           "flex flex-col min-h-svh min-w-80 justify-center overscroll-none"
         )}
       >
