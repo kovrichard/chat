@@ -30,8 +30,8 @@ FROM base AS prerelease
 COPY --from=install /temp/dev/node_modules ./node_modules
 COPY . .
 
-ARG NEXT_PUBLIC_AUTHORITY
-ENV NEXT_PUBLIC_AUTHORITY=${NEXT_PUBLIC_AUTHORITY}
+ARG AUTHORITY
+ENV AUTHORITY=${AUTHORITY}
 
 RUN bun run build
 
