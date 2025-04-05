@@ -50,7 +50,10 @@ export default function RootLayout({
         <Analytics />
       </head>
       <body
-        className={cn(inter.className, "flex flex-col min-h-svh min-w-80 justify-center")}
+        className={cn(
+          inter.className,
+          "flex flex-col min-h-svh min-w-80 justify-center overscroll-none"
+        )}
       >
         <QueryProvider>
           <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>

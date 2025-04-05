@@ -138,7 +138,7 @@ export default function ConversationPage() {
       onScroll={handleScroll}
       className="relative h-[calc(100svh-1rem-110px)]"
     >
-      <div className="absolute top-0 left-0 right-0 max-w-5xl mx-auto h-6 bg-gradient-to-b from-background to-transparent pointer-events-none z-10" />
+      <div className="absolute top-0 left-0 right-0 max-w-5xl mx-auto h-6 bg-gradient-to-b from-background to-transparent pointer-events-none z-10 rounded-t-xl" />
       {messagesList}
       <div className="absolute bottom-0 left-0 right-0 max-w-5xl mx-auto h-6 bg-gradient-to-t from-background to-transparent pointer-events-none z-10" />
     </ScrollArea>
