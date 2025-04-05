@@ -7,6 +7,9 @@ const schema = z.object({
   environment: z.enum(["development", "stage", "production"]).default("development"),
   logLevel: z.enum(["error", "warn", "info", "debug"]).default("info"),
   logDrainUrl: z.string().default(""),
+  scheme: z.string().default("https"),
+  authority: z.string(),
+  host: z.string().url(),
 
   // Auth
   githubId: z.string().optional(),
@@ -25,6 +28,9 @@ const envVars = {
   environment: process.env.ENVIRONMENT,
   logLevel: process.env.LOG_LEVEL,
   logDrainUrl: process.env.LOG_DRAIN_URL,
+  scheme: process.env.SCHEME,
+  authority: process.env.AUTHORITY,
+  host: `${process.env.SCHEME || "https"}://${process.env.AUTHORITY}`,
 
   // Auth
   githubId: process.env.AUTH_GITHUB_ID,

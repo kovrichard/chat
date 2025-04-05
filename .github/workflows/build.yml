@@ -18,7 +18,7 @@ jobs:
       # Public
 
       ## General
-      NEXT_PUBLIC_AUTHORITY: https://chat2.richardkovacs.dev
+      AUTHORITY: https://chat2.richardkovacs.dev
 
     steps:
       - name: Checkout code
@@ -55,7 +55,7 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           build-args:
-            NEXT_PUBLIC_AUTHORITY=${{ env.NEXT_PUBLIC_AUTHORITY }}
+            AUTHORITY=${{ env.AUTHORITY }}
 
       - name: Deploy to Coolify
         run: | 

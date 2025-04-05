@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Analytics from "@/components/analytics";
+import conf from "@/lib/config";
 import { canonicalUrl, metaDescription, metaTitle, openGraph } from "@/lib/metadata";
-import publicConf from "@/lib/public-config";
 import { QueryProvider } from "@/lib/query-client";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "next-themes";
@@ -13,7 +13,7 @@ import { Toaster } from "sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(publicConf.host),
+  metadataBase: new URL(conf.host),
   alternates: {
     canonical: canonicalUrl,
   },
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   robots: "index, follow",
   openGraph: {
     ...openGraph,
-    url: publicConf.host,
+    url: conf.host,
   },
   twitter: {
     // creator: "@",

@@ -1,11 +1,6 @@
 import { z } from "zod";
 
 const schema = z.object({
-  // General
-  scheme: z.string().default("https"),
-  authority: z.string(),
-  host: z.string().url(),
-
   // Auth
   redirectPath: z.string().default("/chat"),
 
@@ -17,11 +12,6 @@ const schema = z.object({
 });
 
 const envVars = {
-  // General
-  scheme: process.env.NEXT_PUBLIC_SCHEME,
-  authority: process.env.NEXT_PUBLIC_AUTHORITY,
-  host: `${process.env.NEXT_PUBLIC_SCHEME || "https"}://${process.env.NEXT_PUBLIC_AUTHORITY}`,
-
   // Auth
   redirectPath: process.env.NEXT_PUBLIC_AUTH_REDIRECT_URL,
 
