@@ -7,7 +7,7 @@ const schema = z.object({
   host: z.string().url(),
 
   // Auth
-  redirectPath: z.string(),
+  redirectPath: z.string().default("/chat"),
 
   // Tracking
   gaId: z.string().optional(),
@@ -21,6 +21,9 @@ const envVars = {
   scheme: process.env.NEXT_PUBLIC_SCHEME,
   authority: process.env.NEXT_PUBLIC_AUTHORITY,
   host: `${process.env.NEXT_PUBLIC_SCHEME || "https"}://${process.env.NEXT_PUBLIC_AUTHORITY}`,
+
+  // Auth
+  redirectPath: process.env.NEXT_PUBLIC_AUTH_REDIRECT_URL,
 
   // Tracking
   gaId: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID,
