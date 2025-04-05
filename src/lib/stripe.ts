@@ -1,13 +1,13 @@
 import conf from "@/lib/config";
 import Stripe from "stripe";
-import { getUserFromSession } from "./dao/users";
+import { getUserIdFromSession } from "./dao/users";
 
 export const stripe = new Stripe(conf.stripeSecretKey, {
   apiVersion: "2024-09-30.acacia",
 });
 
 export async function createStripeBillingPortalUrl(customerId: string) {
-  await getUserFromSession();
+  await getUserIdFromSession();
 
   const session = await stripe.billingPortal.sessions.create({
     customer: customerId,

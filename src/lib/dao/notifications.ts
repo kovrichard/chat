@@ -1,14 +1,14 @@
 import "server-only";
 
-import { getUserFromSession } from "@/lib/dao/users";
+import { getUserIdFromSession } from "@/lib/dao/users";
 import prisma from "@/lib/prisma";
 
 export async function getNotifications() {
-  const user = await getUserFromSession();
+  const userId = await getUserIdFromSession();
 
   return prisma.notification.findMany({
     where: {
-      userId: user.id,
+      userId,
     },
   });
 }

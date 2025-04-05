@@ -1,7 +1,7 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { getUserFromSession } from "@/lib/dao/users";
+import { getUserIdFromSession } from "@/lib/dao/users";
 import { cookies } from "next/headers";
 import React from "react";
 
@@ -10,7 +10,7 @@ export default async function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  await getUserFromSession();
+  await getUserIdFromSession();
 
   const cookieStore = await cookies();
   const sidebarState = cookieStore.get("sidebar:state");

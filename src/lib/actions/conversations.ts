@@ -2,12 +2,12 @@
 
 import "server-only";
 
-import { getUserFromSession } from "@/lib/dao/users";
+import { getUserIdFromSession } from "@/lib/dao/users";
 import prisma from "@/lib/prisma";
 import { PartialConversation } from "@/types/chat";
 
 export async function saveConversation(conversation: PartialConversation) {
-  const user = await getUserFromSession();
+  const userId = await getUserIdFromSession();
 
   const newConversation = await prisma.conversation.create({
     data: {
@@ -16,7 +16,7 @@ export async function saveConversation(conversation: PartialConversation) {
       model: conversation.model,
       user: {
         connect: {
-          id: user.id,
+          id: userId,
         },
       },
       messages: {
@@ -29,10 +29,10 @@ export async function saveConversation(conversation: PartialConversation) {
 }
 
 export async function saveConversationTitle(conversationId: string, title: string) {
-  const user = await getUserFromSession();
+  const userId = await getUserIdFromSession();
 
   const updatedConversation = await prisma.conversation.update({
-    where: { id: conversationId, userId: user.id },
+    where: { id: conversationId, userId },
     data: { title },
   });
 
@@ -40,10 +40,10 @@ export async function saveConversationTitle(conversationId: string, title: strin
 }
 
 export async function saveConversationModel(conversationId: string, model: string) {
-  const user = await getUserFromSession();
+  const userId = await getUserIdFromSession();
 
   const updatedConversation = await prisma.conversation.update({
-    where: { id: conversationId, userId: user.id },
+    where: { id: conversationId, userId },
     data: { model },
   });
 

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { getUserFromSession } from "@/lib/dao/users";
+import { getUserIdFromSession } from "@/lib/dao/users";
 import prisma from "@/lib/prisma";
 
 type ReasoningDetail =
@@ -44,7 +44,7 @@ async function saveMessage(
   reasoning?: string,
   signature?: string
 ) {
-  const user = await getUserFromSession();
+  const userId = await getUserIdFromSession();
 
   const newMessage = await prisma.message.create({
     data: {
@@ -59,7 +59,7 @@ async function saveMessage(
   await prisma.conversation.update({
     where: {
       id: conversationId,
-      userId: user.id,
+      userId,
     },
     data: {
       lastMessageAt: new Date(),

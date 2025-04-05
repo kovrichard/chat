@@ -25,6 +25,16 @@ type SessionUser = {
   freeMessages: number;
 };
 
+export const getUserIdFromSession = cache(async (): Promise<number> => {
+  const session = await auth();
+
+  if (!session || !session.user || !session.user.id) {
+    return redirect("/login");
+  }
+
+  return parseInt(session.user.id);
+});
+
 export const getUserFromSession = cache(async (): Promise<SessionUser> => {
   const session = await auth();
 

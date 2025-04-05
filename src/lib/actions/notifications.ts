@@ -2,16 +2,16 @@
 
 import "server-only";
 
-import { getUserFromSession } from "@/lib/dao/users";
+import { getUserIdFromSession } from "@/lib/dao/users";
 import prisma from "@/lib/prisma";
 
 export async function readNotification(notificationId: number): Promise<void> {
-  const user = await getUserFromSession();
+  const userId = await getUserIdFromSession();
 
   await prisma.notification.update({
     where: {
       id: notificationId,
-      userId: user.id,
+      userId,
     },
     data: {
       read: true,
@@ -20,14 +20,14 @@ export async function readNotification(notificationId: number): Promise<void> {
 }
 
 export async function readNotifications(notificationIds: number[]): Promise<void> {
-  const user = await getUserFromSession();
+  const userId = await getUserIdFromSession();
 
   await prisma.notification.updateMany({
     where: {
       id: {
         in: notificationIds,
       },
-      userId: user.id,
+      userId,
     },
     data: {
       read: true,

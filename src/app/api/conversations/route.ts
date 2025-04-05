@@ -1,9 +1,9 @@
-import { getUserFromSession } from "@/lib/dao/users";
+import { getUserIdFromSession } from "@/lib/dao/users";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const user = await getUserFromSession();
+  const userId = await getUserIdFromSession();
   const searchParams = req.nextUrl.searchParams;
   const page = parseInt(searchParams.get("page") || "1");
   const limit = parseInt(searchParams.get("limit") || "15");
@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
   const [conversations, total] = await Promise.all([
     prisma.conversation.findMany({
       where: {
-        userId: user.id,
+        userId,
       },
       select: {
         id: true,
@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
     }),
     prisma.conversation.count({
       where: {
-        userId: user.id,
+        userId,
       },
     }),
   ]);
