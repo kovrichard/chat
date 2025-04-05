@@ -6,7 +6,6 @@ services:
       target: dev
       args:
         NEXT_PUBLIC_AUTHORITY: localhost:3000
-        NEXT_PUBLIC_AUTH_REDIRECT_URL: /chat
     working_dir: /usr/src/app/
     env_file: .env
     environment:

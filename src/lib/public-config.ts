@@ -22,9 +22,6 @@ const envVars = {
   authority: process.env.NEXT_PUBLIC_AUTHORITY,
   host: `${process.env.NEXT_PUBLIC_SCHEME || "https"}://${process.env.NEXT_PUBLIC_AUTHORITY}`,
 
-  // Auth
-  redirectPath: process.env.NEXT_PUBLIC_AUTH_REDIRECT_URL,
-
   // Tracking
   gaId: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID,
   gtmId: process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID,
