@@ -144,11 +144,7 @@ export default function ConversationPage() {
     () => (
       <div className="flex flex-col max-w-5xl mx-auto gap-4 px-2 pt-8">
         {messages.map((message) => (
-          <MessageItem
-            key={message.id}
-            message={message}
-            conversationId={conversationId}
-          />
+          <MessageItem key={message.id} message={message} />
         ))}
         {status === "submitted" && <LoadingDots className="text-muted-foreground" />}
         <div ref={messagesEndRef} />
