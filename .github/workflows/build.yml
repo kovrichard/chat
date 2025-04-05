@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: "kovrichard/chat"
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,7 +17,7 @@ jobs:
       # Public
 
       ## General
-      NEXT_PUBLIC_AUTHORITY: https://catalyst.richardkovacs.dev
+      NEXT_PUBLIC_AUTHORITY: https://chat2.richardkovacs.dev
 
       ## Auth
       NEXT_PUBLIC_AUTH_REDIRECT_URL: /chat
@@ -33,9 +37,21 @@ jobs:
       
       - name: Lint project
         run: bun run lint-check && bun run type-check
-      
-      - name: Build project
-        run: bun run build
 
       - name: Migrate database
         run: bun run db-push
+      
+      - name: Login to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Build image and push to registry
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
