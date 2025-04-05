@@ -1,8 +1,10 @@
 import { Message } from "ai";
+import { Copy } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { ThinkingIndicator } from "./thinking-indicator";
+import { Button } from "./ui/button";
 
 export function MessageContent({ message }: { message: Message }) {
   if (message.role === "user") {
@@ -30,7 +32,15 @@ export function MessageContent({ message }: { message: Message }) {
                 const match = /language-(\w+)/.exec(className || "");
                 return match ? (
                   <div className="relative my-2">
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto group/code">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-2 right-2 size-8 opacity-0 group-hover/code:opacity-100 transition-opacity duration-100"
+                        onClick={() => navigator.clipboard.writeText(String(children))}
+                      >
+                        <Copy className="size-4" />
+                      </Button>
                       <SyntaxHighlighter
                         // @ts-ignore
                         style={atomDark}
