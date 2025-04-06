@@ -122,6 +122,10 @@ export const providers: Provider[] = [
         id: "llama-4-scout",
         name: "Llama 4 Scout",
       },
+      {
+        id: "llama-4-maverick",
+        name: "Llama 4 Maverick",
+      },
     ],
   },
   {

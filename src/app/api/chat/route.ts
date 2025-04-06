@@ -33,6 +33,9 @@ const allowedModels = {
   "grok-2-1212": xai("grok-2-1212"),
   "llama-3.1-405b": fireworks("accounts/fireworks/models/llama-v3p1-405b-instruct"),
   "llama-4-scout": fireworks("accounts/fireworks/models/llama4-scout-instruct-basic"),
+  "llama-4-maverick": fireworks(
+    "accounts/fireworks/models/llama4-maverick-instruct-basic"
+  ),
   "deepseek-r1": fireworks("accounts/fireworks/models/deepseek-r1"),
   "deepseek-v3": fireworks("accounts/fireworks/models/deepseek-v3"),
   sonar: perplexity("sonar"),

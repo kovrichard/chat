@@ -104,7 +104,7 @@ export function ChatSidebar() {
           {groupedConversations.today.length > 0 && (
             <SidebarGroup>
               <SidebarGroupLabel className="text-primary/70">Today</SidebarGroupLabel>
-              <SidebarGroupContent>
+              <SidebarGroupContent className="space-y-1">
                 {groupedConversations.today.map((chat: PartialConversation) => (
                   <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
                 ))}
@@ -114,7 +114,7 @@ export function ChatSidebar() {
           {groupedConversations.yesterday.length > 0 && (
             <SidebarGroup>
               <SidebarGroupLabel className="text-primary/70">Yesterday</SidebarGroupLabel>
-              <SidebarGroupContent>
+              <SidebarGroupContent className="space-y-1">
                 {groupedConversations.yesterday.map((chat: PartialConversation) => (
                   <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
                 ))}
@@ -126,7 +126,7 @@ export function ChatSidebar() {
               <SidebarGroupLabel className="text-primary/70">
                 Previous 7 days
               </SidebarGroupLabel>
-              <SidebarGroupContent>
+              <SidebarGroupContent className="space-y-1">
                 {groupedConversations.lastWeek.map((chat: PartialConversation) => (
                   <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
                 ))}
@@ -136,7 +136,7 @@ export function ChatSidebar() {
           {groupedConversations.older.length > 0 && (
             <SidebarGroup>
               <SidebarGroupLabel className="text-primary/70">Older</SidebarGroupLabel>
-              <SidebarGroupContent>
+              <SidebarGroupContent className="space-y-1">
                 {groupedConversations.older.map((chat: PartialConversation) => (
                   <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
                 ))}

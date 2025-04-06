@@ -50,7 +50,7 @@ export function ModelMenu() {
     return (
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild className="hidden md:block">
-          <Button variant="ghost" size="sm" className="-ml-2 -mb-2">
+          <Button variant="ghost" size="sm" className="-ml-2 -mb-4">
             {getModelName(model)}
           </Button>
         </PopoverTrigger>
@@ -127,7 +127,13 @@ function StatusList({ setOpen }: { setOpen: (open: boolean) => void }) {
                 {model.features?.map((feature: Feature) => (
                   <Tooltip key={feature.name}>
                     <TooltipTrigger asChild>
-                      <feature.icon size={16} className={cn(feature.color)} />
+                      <feature.icon
+                        size={16}
+                        className={cn(
+                          feature.color,
+                          "group-data-[selected='true']:text-accent-foreground"
+                        )}
+                      />
                     </TooltipTrigger>
                     <TooltipContent>{feature.description}</TooltipContent>
                   </Tooltip>
