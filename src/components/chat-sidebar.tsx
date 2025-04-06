@@ -97,7 +97,7 @@ export function ChatSidebar() {
           <SidebarGroupLabel className="text-muted-foreground p-1">
             Just a moment...
           </SidebarGroupLabel>
-          <SidebarGroupContent>
+          <SidebarGroupContent className="space-y-1">
             {[...Array(5)].map((_, i) => (
               <div key={i} className="rounded-md p-3">
                 <div className="flex flex-col items-start gap-2">
