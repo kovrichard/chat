@@ -120,8 +120,12 @@ const providers = [
     icon: LazyMeta,
     models: [
       {
-        id: "llama-3.3",
-        name: "Llama 3.3",
+        id: "llama-3.1-405b",
+        name: "Llama 3.1 405B",
+      },
+      {
+        id: "llama-4-scout",
+        name: "Llama 4 Scout",
       },
     ],
   },
@@ -133,6 +137,10 @@ const providers = [
         id: "deepseek-r1",
         name: "DeepSeek R1",
         features: [reasoning],
+      },
+      {
+        id: "deepseek-v3",
+        name: "DeepSeek V3",
       },
     ],
   },

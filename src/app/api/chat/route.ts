@@ -8,8 +8,8 @@ import {
 import { decrementFreeMessages, getUserFromSession } from "@/lib/dao/users";
 import { AnthropicProviderOptions, anthropic } from "@ai-sdk/anthropic";
 import { createAzure } from "@ai-sdk/azure";
+import { fireworks } from "@ai-sdk/fireworks";
 import { google } from "@ai-sdk/google";
-import { groq } from "@ai-sdk/groq";
 import { perplexity } from "@ai-sdk/perplexity";
 import { xai } from "@ai-sdk/xai";
 import { smoothStream, streamText } from "ai";
@@ -31,8 +31,10 @@ const allowedModels = {
   "gemini-2.0-flash": google("gemini-2.0-flash", { useSearchGrounding: true }),
   "gemini-2.0-flash-lite": google("gemini-2.0-flash-lite"),
   "grok-2-1212": xai("grok-2-1212"),
-  "llama-3.3": groq("llama-3.3-70b-versatile"),
-  "deepseek-r1": groq("deepseek-r1-distill-llama-70b"),
+  "llama-3.1-405b": fireworks("accounts/fireworks/models/llama-v3p1-405b-instruct"),
+  "llama-4-scout": fireworks("accounts/fireworks/models/llama4-scout-instruct-basic"),
+  "deepseek-r1": fireworks("accounts/fireworks/models/deepseek-r1"),
+  "deepseek-v3": fireworks("accounts/fireworks/models/deepseek-v3"),
   sonar: perplexity("sonar"),
   "sonar-pro": perplexity("sonar-pro"),
 };
