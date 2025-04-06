@@ -1,5 +1,6 @@
-import { Brain, Globe } from "lucide-react";
+import { Brain, Globe, LucideProps } from "lucide-react";
 import dynamic from "next/dynamic";
+import { ComponentType, ForwardRefExoticComponent, RefAttributes } from "react";
 
 const LazyAnthropic = dynamic(() => import("@/components/icons/anthropic"));
 const LazyDeepSeek = dynamic(() => import("@/components/icons/deepseek"));
@@ -9,21 +10,43 @@ const LazyMeta = dynamic(() => import("@/components/icons/meta"));
 const LazyOpenAI = dynamic(() => import("@/components/icons/openai"));
 const LazyPerplexity = dynamic(() => import("@/components/icons/perplexity"));
 
-const reasoning = {
+export type Feature = {
+  name: string;
+  description: string;
+  icon: ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
+  >;
+  color: string;
+};
+
+export type Model = {
+  id: string;
+  name: string;
+  features?: Feature[];
+  free?: boolean;
+};
+
+export type Provider = {
+  name: string;
+  icon: ComponentType<{ size?: number | undefined }>;
+  models: Model[];
+};
+
+const reasoning: Feature = {
   name: "Reasoning",
   description: "Reasoning model",
   icon: Brain,
   color: "text-yellow-500",
 };
 
-const search = {
+const search: Feature = {
   name: "Search",
   description: "Searches the web for information",
   icon: Globe,
   color: "text-blue-500",
 };
 
-export const providers = [
+export const providers: Provider[] = [
   {
     name: "OpenAI",
     icon: LazyOpenAI,

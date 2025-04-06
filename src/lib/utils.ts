@@ -23,3 +23,15 @@ const timeAgo = new TimeAgo("en-US");
 export function formatTimeAgo(date: Date) {
   return timeAgo.format(date);
 }
+
+export function debounce(func: Function, wait = 100) {
+  let timeout: NodeJS.Timeout;
+  return function executedFunction(...args: any[]) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
