@@ -49,3 +49,9 @@ export async function saveConversationModel(conversationId: string, model: strin
 
   return updatedConversation;
 }
+
+export async function deleteConversation(conversationId: string) {
+  const userId = await getUserIdFromSession();
+
+  await prisma.conversation.delete({ where: { id: conversationId, userId } });
+}

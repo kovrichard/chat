@@ -1,4 +1,5 @@
 import {
+  deleteConversation,
   saveConversation,
   saveConversationModel,
   saveConversationTitle,
@@ -94,6 +95,21 @@ export function useUpdateConversationModel() {
         ...old,
         model: updatedConversation.model,
       }));
+    },
+  });
+}
+
+export function useDeleteConversation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ conversationId }: { conversationId: string }) =>
+      deleteConversation(conversationId),
+    onSuccess: (_, { conversationId }) => {
+      queryClient.invalidateQueries({ queryKey: conversationKeys.list(1) });
+      queryClient.invalidateQueries({
+        queryKey: conversationKeys.detail(conversationId),
+      });
     },
   });
 }

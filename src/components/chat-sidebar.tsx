@@ -1,13 +1,25 @@
 "use client";
 
-import { useConversations } from "@/lib/queries/conversations";
+import { useConversations, useDeleteConversation } from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
 import { PartialConversation } from "@/types/chat";
-import { MessageSquare, Plus } from "lucide-react";
+import { MessageSquare, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
 import { AnimatedTitle } from "./ui/animated-title";
+import { Button } from "./ui/button";
 import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel } from "./ui/sidebar";
 
 function groupConversationsByTime(conversations: PartialConversation[]) {
@@ -168,29 +180,75 @@ function ConversationLink({
   chat: PartialConversation;
   currentId: string;
 }) {
+  const deleteConversation = useDeleteConversation();
+  const router = useRouter();
+
   return (
-    <Link
-      href={`/chat/${chat.id}`}
-      prefetch
-      className={cn(
-        "flex w-full flex-col items-start gap-1 rounded-lg p-3 text-left text-sm transition-colors",
-        currentId === chat.id ? "bg-accent text-accent-foreground" : "hover:bg-muted"
-      )}
-    >
-      <div className="flex w-full items-center gap-2">
-        <MessageSquare className="h-4 w-4" />
-        <AnimatedTitle text={chat.title} />
-      </div>
-      {chat?.messages?.length > 0 && (
-        <p
-          className={cn(
-            "text-xs text-muted-foreground truncate w-full",
-            currentId === chat.id && "text-accent-foreground"
-          )}
-        >
-          {chat.messages[chat.messages.length - 1]?.content}
-        </p>
-      )}
-    </Link>
+    <div className="group/chat relative">
+      <Link
+        href={`/chat/${chat.id}`}
+        prefetch
+        className={cn(
+          "flex w-full flex-col items-start gap-1 rounded-lg p-3 text-left text-sm transition-colors",
+          currentId === chat.id ? "bg-accent text-accent-foreground" : "hover:bg-muted"
+        )}
+      >
+        <div className="flex w-full items-center gap-2">
+          <MessageSquare size={16} className="shrink-0" />
+          <AnimatedTitle text={chat.title} />
+          <div className="hidden group-hover/chat:inline-flex size-5" />
+        </div>
+        {chat?.messages?.length > 0 && (
+          <p
+            className={cn(
+              "text-xs text-muted-foreground truncate w-full",
+              currentId === chat.id && "text-accent-foreground"
+            )}
+          >
+            {chat.messages[chat.messages.length - 1]?.content}
+          </p>
+        )}
+      </Link>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-3 right-3 hidden group-hover/chat:inline-flex items-center justify-center p-2 size-5 hover:bg-transparent z-10"
+          >
+            <Trash2
+              size={16}
+              className={cn(
+                "text-muted-foreground",
+                currentId === chat.id && "text-accent-foreground"
+              )}
+            />
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You won't see this conversation ever again.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                await deleteConversation.mutateAsync({
+                  conversationId: chat.id,
+                });
+                if (currentId === chat.id) {
+                  router.push("/chat");
+                }
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   );
 }
