@@ -10,6 +10,7 @@ import { AnthropicProviderOptions, anthropic } from "@ai-sdk/anthropic";
 import { createAzure } from "@ai-sdk/azure";
 import { google } from "@ai-sdk/google";
 import { groq } from "@ai-sdk/groq";
+import { perplexity } from "@ai-sdk/perplexity";
 import { xai } from "@ai-sdk/xai";
 import { smoothStream, streamText } from "ai";
 import { v4 as uuidv4 } from "uuid";
@@ -32,6 +33,8 @@ const allowedModels = {
   "grok-2-1212": xai("grok-2-1212"),
   "llama-3.3": groq("llama-3.3-70b-versatile"),
   "deepseek-r1": groq("deepseek-r1-distill-llama-70b"),
+  sonar: perplexity("sonar"),
+  "sonar-pro": perplexity("sonar-pro"),
 };
 
 function getProviderOptions(model: string) {

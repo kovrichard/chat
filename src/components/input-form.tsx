@@ -19,6 +19,7 @@ const LazyGoogle = dynamic(() => import("./icons/google"));
 const LazyXAI = dynamic(() => import("./icons/xai"));
 const LazyMeta = dynamic(() => import("./icons/meta"));
 const LazyOpenAI = dynamic(() => import("./icons/openai"));
+const LazyPerplexity = dynamic(() => import("./icons/perplexity"));
 
 import { PartialConversation } from "@/types/chat";
 import { useQuery } from "@tanstack/react-query";
@@ -132,6 +133,22 @@ const providers = [
         id: "deepseek-r1",
         name: "DeepSeek R1",
         features: [reasoning],
+      },
+    ],
+  },
+  {
+    name: "Perplexity",
+    icon: LazyPerplexity,
+    models: [
+      {
+        id: "sonar",
+        name: "Sonar",
+        features: [search],
+      },
+      {
+        id: "sonar-pro",
+        name: "Sonar Pro",
+        features: [search],
       },
     ],
   },
