@@ -10,6 +10,12 @@ const LazyMeta = dynamic(() => import("@/components/icons/meta"));
 const LazyOpenAI = dynamic(() => import("@/components/icons/openai"));
 const LazyPerplexity = dynamic(() => import("@/components/icons/perplexity"));
 
+export function getModel(modelId: string): Model | undefined {
+  return providers
+    .flatMap((provider) => provider.models)
+    .find((model) => model.id === modelId);
+}
+
 export type Feature = {
   name: string;
   description: string;

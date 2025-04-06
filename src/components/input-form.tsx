@@ -56,7 +56,7 @@ const InputForm = forwardRef<HTMLTextAreaElement>((_, ref) => {
       const optimisticConversation: PartialConversation = {
         id: conversationId,
         title: "New Chat",
-        model: model,
+        model: model.id,
         messages: [
           {
             id: uuidv4(),

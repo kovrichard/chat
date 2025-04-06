@@ -1,11 +1,12 @@
 import { create } from "zustand";
+import { Model, getModel } from "../providers";
 
 type ModelStore = {
-  model: string;
-  setModel: (model: string) => void;
+  model: Model;
+  setModel: (modelId: string) => void;
 };
 
 export const useModelStore = create<ModelStore>((set) => ({
-  model: "4o-mini",
-  setModel: (model) => set({ model }),
+  model: getModel("4o-mini") as Model,
+  setModel: (modelId) => set({ model: getModel(modelId) }),
 }));

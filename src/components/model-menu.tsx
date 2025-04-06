@@ -28,13 +28,6 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
-function getModelName(modelId: string) {
-  const model = providers
-    .flatMap((provider) => provider.models)
-    .find((m) => m.id === modelId);
-  return model?.name;
-}
-
 function getProviderIcon(modelId: string) {
   const provider = providers.find((p) => p.models.some((m) => m.id === modelId));
   return provider?.icon;
@@ -44,14 +37,14 @@ export function ModelMenu() {
   const [open, setOpen] = useState(false);
   const { model } = useModelStore();
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const providerIcon = getProviderIcon(model);
+  const providerIcon = getProviderIcon(model.id);
 
   if (isDesktop) {
     return (
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild className="hidden md:block">
           <Button variant="ghost" size="sm" className="-ml-2 -mb-4">
-            {getModelName(model)}
+            {model.name}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[300px] p-0" align="start">
@@ -86,7 +79,7 @@ export function ModelMenu() {
 function StatusList({ setOpen }: { setOpen: (open: boolean) => void }) {
   const params = useParams();
   const conversationId = params.id as string;
-  const { setModel } = useModelStore();
+  const { model, setModel } = useModelStore();
   const updateModel = useUpdateConversationModel();
   const handleModelChange = (value: string) => {
     setModel(value);
@@ -99,7 +92,7 @@ function StatusList({ setOpen }: { setOpen: (open: boolean) => void }) {
   const modelCount = providers.reduce((acc, provider) => acc + provider.models.length, 0);
 
   return (
-    <Command className="rounded-none md:rounded-md">
+    <Command className="rounded-none md:rounded-md" defaultValue={model.name}>
       <CommandInput placeholder={`Filter ${modelCount} models...`} />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>

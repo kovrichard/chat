@@ -51,7 +51,7 @@ export function ChatProvider({
   } = useChat({
     id,
     initialMessages,
-    body: { model },
+    body: { model: model.id },
     onFinish: (message: Message) => {
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
 
