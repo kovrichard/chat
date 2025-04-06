@@ -20,7 +20,7 @@ export async function signInUser(_prevState: any, formData: FormData) {
       description: "You have been successfully signed in.",
     };
   } catch (error: any) {
-    if (error.cause.err instanceof InvalidLoginError) {
+    if (error?.cause?.err instanceof InvalidLoginError) {
       return {
         message: "Something went wrong",
         description: "Please try again.",
