@@ -11,7 +11,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useChatContext } from "@/lib/contexts/chat-context";
-import { useConversation } from "@/lib/queries/conversations";
+import { useConversation, useRegenerateMessage } from "@/lib/queries/conversations";
 import { useModelStore } from "@/lib/stores/model-store";
 import { cn } from "@/lib/utils";
 import { Message } from "ai";
@@ -23,9 +23,25 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 const MessageItem = memo(
   ({
     message,
+    conversationId,
   }: {
     message: Message;
+    conversationId: string;
   }) => {
+    const regenerateMessage = useRegenerateMessage();
+    const { reload } = useChatContext();
+
+    const handleRegenerateMessage = async () => {
+      const a = false;
+      if (a) {
+        await regenerateMessage.mutateAsync({
+          messageId: message.id,
+          conversationId,
+        });
+        reload({ body: { retry: true } });
+      }
+    };
+
     return (
       <div
         className={cn(
@@ -67,6 +83,7 @@ const MessageItem = memo(
                   <RefreshCw
                     size={18}
                     className="opacity-0 group-hover:opacity-100 transition-opacity duration-100"
+                    onClick={handleRegenerateMessage}
                   />
                 </Button>
               </TooltipTrigger>
@@ -144,7 +161,11 @@ export default function ConversationPage() {
     () => (
       <div className="flex flex-col max-w-5xl mx-auto gap-4 px-2 pt-8">
         {messages.map((message) => (
-          <MessageItem key={message.id} message={message} />
+          <MessageItem
+            key={message.id}
+            message={message}
+            conversationId={conversationId}
+          />
         ))}
         {status === "submitted" && <LoadingDots className="text-muted-foreground" />}
         <div ref={messagesEndRef} />

@@ -11,6 +11,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { Message } from "ai";
+import { deleteMessageChainAfter } from "../actions/messages";
 import { useMessageProcessor } from "../hooks/use-message-processor";
 
 const conversationKeys = {
@@ -149,6 +150,25 @@ export function useAddMessage() {
         queryKey: conversationKeys.detail(conversationId),
       });
       queryClient.invalidateQueries({ queryKey: conversationKeys.list(1) });
+    },
+  });
+}
+
+export function useRegenerateMessage() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      messageId,
+      conversationId,
+    }: { messageId: string; conversationId: string }) =>
+      deleteMessageChainAfter(messageId, conversationId),
+    onSuccess: (_, { conversationId }) => {
+      queryClient.invalidateQueries({ queryKey: conversationKeys.list(1) });
+
+      queryClient.invalidateQueries({
+        queryKey: conversationKeys.detail(conversationId),
+      });
     },
   });
 }

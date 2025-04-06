@@ -28,3 +28,33 @@ export async function saveMessage(message: Message, conversationId: string) {
 
   return newMessage;
 }
+
+export async function deleteMessageChainAfter(messageId: string, conversationId: string) {
+  const userId = await getUserIdFromSession();
+
+  const message = await prisma.message.findUnique({
+    where: {
+      id: messageId,
+      conversationId,
+      conversation: {
+        userId,
+      },
+    },
+  });
+
+  if (!message) {
+    throw new Error("Message not found");
+  }
+
+  await prisma.message.deleteMany({
+    where: {
+      conversation: {
+        id: conversationId,
+        userId,
+      },
+      createdAt: {
+        gt: message.createdAt,
+      },
+    },
+  });
+}
