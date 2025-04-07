@@ -1,9 +1,8 @@
 "use client";
 
-import { useDeleteConversation } from "@/lib/queries/conversations";
+import { useConversations, useDeleteConversation } from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
 import { PartialConversation } from "@/types/chat";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import { MessageSquare, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -58,23 +57,7 @@ function groupConversationsByTime(conversations: PartialConversation[]) {
 export default function ChatSidebar({ conversations }: { conversations: any }) {
   const { id } = useParams();
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteQuery({
-      queryKey: ["conversations"],
-      queryFn: async ({ pageParam = 1 }) => {
-        const response = await fetch(`/api/conversations?page=${pageParam}&limit=15`);
-        const data = await response.json();
-        return {
-          conversations: data.conversations,
-          nextPage: data.hasMore ? pageParam + 1 : undefined,
-        };
-      },
-      getNextPageParam: (lastPage) => lastPage.nextPage,
-      initialPageParam: 1,
-      initialData: () => ({
-        pages: [conversations],
-        pageParams: [conversations.hasMore ? 1 : undefined],
-      }),
-    });
+    useConversations(conversations);
   const observerRef = useRef<IntersectionObserver>();
   const loadMoreRef = useRef<HTMLDivElement>(null);
 

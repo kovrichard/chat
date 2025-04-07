@@ -20,9 +20,9 @@ const conversationKeys = {
   list: (page: number) => ["conversations", "list", page] as const,
 };
 
-export function useConversations(page = 1) {
+export function useConversations(conversations: any) {
   return useInfiniteQuery({
-    queryKey: conversationKeys.list(page),
+    queryKey: conversationKeys.list(1),
     queryFn: async ({ pageParam = 1 }) => {
       const response = await fetch(`/api/conversations?page=${pageParam}&limit=15`);
       const data = await response.json();
@@ -33,6 +33,15 @@ export function useConversations(page = 1) {
     },
     getNextPageParam: (lastPage) => lastPage.nextPage,
     initialPageParam: 1,
+    initialData: () => ({
+      pages: [
+        {
+          conversations: conversations.conversations,
+          nextPage: conversations.hasMore ? 1 : undefined,
+        },
+      ],
+      pageParams: [1],
+    }),
   });
 }
 
