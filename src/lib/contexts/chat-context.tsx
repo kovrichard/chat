@@ -1,12 +1,12 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
+import { QueryClient } from "@tanstack/react-query";
 import { Message } from "ai";
 import React, { createContext, useContext, ReactNode } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useAddMessage } from "../queries/conversations";
 import { useUpdateConversationTitle } from "../queries/conversations";
-import { queryClient } from "../query-client";
 import { useModelStore } from "../stores/model-store";
 
 type ChatStatus = "submitted" | "streaming" | "ready" | "error";
@@ -34,6 +34,7 @@ export function ChatProvider({
   id?: string;
   initialMessages?: Message[];
 }) {
+  const queryClient = new QueryClient();
   const updateTitle = useUpdateConversationTitle();
   const addMessage = useAddMessage();
   const { model } = useModelStore();

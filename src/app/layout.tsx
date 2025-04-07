@@ -4,7 +4,7 @@ import "./globals.css";
 import Analytics from "@/components/analytics";
 import conf from "@/lib/config";
 import { canonicalUrl, metaDescription, metaTitle, openGraph } from "@/lib/metadata";
-import { QueryProvider } from "@/lib/query-client";
+import { Providers } from "@/lib/query-client";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "next-themes";
 import React from "react";
@@ -55,12 +55,12 @@ export default function RootLayout({
           "flex flex-col min-h-svh min-w-80 justify-center overscroll-none"
         )}
       >
-        <QueryProvider>
+        <Providers>
           <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
             {children}
             <Toaster />
           </ThemeProvider>
-        </QueryProvider>
+        </Providers>
       </body>
     </html>
   );

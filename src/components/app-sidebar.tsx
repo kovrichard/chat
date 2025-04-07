@@ -6,13 +6,16 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { getConversations } from "@/lib/dao/conversations";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { ChatSidebar } from "./chat-sidebar";
+import ChatSidebar from "./chat-sidebar";
 import { SignOut } from "./signout-button";
 import { Button } from "./ui/button";
 
-export function AppSidebar() {
+export async function AppSidebar() {
+  const conversations = await getConversations(1, 15);
+
   return (
     <Sidebar className="border-none">
       <SidebarHeader className="flex-col items-center gap-4 py-4 pl-4">
@@ -26,7 +29,7 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent className="relative pl-2">
         <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-sidebar to-transparent pointer-events-none z-10" />
-        <ChatSidebar />
+        <ChatSidebar conversations={conversations} />
         <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-sidebar to-transparent pointer-events-none z-10" />
       </SidebarContent>
       <SidebarFooter className="pl-4 py-4">

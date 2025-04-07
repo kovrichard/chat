@@ -1,8 +1,9 @@
 "use client";
 
-import { useConversations, useDeleteConversation } from "@/lib/queries/conversations";
+import { useDeleteConversation } from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
 import { PartialConversation } from "@/types/chat";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { MessageSquare, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -54,14 +55,29 @@ function groupConversationsByTime(conversations: PartialConversation[]) {
   return groups;
 }
 
-export function ChatSidebar() {
+export default function ChatSidebar({ conversations }: { conversations: any }) {
   const { id } = useParams();
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useConversations();
+    useInfiniteQuery({
+      queryKey: ["conversations"],
+      queryFn: async ({ pageParam = 1 }) => {
+        const response = await fetch(`/api/conversations?page=${pageParam}&limit=15`);
+        const data = await response.json();
+        return {
+          conversations: data.conversations,
+          nextPage: data.hasMore ? pageParam + 1 : undefined,
+        };
+      },
+      getNextPageParam: (lastPage) => lastPage.nextPage,
+      initialPageParam: 1,
+      initialData: () => ({
+        pages: [conversations],
+        pageParams: [conversations.hasMore ? 1 : undefined],
+      }),
+    });
   const observerRef = useRef<IntersectionObserver>();
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
-  // Flatten all pages of conversations
   const allConversations = data?.pages.flatMap((page) => page.conversations) || [];
   const groupedConversations = groupConversationsByTime(allConversations);
 
