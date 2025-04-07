@@ -99,7 +99,7 @@ async function hashPassword(plainPassword: string) {
 }
 
 async function verifyPassword(plainPassword: string, hashedPassword: string) {
-  const bcrypt = require("bcrypt");
+  const bcrypt = require("bcryptjs");
 
   try {
     // Hash with scrypt if password follows new format
