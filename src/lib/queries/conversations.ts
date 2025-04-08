@@ -138,7 +138,7 @@ export function useAddMessage() {
       const optimisticMessage = {
         ...message,
         id: message.id,
-        createdAt: message.createdAt,
+        createdAt: message.createdAt || new Date(),
       };
 
       // Update conversation detail cache
