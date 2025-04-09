@@ -21,6 +21,7 @@ import { useUpdateConversationTitle } from "../queries/conversations";
 type ChatStatus = "submitted" | "streaming" | "ready" | "error";
 
 interface ChatContextType {
+  id: string;
   messages: Message[];
   input: string;
   model: Model;
@@ -48,6 +49,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const { data: conversation, isLoading } = useConversation(conversationId);
 
   const {
+    id,
     messages,
     input,
     setMessages,
@@ -105,6 +107,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   return (
     <ChatContext.Provider
       value={{
+        id,
         messages,
         input,
         model,
