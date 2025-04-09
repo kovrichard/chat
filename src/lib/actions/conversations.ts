@@ -5,6 +5,8 @@ import "server-only";
 import { getUserIdFromSession } from "@/lib/dao/users";
 import prisma from "@/lib/prisma";
 import { PartialConversation } from "@/types/chat";
+import { openai } from "@ai-sdk/openai";
+import { Message, generateText } from "ai";
 
 export async function saveConversation(conversation: PartialConversation) {
   const userId = await getUserIdFromSession();
@@ -28,13 +30,29 @@ export async function saveConversation(conversation: PartialConversation) {
   return newConversation;
 }
 
-export async function saveConversationTitle(conversationId: string, title: string) {
+async function saveConversationTitle(conversationId: string, title: string) {
   const userId = await getUserIdFromSession();
 
   const updatedConversation = await prisma.conversation.update({
     where: { id: conversationId, userId },
     data: { title },
   });
+
+  return updatedConversation;
+}
+
+export async function updateConversationTitle(
+  conversationId: string,
+  messages: Message[]
+) {
+  const { text } = await generateText({
+    model: openai("gpt-4o-mini"),
+    system:
+      "Your job is to generate a title for a conversation based on the messages. The title should never be longer than 3 words. Only return the title, no other text.",
+    messages,
+  });
+
+  const updatedConversation = await saveConversationTitle(conversationId, text);
 
   return updatedConversation;
 }

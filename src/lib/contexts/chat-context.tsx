@@ -74,14 +74,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       if (messages.length === 1) {
         const titleMessages = [messages[0], message];
 
-        fetch("/api/title", {
-          method: "POST",
-          body: JSON.stringify({ messages: titleMessages }),
-        })
-          .then((res) => res.text())
-          .then((title) => {
-            updateTitle.mutateAsync({ conversationId, title });
-          });
+        updateTitle.mutateAsync({
+          conversationId,
+          messages: titleMessages,
+        });
       }
     },
   });

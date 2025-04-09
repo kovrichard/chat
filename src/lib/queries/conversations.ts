@@ -2,7 +2,7 @@ import {
   deleteConversation,
   saveConversation,
   saveConversationModel,
-  saveConversationTitle,
+  updateConversationTitle,
 } from "@/lib/actions/conversations";
 import { PartialConversation } from "@/types/chat";
 import {
@@ -68,8 +68,11 @@ export function useUpdateConversationTitle() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ conversationId, title }: { conversationId: string; title: string }) =>
-      saveConversationTitle(conversationId, title),
+    mutationFn: ({
+      conversationId,
+      messages,
+    }: { conversationId: string; messages: Message[] }) =>
+      updateConversationTitle(conversationId, messages),
     onSuccess: (updatedConversation) => {
       // Update the conversation in all pages of the infinite query
       queryClient.setQueryData(conversationKeys.list(1), (old: any) => {
