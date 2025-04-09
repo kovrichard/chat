@@ -1,5 +1,5 @@
-import { getUserIdFromSession } from "@/lib/dao/users";
-import prisma from "@/lib/prisma";
+import { getConversation } from "@/lib/dao/conversations";
+import { processMessages } from "@/lib/message-processor";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -7,31 +7,8 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const userId = await getUserIdFromSession();
 
-  const conversation = await prisma.conversation.findUnique({
-    where: {
-      id: id,
-      userId,
-    },
-    select: {
-      id: true,
-      title: true,
-      model: true,
-      messages: {
-        select: {
-          id: true,
-          content: true,
-          role: true,
-          reasoning: true,
-          signature: true,
-        },
-        orderBy: {
-          createdAt: "asc",
-        },
-      },
-    },
-  });
+  const conversation = await getConversation(id);
 
   return NextResponse.json(conversation);
 }
