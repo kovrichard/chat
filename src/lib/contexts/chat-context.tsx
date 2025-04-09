@@ -78,8 +78,11 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       router.push("/chat");
     }
 
-    if (conversation) {
+    if (conversation?.messages) {
       setMessages(conversation.messages);
+    }
+
+    if (conversation?.model) {
       setModel(conversation.model);
     }
   }, [conversation, isLoading, router]);
