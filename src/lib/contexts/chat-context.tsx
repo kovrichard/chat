@@ -4,17 +4,27 @@ import { useChat } from "@ai-sdk/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Message } from "ai";
 import { useParams, useRouter } from "next/navigation";
-import React, { createContext, useContext, ReactNode, useEffect, useMemo } from "react";
+import React, {
+  createContext,
+  useContext,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { v4 as uuidv4 } from "uuid";
+import { getModel } from "../providers";
+import { Model } from "../providers";
 import { useAddMessage, useConversation } from "../queries/conversations";
 import { useUpdateConversationTitle } from "../queries/conversations";
-import { useModelStore } from "../stores/model-store";
 
 type ChatStatus = "submitted" | "streaming" | "ready" | "error";
 
 interface ChatContextType {
   messages: Message[];
   input: string;
+  model: Model;
+  setModelId: (modelId: string) => void;
   setMessages: (messages: Message[]) => void;
   handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -33,7 +43,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
   const updateTitle = useUpdateConversationTitle();
   const addMessage = useAddMessage();
-  const { model, setModel } = useModelStore();
+  const [model, setModel] = useState<Model>(getModel("4o-mini") as Model);
+  const [modelId, setModelId] = useState<string>("4o-mini");
   const { data: conversation, isLoading } = useConversation(conversationId);
 
   const {
@@ -74,6 +85,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
+    setModel(getModel(modelId) as Model);
+  }, [modelId]);
+
+  useEffect(() => {
     if (!isLoading && !conversation) {
       router.push("/chat");
     }
@@ -83,7 +98,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     }
 
     if (conversation?.model) {
-      setModel(conversation.model);
+      setModelId(conversation.model);
     }
   }, [conversation, isLoading, router]);
 
@@ -92,6 +107,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       value={{
         messages,
         input,
+        model,
+        setModelId,
         setMessages,
         handleInputChange,
         handleSubmit,

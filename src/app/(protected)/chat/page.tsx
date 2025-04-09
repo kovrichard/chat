@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { useChatContext } from "@/lib/contexts/chat-context";
-import { useModelStore } from "@/lib/stores/model-store";
 import { ChangeEvent, useEffect } from "react";
 
 const examples = [
@@ -13,8 +12,7 @@ const examples = [
 ];
 
 export default function ChatPage() {
-  const { setModel } = useModelStore();
-  const { handleInputChange } = useChatContext();
+  const { setModelId, handleInputChange } = useChatContext();
 
   const handleExampleClick = (example: string) => {
     handleInputChange({
@@ -31,7 +29,7 @@ export default function ChatPage() {
   };
 
   useEffect(() => {
-    setModel("4o-mini");
+    setModelId("4o-mini");
   }, []);
 
   return (

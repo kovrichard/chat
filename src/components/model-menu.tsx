@@ -1,9 +1,9 @@
 "use client";
 
+import { useChatContext } from "@/lib/contexts/chat-context";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { Feature, providers } from "@/lib/providers";
 import { useUpdateConversationModel } from "@/lib/queries/conversations";
-import { useModelStore } from "@/lib/stores/model-store";
 import { cn } from "@/lib/utils";
 import { useParams } from "next/navigation";
 import { useState } from "react";
@@ -35,7 +35,7 @@ function getProviderIcon(modelId: string) {
 
 export function ModelMenu() {
   const [open, setOpen] = useState(false);
-  const { model } = useModelStore();
+  const { model } = useChatContext();
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const providerIcon = getProviderIcon(model.id);
 
@@ -79,10 +79,10 @@ export function ModelMenu() {
 function StatusList({ setOpen }: { setOpen: (open: boolean) => void }) {
   const params = useParams();
   const conversationId = params.id as string;
-  const { model, setModel } = useModelStore();
+  const { model, setModelId } = useChatContext();
   const updateModel = useUpdateConversationModel();
   const handleModelChange = (value: string) => {
-    setModel(value);
+    setModelId(value);
 
     if (conversationId) {
       updateModel.mutateAsync({ conversationId, model: value });

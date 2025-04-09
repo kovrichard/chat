@@ -6,14 +6,12 @@ import {
   useAddMessage,
   useCreateConversationOptimistic,
 } from "@/lib/queries/conversations";
-import { useModelStore } from "@/lib/stores/model-store";
 import { IconPlayerStop } from "@tabler/icons-react";
 import { Send } from "lucide-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { FormEvent, KeyboardEvent, forwardRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 
-import { providers } from "@/lib/providers";
 import { PartialConversation } from "@/types/chat";
 import { useQuery } from "@tanstack/react-query";
 import { v4 as uuidv4 } from "uuid";
@@ -25,10 +23,10 @@ const InputForm = forwardRef<HTMLTextAreaElement, { freeMessages: number }>(
     const params = useParams();
     const pathname = usePathname();
     const conversationId = params.id as string;
-    const { model } = useModelStore();
     const createConversationOptimistic = useCreateConversationOptimistic();
     const addMessage = useAddMessage();
-    const { input, handleInputChange, handleSubmit, status, stop } = useChatContext();
+    const { input, model, handleInputChange, handleSubmit, status, stop } =
+      useChatContext();
     const { data: subscription } = useQuery({
       queryKey: ["subscription"],
       queryFn: async () => {
