@@ -5,7 +5,6 @@ import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { Feature, providers } from "@/lib/providers";
 import { useUpdateConversationModel } from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
-import { useParams } from "next/navigation";
 import { useState } from "react";
 import React from "react";
 import { Button } from "./ui/button";
@@ -77,15 +76,14 @@ export function ModelMenu() {
 }
 
 function StatusList({ setOpen }: { setOpen: (open: boolean) => void }) {
-  const params = useParams();
-  const conversationId = params.id as string;
-  const { model, setModelId } = useChatContext();
+  const { id, model, setModelId } = useChatContext();
   const updateModel = useUpdateConversationModel();
+
   const handleModelChange = (value: string) => {
     setModelId(value);
 
-    if (conversationId) {
-      updateModel.mutateAsync({ conversationId, model: value });
+    if (id) {
+      updateModel.mutateAsync({ conversationId: id, model: value });
     }
   };
 

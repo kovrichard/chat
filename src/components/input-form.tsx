@@ -8,7 +8,7 @@ import {
 } from "@/lib/queries/conversations";
 import { IconPlayerStop } from "@tabler/icons-react";
 import { Send } from "lucide-react";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FormEvent, KeyboardEvent, forwardRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 
@@ -20,12 +20,10 @@ import { ModelMenu } from "./model-menu";
 const InputForm = forwardRef<HTMLTextAreaElement, { freeMessages: number }>(
   ({ freeMessages }, ref) => {
     const router = useRouter();
-    const params = useParams();
     const pathname = usePathname();
-    const conversationId = params.id as string;
     const createConversationOptimistic = useCreateConversationOptimistic();
     const addMessage = useAddMessage();
-    const { input, model, handleInputChange, handleSubmit, status, stop } =
+    const { id, input, model, handleInputChange, handleSubmit, status, stop } =
       useChatContext();
     const { data: subscription } = useQuery({
       queryKey: ["subscription"],
@@ -80,7 +78,7 @@ const InputForm = forwardRef<HTMLTextAreaElement, { freeMessages: number }>(
             content: input,
             role: "user",
           },
-          conversationId,
+          conversationId: id,
         });
         handleSubmit(e as FormEvent<HTMLFormElement>);
       }
