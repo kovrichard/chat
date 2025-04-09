@@ -11,12 +11,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useChatContext } from "@/lib/contexts/chat-context";
-import { useConversation, useRegenerateMessage } from "@/lib/queries/conversations";
-import { useModelStore } from "@/lib/stores/model-store";
+import { useRegenerateMessage } from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
 import { Message } from "ai";
 import { Copy, RefreshCw } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // Memoized message component to prevent unnecessary rerenders
@@ -101,13 +100,10 @@ const MessageItem = memo(
 MessageItem.displayName = "MessageItem";
 
 export default function ConversationPage() {
-  const router = useRouter();
   const params = useParams();
   const conversationId = params.id as string;
-  const { data: conversation, isLoading } = useConversation(conversationId);
-  const { setModel } = useModelStore();
 
-  const { messages, status, reload, setMessages, setInput } = useChatContext();
+  const { messages, status, reload, setInput } = useChatContext();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -142,20 +138,6 @@ export default function ConversationPage() {
     }
   }, [messages, userScrolled, scrollToBottom]);
 
-  useEffect(() => {
-    if (!isLoading && !conversation) {
-      router.push("/chat");
-    }
-
-    if (conversation?.model) {
-      setModel(conversation.model);
-    }
-
-    if (conversation?.messages) {
-      setMessages(conversation.messages);
-    }
-  }, [conversation, isLoading, router, setModel, setMessages]);
-
   // Memoize the messages list to prevent unnecessary rerenders
   const messagesList = useMemo(
     () => (
@@ -173,18 +155,6 @@ export default function ConversationPage() {
     ),
     [messages, status]
   );
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-svh">
-        <div className="flex gap-2">
-          <div className="size-4 bg-muted rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-          <div className="size-4 bg-muted rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-          <div className="size-4 bg-muted rounded-full animate-bounce"></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <ScrollArea

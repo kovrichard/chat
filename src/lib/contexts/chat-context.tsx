@@ -1,11 +1,12 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { QueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Message } from "ai";
-import React, { createContext, useContext, ReactNode } from "react";
+import { useParams, useRouter } from "next/navigation";
+import React, { createContext, useContext, ReactNode, useEffect, useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { useAddMessage } from "../queries/conversations";
+import { useAddMessage, useConversation } from "../queries/conversations";
 import { useUpdateConversationTitle } from "../queries/conversations";
 import { useModelStore } from "../stores/model-store";
 
@@ -25,19 +26,15 @@ interface ChatContextType {
 
 const ChatContext = createContext<ChatContextType | null>(null);
 
-export function ChatProvider({
-  children,
-  id = uuidv4(),
-  initialMessages = [],
-}: {
-  children: ReactNode;
-  id?: string;
-  initialMessages?: Message[];
-}) {
-  const queryClient = new QueryClient();
+export function ChatProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const params = useParams();
+  const conversationId = useMemo(() => (params.id as string) || uuidv4(), [params.id]);
+  const queryClient = useQueryClient();
   const updateTitle = useUpdateConversationTitle();
   const addMessage = useAddMessage();
-  const { model } = useModelStore();
+  const { model, setModel } = useModelStore();
+  const { data: conversation, isLoading } = useConversation(conversationId);
 
   const {
     messages,
@@ -50,15 +47,15 @@ export function ChatProvider({
     reload,
     setInput,
   } = useChat({
-    id,
-    initialMessages,
+    id: conversationId,
+    initialMessages: conversation?.messages,
     body: { model: model.id },
     onFinish: (message: Message) => {
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
 
       addMessage.mutateAsync({
         message,
-        conversationId: id,
+        conversationId,
       });
 
       if (messages.length === 1) {
@@ -70,11 +67,22 @@ export function ChatProvider({
         })
           .then((res) => res.text())
           .then((title) => {
-            updateTitle.mutateAsync({ conversationId: id, title });
+            updateTitle.mutateAsync({ conversationId, title });
           });
       }
     },
   });
+
+  useEffect(() => {
+    if (!isLoading && !conversation) {
+      router.push("/chat");
+    }
+
+    if (conversation) {
+      setMessages(conversation.messages);
+      setModel(conversation.model);
+    }
+  }, [conversation, isLoading, router]);
 
   return (
     <ChatContext.Provider
