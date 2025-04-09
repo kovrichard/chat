@@ -37,11 +37,11 @@ RUN bun run build
 
 FROM base AS release
 
-COPY --from=install /temp/prod/node_modules ./node_modules
-COPY --from=prerelease /usr/src/app/.next ./.next
-COPY --from=prerelease /usr/src/app/package.json ./
+COPY --from=prerelease /usr/src/app/public ./public
+COPY --from=prerelease /usr/src/app/.next/standalone ./
+COPY --from=prerelease /usr/src/app/.next/static ./.next/static
 
-CMD ["bun", "run", "start"]
+CMD ["bun", "run", "server.js"]
 
 FROM base AS dev
 
