@@ -1,13 +1,13 @@
-interface Message {
+export interface Message {
   content?: string;
-  reasoning?: string;
-  signature?: string;
+  reasoning: string | null;
+  signature: string | null;
 }
 
 interface ProcessedMessage {
   content?: string;
-  reasoning?: string;
-  signature?: string;
+  reasoning: string | null;
+  signature: string | null;
   parts: Array<{
     type: "text" | "reasoning";
     text?: string;
@@ -53,8 +53,6 @@ function processMessage(message: Message): ProcessedMessage {
   };
 }
 
-self.onmessage = (e) => {
-  const messages: Message[] = e.data;
-  const processedMessages = messages.map(processMessage);
-  self.postMessage(processedMessages);
-};
+export function processMessages(messages: Message[]): ProcessedMessage[] {
+  return messages.map(processMessage);
+}

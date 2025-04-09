@@ -13,7 +13,7 @@ import {
 } from "@tanstack/react-query";
 import { Message } from "ai";
 import { deleteMessageChainAfter } from "../actions/messages";
-import { useMessageProcessor } from "../hooks/use-message-processor";
+import { processMessages } from "../message-processor";
 
 const conversationKeys = {
   detail: (id: string) => ["conversations", id] as const,
@@ -46,8 +46,6 @@ export function useConversations(conversations: any) {
 }
 
 export function useConversation(id: string) {
-  const { processMessages } = useMessageProcessor();
-
   return useQuery({
     queryKey: conversationKeys.detail(id),
     queryFn: async () => {
@@ -56,8 +54,7 @@ export function useConversation(id: string) {
       const response = await fetch(`/api/conversations/${id}`);
       const data = await response.json();
 
-      // Process messages in Web Worker
-      const processedMessages = await processMessages(data.messages);
+      const processedMessages = processMessages(data.messages);
 
       return {
         ...data,
