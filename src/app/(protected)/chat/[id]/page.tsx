@@ -103,7 +103,7 @@ export default function ConversationPage() {
   const params = useParams();
   const conversationId = params.id as string;
 
-  const { messages, status, reload, setInput } = useChatContext();
+  const { messages, status, reload, setInput, stop } = useChatContext();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -137,6 +137,12 @@ export default function ConversationPage() {
       scrollToBottom();
     }
   }, [messages, userScrolled, scrollToBottom]);
+
+  useEffect(() => {
+    return () => {
+      stop();
+    };
+  }, []);
 
   // Memoize the messages list to prevent unnecessary rerenders
   const messagesList = useMemo(
