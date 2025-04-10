@@ -102,7 +102,7 @@ export function useUpdateConversationModel() {
     onSuccess: (updatedConversation, { conversationId }) => {
       queryClient.setQueryData(conversationKeys.detail(conversationId), (old: any) => ({
         ...old,
-        model: updatedConversation.model,
+        model: updatedConversation?.model,
       }));
     },
   });

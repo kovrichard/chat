@@ -7,6 +7,7 @@ import prisma from "@/lib/prisma";
 import { PartialConversation } from "@/types/chat";
 import { openai } from "@ai-sdk/openai";
 import { Message, generateText } from "ai";
+import { logger } from "../logger";
 
 export async function saveConversation(conversation: PartialConversation) {
   const userId = await getUserIdFromSession();
@@ -60,12 +61,17 @@ export async function updateConversationTitle(
 export async function saveConversationModel(conversationId: string, modelId: string) {
   const userId = await getUserIdFromSession();
 
-  const updatedConversation = await prisma.conversation.update({
-    where: { id: conversationId, userId },
-    data: { model: modelId },
-  });
+  try {
+    const updatedConversation = await prisma.conversation.update({
+      where: { id: conversationId, userId },
+      data: { model: modelId },
+    });
 
-  return updatedConversation;
+    return updatedConversation;
+  } catch (error: any) {
+    logger.error(error);
+    return null;
+  }
 }
 
 export async function deleteConversation(conversationId: string) {
