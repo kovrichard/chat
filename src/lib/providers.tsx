@@ -111,6 +111,15 @@ export const providers: Provider[] = [
     icon: LazyXAI,
     models: [
       {
+        id: "grok-3-beta",
+        name: "Grok 3",
+      },
+      {
+        id: "grok-3-mini-beta",
+        name: "Grok 3 mini",
+        features: [reasoning],
+      },
+      {
         id: "grok-2-1212",
         name: "Grok 2",
       },
