@@ -45,7 +45,31 @@ const MemoizedSyntaxHighlighter = memo(
 const CodeBlock = memo(
   ({ language, children }: { language: string; children: string }) => {
     const [isRendered, setIsRendered] = useState(false);
+    const [isStable, setIsStable] = useState(false);
     const codeRef = useRef<HTMLDivElement>(null);
+    const contentRef = useRef(children);
+    const timeoutRef = useRef<NodeJS.Timeout>();
+
+    useEffect(() => {
+      setIsStable(false);
+
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        if (contentRef.current === children) {
+          setIsStable(true);
+        }
+        contentRef.current = children;
+      }, 500);
+
+      return () => {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+      };
+    }, [children]);
 
     useEffect(() => {
       const observer = new IntersectionObserver(
@@ -74,7 +98,7 @@ const CodeBlock = memo(
           >
             <Copy className="size-4" />
           </Button>
-          {isRendered ? (
+          {isRendered && isStable ? (
             <MemoizedSyntaxHighlighter language={language}>
               {children.replace(/\n$/, "")}
             </MemoizedSyntaxHighlighter>
