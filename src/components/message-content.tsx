@@ -69,7 +69,7 @@ const CodeBlock = memo(
           <Button
             variant="ghost"
             size="icon"
-            className="absolute top-2 right-2 size-8 opacity-0 group-hover/code:opacity-100 transition-opacity duration-100"
+            className="absolute top-2 right-2 size-8 opacity-0 group-hover/code:opacity-100 transition-opacity duration-100 z-10"
             onClick={() => navigator.clipboard.writeText(String(children))}
           >
             <Copy className="size-4" />
