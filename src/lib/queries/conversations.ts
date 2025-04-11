@@ -45,7 +45,7 @@ export function useConversations(conversations: any) {
   });
 }
 
-export function useConversation(id: string) {
+export function useConversation(id: string, initialConversation?: any) {
   return useQuery({
     queryKey: conversationKeys.detail(id),
     queryFn: async () => {
@@ -60,6 +60,15 @@ export function useConversation(id: string) {
         ...data,
         messages: processedMessages,
       };
+    },
+    initialData: () => {
+      if (initialConversation) {
+        return {
+          ...initialConversation,
+          messages: processMessages(initialConversation.messages),
+        };
+      }
+      return null;
     },
   });
 }

@@ -1,0 +1,20 @@
+import { MessagesList } from "@/components/message-list";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { getConversation } from "@/lib/dao/conversations";
+
+export default async function ChatPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const conversation = await getConversation(id);
+
+  return (
+    <ScrollArea className="relative h-[calc(100svh-110px)] md:h-[calc(100svh-1rem-110px)]">
+      <div className="absolute top-0 left-0 right-0 max-w-5xl mx-auto h-6 bg-gradient-to-b from-background to-transparent pointer-events-none z-10 rounded-t-xl" />
+      <MessagesList id={id} initialConversation={conversation} />
+      <div className="absolute bottom-0 left-0 right-0 max-w-5xl mx-auto h-6 bg-gradient-to-t from-background to-transparent pointer-events-none z-10" />
+    </ScrollArea>
+  );
+}

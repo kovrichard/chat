@@ -9,7 +9,7 @@ import {
 import { IconPlayerStop } from "@tabler/icons-react";
 import { Send } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { FormEvent, KeyboardEvent, forwardRef } from "react";
+import { FormEvent, KeyboardEvent, forwardRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 
 import { PartialConversation } from "@/types/chat";
@@ -23,8 +23,8 @@ const InputForm = forwardRef<HTMLTextAreaElement, { freeMessages: number }>(
     const pathname = usePathname();
     const createConversationOptimistic = useCreateConversationOptimistic();
     const addMessage = useAddMessage();
-    const { id, input, model, handleInputChange, handleSubmit, status, stop } =
-      useChatContext();
+    const [input, setInput] = useState("");
+    const { id, model, status, append, stop } = useChatContext();
     const { data: subscription } = useQuery({
       queryKey: ["subscription"],
       queryFn: async () => {
@@ -70,6 +70,7 @@ const InputForm = forwardRef<HTMLTextAreaElement, { freeMessages: number }>(
         };
 
         createConversationOptimistic.mutate(optimisticConversation);
+        setInput("");
         router.push(`/chat/${conversationId}`);
       } else {
         addMessage.mutate({
@@ -80,7 +81,12 @@ const InputForm = forwardRef<HTMLTextAreaElement, { freeMessages: number }>(
           },
           conversationId: id,
         });
-        handleSubmit(e as FormEvent<HTMLFormElement>);
+        append({
+          id: uuidv4(),
+          role: "user",
+          content: input,
+        });
+        setInput("");
       }
     }
 
@@ -95,7 +101,7 @@ const InputForm = forwardRef<HTMLTextAreaElement, { freeMessages: number }>(
             ref={ref}
             placeholder="(Shift + Enter for new line)"
             value={input}
-            onChange={handleInputChange}
+            onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             rows={1}
             className="flex min-h-10 max-h-80 w-full bg-transparent placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 text-sm resize-none"

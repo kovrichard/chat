@@ -3,7 +3,7 @@
 import { useChat } from "@ai-sdk/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Message } from "ai";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import React, {
   createContext,
   useContext,
@@ -15,7 +15,7 @@ import React, {
 import { v4 as uuidv4 } from "uuid";
 import { getModel } from "../providers";
 import { Model } from "../providers";
-import { useAddMessage, useConversation } from "../queries/conversations";
+import { useAddMessage } from "../queries/conversations";
 import { useUpdateConversationTitle } from "../queries/conversations";
 
 type ChatStatus = "submitted" | "streaming" | "ready" | "error";
@@ -28,17 +28,16 @@ interface ChatContextType {
   setModelId: (modelId: string) => void;
   setMessages: (messages: Message[]) => void;
   handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   status: ChatStatus;
   stop: () => void;
   reload: (options?: { body?: Record<string, any> }) => void;
+  append: (message: Message) => void;
   setInput: (input: string) => void;
 }
 
 const ChatContext = createContext<ChatContextType | null>(null);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
-  const router = useRouter();
   const params = useParams();
   const conversationId = useMemo(() => (params.id as string) || uuidv4(), [params.id]);
   const queryClient = useQueryClient();
@@ -46,7 +45,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const addMessage = useAddMessage();
   const [model, setModel] = useState<Model>(getModel("4o-mini") as Model);
   const [modelId, setModelId] = useState<string>("4o-mini");
-  const { data: conversation, isLoading } = useConversation(conversationId);
 
   const {
     id,
@@ -54,14 +52,13 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     input,
     setMessages,
     handleInputChange,
-    handleSubmit,
     status,
     stop,
     reload,
+    append,
     setInput,
   } = useChat({
     id: conversationId,
-    initialMessages: conversation?.messages,
     body: { model: model.id },
     onFinish: (message: Message) => {
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
@@ -86,20 +83,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setModel(getModel(modelId) as Model);
   }, [modelId]);
 
-  useEffect(() => {
-    if (!isLoading && !conversation) {
-      router.push("/chat");
-    }
-
-    if (conversation?.messages) {
-      setMessages(conversation.messages);
-    }
-
-    if (conversation?.model) {
-      setModelId(conversation.model);
-    }
-  }, [conversation, isLoading, router]);
-
   return (
     <ChatContext.Provider
       value={{
@@ -110,10 +93,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         setModelId,
         setMessages,
         handleInputChange,
-        handleSubmit,
         status,
         stop,
         reload,
+        append,
         setInput,
       }}
     >
