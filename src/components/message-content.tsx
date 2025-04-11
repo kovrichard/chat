@@ -123,7 +123,10 @@ const MemoizedMarkdownBlock = memo(
             return match ? (
               <CodeBlock language={match[1]}>{String(children)}</CodeBlock>
             ) : (
-              <code className="bg-zinc-800 px-1 py-0.5 rounded text-sm" {...props}>
+              <code
+                className="bg-zinc-800 border border-[rgb(225,225,232)] text-zinc-300 px-1 py-0.5 rounded text-sm"
+                {...props}
+              >
                 {children}
               </code>
             );
