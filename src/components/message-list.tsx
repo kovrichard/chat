@@ -46,9 +46,13 @@ export function MessagesList({
     }
   }, [messages.length, reload]);
 
-  useEffect(() => {
+  function scrollDown() {
     messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
-  }, [conversation?.messages.length]);
+  }
+
+  useEffect(() => {
+    scrollDown();
+  }, [conversation?.messages.length, status]);
 
   const memoizedConversationMessages = useMemo(() => {
     return conversation?.messages?.map((message: any) => (
