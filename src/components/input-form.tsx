@@ -94,10 +94,10 @@ const InputForm = forwardRef<HTMLTextAreaElement, { freeMessages: number }>(
     }
 
     return (
-      <div className="flex-none">
+      <div className="flex-none sm:px-4 max-w-5xl w-full mx-auto">
         <form
           onSubmit={handleSendMessage}
-          className="flex flex-col w-full max-w-5xl mx-auto items-end border rounded-t-xl sm:rounded-b-xl p-4 bg-card"
+          className="flex flex-col items-end border rounded-t-xl sm:rounded-b-xl p-4 bg-card"
         >
           <TextareaAutosize
             id="message-input"

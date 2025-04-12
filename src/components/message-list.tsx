@@ -63,7 +63,7 @@ export function MessagesList({
   }, [messages, lastMessageIndex, status]);
 
   return (
-    <div className="flex flex-col max-w-5xl mx-auto gap-4 px-4 pt-8">
+    <div className="flex flex-col max-w-5xl mx-auto gap-4 px-4 sm:px-8 pt-8">
       {memoizedConversationMessages}
       {memoizedLastMessage}
       {status === "submitted" && <LoadingDots className="text-muted-foreground" />}
