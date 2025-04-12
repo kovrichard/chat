@@ -18,7 +18,6 @@ export function MessagesList({
   id: string;
 }) {
   const router = useRouter();
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const { messages, status, setMessages, setModelId, setInput, reload } =
     useChatContext();
   const { data: conversation } = useConversation(id, initialConversation);
@@ -46,14 +45,6 @@ export function MessagesList({
     }
   }, [messages.length, reload]);
 
-  function scrollDown() {
-    messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
-  }
-
-  useEffect(() => {
-    scrollDown();
-  }, [conversation?.messages.length, status]);
-
   const memoizedConversationMessages = useMemo(() => {
     return conversation?.messages?.map((message: any) => (
       <MemoizedMessageItem key={message.id} message={message} />
@@ -76,7 +67,7 @@ export function MessagesList({
       {memoizedConversationMessages}
       {memoizedLastMessage}
       {status === "submitted" && <LoadingDots className="text-muted-foreground" />}
-      <div ref={messagesEndRef} />
+      <div id="messages-end" />
     </div>
   );
 }
