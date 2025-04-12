@@ -1,7 +1,13 @@
 import { getUserFromSession } from "@/lib/dao/users";
-import { NextResponse } from "next/server";
+import rateLimit from "@/lib/rate-limiter";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+const limiter = rateLimit(10, 60);
+
+export async function GET(request: NextRequest) {
+  const response = limiter(request);
+  if (response) return response;
+
   const user = await getUserFromSession();
 
   return NextResponse.json({

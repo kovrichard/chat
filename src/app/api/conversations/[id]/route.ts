@@ -1,11 +1,16 @@
 import { getConversation } from "@/lib/dao/conversations";
-import { processMessages } from "@/lib/message-processor";
-import { NextResponse } from "next/server";
+import rateLimit from "@/lib/rate-limiter";
+import { NextRequest, NextResponse } from "next/server";
+
+const limiter = rateLimit(50, 30);
 
 export async function GET(
-  _request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const response = limiter(request);
+  if (response) return response;
+
   const { id } = await params;
 
   const conversation = await getConversation(id);

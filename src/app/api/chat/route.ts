@@ -6,6 +6,7 @@ import {
   saveUserMessage,
 } from "@/lib/dao/messages";
 import { decrementFreeMessages, getUserFromSession } from "@/lib/dao/users";
+import rateLimit from "@/lib/rate-limiter";
 import { AnthropicProviderOptions, anthropic } from "@ai-sdk/anthropic";
 import { createAzure } from "@ai-sdk/azure";
 import { fireworks } from "@ai-sdk/fireworks";
@@ -18,7 +19,10 @@ import {
   streamText,
   wrapLanguageModel,
 } from "ai";
+import { NextRequest } from "next/server";
 import { v4 as uuidv4 } from "uuid";
+
+const limiter = rateLimit(10, 60);
 
 export const maxDuration = 30;
 
@@ -72,7 +76,10 @@ function getProviderOptions(model: string) {
   return providerOptions;
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  const response = limiter(req);
+  if (response) return response;
+
   const start = Date.now();
   const user = await getUserFromSession();
   const userFetched = Date.now();
