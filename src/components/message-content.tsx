@@ -4,7 +4,8 @@ import { marked } from "marked";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { xonokai } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { tomorrow } from "react-syntax-highlighter/dist/esm/styles/prism";
+// xonokai, tomorrow, twilight, prism
 import { ThinkingIndicator } from "./thinking-indicator";
 import { Button } from "./ui/button";
 
@@ -24,10 +25,10 @@ const MemoizedSyntaxHighlighter = memo(
   }) => {
     return (
       <SyntaxHighlighter
-        style={xonokai}
+        style={tomorrow}
         language={language}
         PreTag="div"
-        className="rounded-md border border-zinc-700 p-4"
+        className="rounded-md border !bg-sidebar/90 p-4"
         customStyle={{
           margin: 0,
           borderRadius: "0.375rem",
@@ -103,7 +104,7 @@ const CodeBlock = memo(
               {children.replace(/\n$/, "")}
             </MemoizedSyntaxHighlighter>
           ) : (
-            <div className="bg-zinc-800 p-[15px] rounded-md border text-[14px] border-[rgb(225,225,232)] text-zinc-300 whitespace-pre-wrap overflow-auto">
+            <div className="bg-sidebar/90 p-[1em] rounded-md border text-base text-sidebar-foreground whitespace-pre-wrap overflow-auto font-[Consolas,Monaco,monospace]">
               <code className="whitespace-pre-wrap">{children}</code>
             </div>
           )}
@@ -124,7 +125,7 @@ const MemoizedMarkdownBlock = memo(
               <CodeBlock language={match[1]}>{String(children)}</CodeBlock>
             ) : (
               <code
-                className="bg-zinc-800 border border-[rgb(225,225,232)] text-zinc-300 px-1 py-0.5 rounded text-sm"
+                className="bg-sidebar border text-sidebar-foreground px-1 py-0.5 rounded text-sm"
                 {...props}
               >
                 {children}
