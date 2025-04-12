@@ -2,7 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { useChatContext } from "@/lib/contexts/chat-context";
-import { ChangeEvent, useEffect } from "react";
+import { useInputStore } from "@/stores/input-store";
+import { useEffect } from "react";
 
 const examples = [
   "105 degrees Fahrenheit to Celsius ",
@@ -12,12 +13,11 @@ const examples = [
 ];
 
 export default function ChatPage() {
-  const { setModelId, handleInputChange } = useChatContext();
+  const { setModelId } = useChatContext();
+  const { setInput } = useInputStore();
 
   const handleExampleClick = (example: string) => {
-    handleInputChange({
-      target: { value: example },
-    } as ChangeEvent<HTMLTextAreaElement>);
+    setInput(example);
     setTimeout(() => {
       const textarea = document.getElementById("message-input") as HTMLTextAreaElement;
       if (textarea) {

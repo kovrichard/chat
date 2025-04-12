@@ -9,9 +9,10 @@ import {
 import { IconPlayerStop } from "@tabler/icons-react";
 import { Send } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { FormEvent, KeyboardEvent, forwardRef, useState } from "react";
+import { FormEvent, KeyboardEvent, forwardRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 
+import { useInputStore } from "@/stores/input-store";
 import { PartialConversation } from "@/types/chat";
 import { useQuery } from "@tanstack/react-query";
 import { v4 as uuidv4 } from "uuid";
@@ -23,7 +24,7 @@ const InputForm = forwardRef<HTMLTextAreaElement, { freeMessages: number }>(
     const pathname = usePathname();
     const createConversationOptimistic = useCreateConversationOptimistic();
     const addMessage = useAddMessage();
-    const [input, setInput] = useState("");
+    const { input, setInput } = useInputStore();
     const { id, model, status, append, stop } = useChatContext();
     const { data: subscription } = useQuery({
       queryKey: ["subscription"],
