@@ -89,26 +89,24 @@ const CodeBlock = memo(
     }, []);
 
     return (
-      <div className="relative my-2" ref={codeRef}>
-        <div className="overflow-x-auto group/code">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute top-2 right-2 size-8 opacity-0 group-hover/code:opacity-100 transition-opacity duration-100 z-10"
-            onClick={() => navigator.clipboard.writeText(String(children))}
-          >
-            <Copy className="size-4" />
-          </Button>
-          {isRendered && isStable ? (
-            <MemoizedSyntaxHighlighter language={language}>
-              {children.replace(/\n$/, "")}
-            </MemoizedSyntaxHighlighter>
-          ) : (
-            <div className="bg-sidebar/90 p-[1em] rounded-md border text-base text-sidebar-foreground whitespace-pre-wrap overflow-auto font-[Consolas,Monaco,monospace]">
-              <code className="whitespace-pre-wrap">{children}</code>
-            </div>
-          )}
-        </div>
+      <div className="relative my-2 overflow-x-auto group/code" ref={codeRef}>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute top-2 right-2 size-8 opacity-0 group-hover/code:opacity-100 transition-opacity duration-100 z-10"
+          onClick={() => navigator.clipboard.writeText(String(children))}
+        >
+          <Copy className="size-4" />
+        </Button>
+        {isRendered && isStable ? (
+          <MemoizedSyntaxHighlighter language={language}>
+            {children.replace(/\n$/, "")}
+          </MemoizedSyntaxHighlighter>
+        ) : (
+          <div className="bg-sidebar/90 p-[1em] rounded-md border text-base text-sidebar-foreground overflow-auto">
+            <code>{children}</code>
+          </div>
+        )}
       </div>
     );
   }
@@ -197,7 +195,13 @@ export function MessageContent({ message }: { message: Message }) {
 
   if (message.role === "assistant") {
     return blocks.map((block, index) => (
-      <MemoizedMarkdownBlock key={`${message.id}-block-${index}`} content={block} />
+      <div
+        key={`${message.id}-block-${index}`}
+        className="break-words"
+        style={{ wordBreak: "break-word" }}
+      >
+        <MemoizedMarkdownBlock content={block} />
+      </div>
     ));
   }
 }

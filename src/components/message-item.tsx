@@ -26,7 +26,9 @@ export function MessageItem({ message }: { message: Message }) {
     <div
       className={cn(
         "flex flex-col gap-1 group",
-        message.role === "user" ? "ml-auto max-w-[60%] items-end" : "mr-auto max-w-full"
+        message.role === "user"
+          ? "ml-auto max-w-[80%] sm:max-w-[60%] items-end"
+          : "mr-auto max-w-full"
       )}
     >
       <MessageContent message={message} />
