@@ -50,9 +50,9 @@ const InputForm = forwardRef<HTMLTextAreaElement, { freeMessages: number }>(
       e.preventDefault();
       if (!input.trim()) return;
 
-      if (pathname === "/chat") {
-        if (status !== "ready") return;
+      if (status !== "ready") return;
 
+      if (pathname === "/chat") {
         const conversationId = uuidv4();
         const optimisticConversation: PartialConversation = {
           id: conversationId,
@@ -82,11 +82,13 @@ const InputForm = forwardRef<HTMLTextAreaElement, { freeMessages: number }>(
           },
           conversationId: id,
         });
-        append({
-          id: uuidv4(),
-          role: "user",
-          content: input,
-        });
+        setTimeout(() => {
+          append({
+            id: uuidv4(),
+            role: "user",
+            content: input,
+          });
+        }, 200);
         setInput("");
       }
     }
