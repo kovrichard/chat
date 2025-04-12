@@ -11,6 +11,8 @@ function rateLimit(limit: number, intervalSeconds: number) {
       requests.set(ip, { count: 0, firstRequest: Date.now() });
     }
 
+    console.log(requests);
+
     const data = requests.get(ip);
     if (Date.now() - data.firstRequest > msInterval) {
       // Reset the count every interval
