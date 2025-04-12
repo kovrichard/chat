@@ -8,6 +8,15 @@ import { tomorrow } from "react-syntax-highlighter/dist/esm/styles/prism";
 // xonokai, tomorrow, twilight, prism
 import { ThinkingIndicator } from "./thinking-indicator";
 import { Button } from "./ui/button";
+import { ScrollArea } from "./ui/scroll-area";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./ui/sheet";
 
 function parseMarkdownIntoBlocks(markdown: string): string[] {
   const tokens = marked.lexer(markdown);
@@ -194,14 +203,44 @@ export function MessageContent({ message }: { message: Message }) {
   }
 
   if (message.role === "assistant") {
-    return blocks.map((block, index) => (
-      <div
-        key={`${message.id}-block-${index}`}
-        className="break-words"
-        style={{ wordBreak: "break-word" }}
-      >
-        <MemoizedMarkdownBlock content={block} />
+    return (
+      <div className="flex flex-col gap-4">
+        {message.parts?.[0].type === "reasoning" && (
+          <Sheet>
+            <SheetTrigger className="text-sm text-muted-foreground mr-auto">
+              Reasoning
+            </SheetTrigger>
+            <SheetContent className="px-0">
+              <SheetHeader className="px-6">
+                <SheetTitle>Reasoning</SheetTitle>
+                <SheetDescription className="sr-only">
+                  Thought process of the model
+                </SheetDescription>
+              </SheetHeader>
+              <div className="relative h-full pt-4 pb-6">
+                <div className="absolute top-4 left-0 right-0 w-full h-4 bg-gradient-to-b from-background to-transparent pointer-events-none z-10" />
+                <ScrollArea className="h-full px-6">
+                  <p className="text-sm text-muted-foreground pt-2 pb-4">
+                    {message.parts?.[0].reasoning}
+                  </p>
+                </ScrollArea>
+                <div className="absolute bottom-6 left-0 right-0 w-full h-6 bg-gradient-to-t from-background to-transparent pointer-events-none z-10" />
+              </div>
+            </SheetContent>
+          </Sheet>
+        )}
+        <div>
+          {blocks.map((block, index) => (
+            <div
+              key={`${message.id}-block-${index}`}
+              className="break-words"
+              style={{ wordBreak: "break-word" }}
+            >
+              <MemoizedMarkdownBlock content={block} />
+            </div>
+          ))}
+        </div>
       </div>
-    ));
+    );
   }
 }
