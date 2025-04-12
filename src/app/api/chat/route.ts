@@ -12,7 +12,12 @@ import { fireworks } from "@ai-sdk/fireworks";
 import { google } from "@ai-sdk/google";
 import { perplexity } from "@ai-sdk/perplexity";
 import { xai } from "@ai-sdk/xai";
-import { smoothStream, streamText } from "ai";
+import {
+  extractReasoningMiddleware,
+  smoothStream,
+  streamText,
+  wrapLanguageModel,
+} from "ai";
 import { v4 as uuidv4 } from "uuid";
 
 export const maxDuration = 30;
@@ -20,6 +25,13 @@ export const maxDuration = 30;
 const azure = createAzure({
   apiVersion: "2024-12-01-preview",
 });
+
+const reasoningFireworks = (model: string) => {
+  return wrapLanguageModel({
+    model: fireworks(model),
+    middleware: extractReasoningMiddleware({ tagName: "think" }),
+  });
+};
 
 const allowedModels = {
   "4o-mini": azure("gpt-4o-mini"),
@@ -38,7 +50,7 @@ const allowedModels = {
   "llama-4-maverick": fireworks(
     "accounts/fireworks/models/llama4-maverick-instruct-basic"
   ),
-  "deepseek-r1": fireworks("accounts/fireworks/models/deepseek-r1"),
+  "deepseek-r1": reasoningFireworks("accounts/fireworks/models/deepseek-r1"),
   "deepseek-v3": fireworks("accounts/fireworks/models/deepseek-v3"),
   sonar: perplexity("sonar"),
   "sonar-pro": perplexity("sonar-pro"),
