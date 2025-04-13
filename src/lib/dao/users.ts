@@ -100,3 +100,14 @@ export async function updateUserWithStripeCustomerId(userId: number, customerId:
     },
   });
 }
+
+export async function updateSubscription(userId: number, subscription: string) {
+  await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      subscription,
+    },
+  });
+}

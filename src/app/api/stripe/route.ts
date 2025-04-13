@@ -1,4 +1,5 @@
 import conf from "@/lib/config";
+import { updateSubscription } from "@/lib/dao/users";
 import { logger } from "@/lib/logger";
 import { stripe } from "@/lib/stripe";
 import { ensure } from "@/lib/utils";
@@ -30,6 +31,16 @@ export async function POST(req: Request) {
     case "customer.subscription.updated": {
       const subscription = event.data.object as Stripe.Subscription;
       logger.info(`Subscription updated: ${subscription.id}`);
+
+      await updateSubscription(
+        parseInt(subscription.metadata.userId),
+        subscription.items.data[0].price.lookup_key || "free"
+      );
+      break;
+    }
+    case "invoice.payment_succeeded": {
+      const invoice = event.data.object as Stripe.Invoice;
+      logger.info(`Invoice payment succeeded: ${invoice.id}`);
       break;
     }
     default: {

@@ -7,7 +7,7 @@ import { SidebarMenuButton } from "./ui/sidebar";
 export function SignOut() {
   return (
     <SidebarMenuButton className="h-10" onClick={() => signOut()}>
-      <LogOut className="shrink-0" size={24} />
+      <LogOut className="shrink-0" />
       <span>Sign Out</span>
     </SidebarMenuButton>
   );
