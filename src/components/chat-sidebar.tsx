@@ -73,7 +73,8 @@ export default function ChatSidebar({ conversations }: { conversations: any }) {
           fetchNextPage();
         }
       },
-      { threshold: 0.1 }
+      // Trigger when the new element is 1px from the bottom of the viewport
+      { threshold: 0 }
     );
 
     if (loadMoreRef.current) {
