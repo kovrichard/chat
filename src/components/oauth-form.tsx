@@ -23,7 +23,10 @@ export default function OAuthForm({ provider }: { provider: string }) {
         });
       }}
     >
-      <Button type="submit" className="flex gap-2 w-full">
+      <Button
+        type="submit"
+        className="flex gap-2 w-full bg-white text-black hover:bg-gray-100 border"
+      >
         <Image
           src={`/${provider}.svg`}
           width="20"
