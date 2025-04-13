@@ -17,6 +17,10 @@ export default function ProfileMenu({
   const { data } = useQuery({
     queryKey: ["billing-portal-url"],
     queryFn: async () => {
+      if (!hasCustomerId) {
+        return null;
+      }
+
       const response = await fetch("/api/subscription/billing-portal");
       const data = await response.json();
       return data.url;
