@@ -18,8 +18,8 @@ import { useQuery } from "@tanstack/react-query";
 import { v4 as uuidv4 } from "uuid";
 import { ModelMenu } from "./model-menu";
 
-const InputForm = forwardRef<HTMLTextAreaElement, { freeMessages: number }>(
-  ({ freeMessages }, ref) => {
+const InputForm = forwardRef<HTMLTextAreaElement, { plan: string; freeMessages: number }>(
+  ({ plan, freeMessages }, ref) => {
     const router = useRouter();
     const pathname = usePathname();
     const createConversationOptimistic = useCreateConversationOptimistic();
@@ -33,6 +33,7 @@ const InputForm = forwardRef<HTMLTextAreaElement, { freeMessages: number }>(
         return response.json();
       },
       initialData: {
+        plan,
         freeMessages,
       },
     });
@@ -112,7 +113,7 @@ const InputForm = forwardRef<HTMLTextAreaElement, { freeMessages: number }>(
           <div className="flex items-center w-full gap-2">
             <ModelMenu />
             <div className="flex items-center ml-auto">
-              {subscription && (
+              {subscription && subscription.plan === "free" && (
                 <p className="text-sm text-muted-foreground font-medium h-9 px-4 py-2">
                   {subscription.freeMessages <= 0 ? (
                     <span>Out of messages</span>

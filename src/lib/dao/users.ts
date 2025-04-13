@@ -111,3 +111,10 @@ export async function updateSubscription(userId: number, subscription: string) {
     },
   });
 }
+
+export async function setFreeMessages(userId: number, freeMessages: number) {
+  await prisma.user.update({
+    where: { id: userId },
+    data: { freeMessages },
+  });
+}

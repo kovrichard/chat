@@ -11,12 +11,10 @@ import {
 
 export default function ProfileMenu({
   hasCustomerId,
-  freeMessages,
 }: {
   hasCustomerId: boolean;
-  freeMessages: number;
 }) {
-  const { data } = useQuery({
+  const { data: billingPortalUrl } = useQuery({
     queryKey: ["billing-portal-url"],
     queryFn: async () => {
       if (!hasCustomerId) {
@@ -28,6 +26,14 @@ export default function ProfileMenu({
       return data.url;
     },
   });
+  const { data: subscription } = useQuery({
+    queryKey: ["subscription"],
+    queryFn: async () => {
+      const response = await fetch("/api/subscription");
+      const data = await response.json();
+      return data;
+    },
+  });
 
   return (
     <>
@@ -37,12 +43,12 @@ export default function ProfileMenu({
           <DropdownMenuSeparator />
           <div className="flex items-center gap-2 h-9 px-2 py-1.5 text-muted-foreground text-sm">
             <MessageSquare className="shrink-0" size={16} />
-            <span>Messages left: {freeMessages}</span>
+            <span>Messages left: {subscription.freeMessages}</span>
           </div>
           <DropdownMenuSeparator />
           <DropdownMenuItem className="p-0 h-10">
             <a
-              href={data}
+              href={billingPortalUrl}
               target="_blank"
               className="flex items-center gap-2 size-full px-2 py-1.5"
             >

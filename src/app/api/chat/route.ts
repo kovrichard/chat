@@ -85,8 +85,8 @@ export async function POST(req: NextRequest) {
   const userFetched = Date.now();
   console.log(`User fetched in: ${userFetched - start}ms`);
 
-  if (user.subscription === "free" && user.freeMessages <= 0) {
-    return new Response("Out of free messages", { status: 400 });
+  if (user.freeMessages <= 0) {
+    return new Response("Out of available messages", { status: 400 });
   }
 
   const { id, messages, model: modelId, firstMessage } = await req.json();
@@ -134,9 +134,7 @@ export async function POST(req: NextRequest) {
         await saveUserMessage(lastMessage.content, id);
         await saveResultAsAssistantMessage(result, id);
       }
-      if (user.subscription === "free") {
-        await decrementFreeMessages(user.id);
-      }
+      await decrementFreeMessages(user.id);
     },
     onError: (error) => {
       console.error(error);

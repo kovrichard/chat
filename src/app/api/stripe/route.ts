@@ -1,5 +1,5 @@
 import conf from "@/lib/config";
-import { updateSubscription } from "@/lib/dao/users";
+import { setFreeMessages, updateSubscription } from "@/lib/dao/users";
 import { logger } from "@/lib/logger";
 import { stripe } from "@/lib/stripe";
 import { ensure } from "@/lib/utils";
@@ -39,8 +39,17 @@ export async function POST(req: Request) {
       break;
     }
     case "invoice.payment_succeeded": {
-      const invoice = event.data.object as Stripe.Invoice;
+      const invoice = event.data.object as any;
       logger.info(`Invoice payment succeeded: ${invoice.id}`);
+
+      const subscription = await stripe.subscriptions.retrieve(
+        invoice.parent.subscription_details.subscription
+      );
+
+      if (subscription.items.data[0].price.lookup_key === "pro") {
+        await setFreeMessages(parseInt(subscription.metadata.userId), 2000);
+      }
+
       break;
     }
     default: {

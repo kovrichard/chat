@@ -11,6 +11,7 @@ export async function GET(request: NextRequest) {
   const user = await getUserFromSession();
 
   return NextResponse.json({
+    plan: user.subscription,
     freeMessages: user.freeMessages,
   });
 }
