@@ -113,11 +113,7 @@ const InputForm = forwardRef<HTMLTextAreaElement, { freeMessages: number }>(
             <ModelMenu />
             <div className="flex items-center ml-auto">
               {subscription && (
-                <Button
-                  variant="ghost"
-                  type="button"
-                  className="text-sm text-muted-foreground h-9"
-                >
+                <p className="text-sm text-muted-foreground font-medium h-9 px-4 py-2">
                   {subscription.freeMessages <= 0 ? (
                     <span>Out of messages</span>
                   ) : subscription.freeMessages === 1 ? (
@@ -125,7 +121,7 @@ const InputForm = forwardRef<HTMLTextAreaElement, { freeMessages: number }>(
                   ) : (
                     <span>{subscription.freeMessages} messages left</span>
                   )}
-                </Button>
+                </p>
               )}
             </div>
             {status === "submitted" || status === "streaming" ? (
