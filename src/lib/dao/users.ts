@@ -87,3 +87,14 @@ export async function decrementFreeMessages(userId: number) {
     data: { freeMessages: { decrement: 1 } },
   });
 }
+
+export async function updateUserWithStripeCustomerId(userId: number, customerId: string) {
+  await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      customerId,
+    },
+  });
+}

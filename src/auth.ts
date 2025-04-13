@@ -1,10 +1,16 @@
 import { randomBytes, scryptSync } from "crypto";
-import { getUserByEmail, saveUser } from "@/lib/dao/users";
+import {
+  getUserByEmail,
+  saveUser,
+  updateUserWithStripeCustomerId,
+} from "@/lib/dao/users";
 import NextAuth from "next-auth";
 import { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
+import conf from "./lib/config";
+import { createStripeCustomer, createStripeTrialSubscription } from "./lib/stripe";
 
 export class InvalidLoginError extends CredentialsSignin {
   code = "invalid_credentials";
@@ -31,12 +37,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           const passwordHash = await hashPassword(credentials.password as string);
 
-          const newUser = await saveUser({
-            name: credentials.name as string,
-            email: credentials.email as string,
-            password: passwordHash,
-            picture: "",
-          });
+          const newUser = await createNewUser(
+            credentials.name as string,
+            credentials.email as string,
+            "",
+            passwordHash
+          );
 
           return newUser as any;
         } else {
@@ -71,11 +77,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const existingUser = await getUserByEmail(email || "");
 
       if (!existingUser) {
-        await saveUser({
-          name: name,
-          email: email,
-          picture: picture || "",
-        });
+        await createNewUser(name, email, picture || "");
       }
 
       return true;
@@ -95,6 +97,32 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
 });
+
+async function createNewUser(
+  name: string,
+  email: string,
+  picture: string,
+  password?: string
+) {
+  const user = await saveUser({
+    name: name,
+    email: email,
+    password: password,
+    picture: picture,
+  });
+
+  if (
+    conf.stripeSecretKey &&
+    conf.stripeWebhookSecret &&
+    conf.stripeTrialSubscriptionPriceId
+  ) {
+    const customer = await createStripeCustomer(user);
+    await updateUserWithStripeCustomerId(user.id, customer.id);
+    await createStripeTrialSubscription(user.id, customer.id);
+  }
+
+  return user;
+}
 
 async function hashPassword(plainPassword: string) {
   try {
