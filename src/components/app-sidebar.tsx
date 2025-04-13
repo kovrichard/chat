@@ -4,17 +4,27 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { getConversations } from "@/lib/dao/conversations";
+import { getUserFromSession } from "@/lib/dao/users";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import ChatSidebar from "./chat-sidebar";
-import { SignOut } from "./signout-button";
+import ProfileMenu from "./profile-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 export async function AppSidebar() {
-  const conversations = await getConversations(1, 15);
+  const userData = getUserFromSession();
+  const conversationsData = getConversations(1, 15);
+  const [user, conversations] = await Promise.all([userData, conversationsData]);
 
   return (
     <Sidebar className="border-none">
@@ -35,7 +45,25 @@ export async function AppSidebar() {
       <SidebarFooter className="pl-4 py-4">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SignOut />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild className="h-auto">
+                <SidebarMenuButton>
+                  <Avatar className="size-7">
+                    <AvatarImage src={user?.picture || ""} />
+                    <AvatarFallback>
+                      {user?.name
+                        ?.split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <p>{user.name || "User"}</p>
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="md:w-64">
+                <ProfileMenu />
+              </DropdownMenuContent>
+            </DropdownMenu>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

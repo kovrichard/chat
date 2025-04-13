@@ -23,6 +23,7 @@ type SessionUser = {
   picture: string;
   subscription: string;
   freeMessages: number;
+  customerId: string | null;
 };
 
 export const getUserIdFromSession = cache(async (): Promise<number> => {
@@ -53,6 +54,7 @@ export const getUserFromSession = cache(async (): Promise<SessionUser> => {
       picture: true,
       subscription: true,
       freeMessages: true,
+      customerId: true,
     },
   });
 
