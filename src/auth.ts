@@ -80,8 +80,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       return true;
     },
+    async jwt({ token, trigger }) {
+      if (trigger === "signIn") {
+        const user = await getUserByEmail(token.email as string);
+        token.userId = user?.id;
+      }
+
+      return token;
+    },
     async session({ session, token }) {
-      session.user.id = token.sub as string;
+      session.user.id = token.userId as string;
 
       return session;
     },
