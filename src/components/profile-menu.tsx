@@ -9,7 +9,11 @@ import {
   DropdownMenuSeparator,
 } from "./ui/dropdown-menu";
 
-export default function ProfileMenu() {
+export default function ProfileMenu({
+  hasCustomerId,
+}: {
+  hasCustomerId: boolean;
+}) {
   const { data } = useQuery({
     queryKey: ["billing-portal-url"],
     queryFn: async () => {
@@ -23,16 +27,18 @@ export default function ProfileMenu() {
     <>
       <DropdownMenuLabel>My Account</DropdownMenuLabel>
       <DropdownMenuSeparator />
-      <DropdownMenuItem className="p-0 h-10">
-        <a
-          href={data}
-          target="_blank"
-          className="flex items-center gap-2 size-full px-2 py-1.5"
-        >
-          <CreditCard className="shrink-0" size={24} />
-          <span>Billing</span>
-        </a>
-      </DropdownMenuItem>
+      {hasCustomerId && (
+        <DropdownMenuItem className="p-0 h-10">
+          <a
+            href={data}
+            target="_blank"
+            className="flex items-center gap-2 size-full px-2 py-1.5"
+          >
+            <CreditCard className="shrink-0" size={24} />
+            <span>Billing</span>
+          </a>
+        </DropdownMenuItem>
+      )}
       <DropdownMenuSeparator />
       <DropdownMenuItem asChild>
         <SignOut />

@@ -1,12 +1,16 @@
 import conf from "@/lib/config";
 import { logger } from "@/lib/logger";
+import { stripe } from "@/lib/stripe";
+import { ensure } from "@/lib/utils";
 import Stripe from "stripe";
 
 export async function POST(req: Request) {
-  if (!conf.stripeSecretKey || !conf.stripeWebhookSecret) {
+  try {
+    ensure(stripe, "Stripe is not configured");
+  } catch (err: any) {
+    logger.error(err);
     return new Response("Not implemented", { status: 501 });
   }
-  const stripe = (await import("@/lib/stripe")).stripe;
 
   const sig = req.headers.get("stripe-signature") || "";
   let event;

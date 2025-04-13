@@ -61,7 +61,7 @@ export async function AppSidebar() {
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="md:w-64">
-                <ProfileMenu />
+                <ProfileMenu hasCustomerId={Boolean(user.customerId)} />
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>

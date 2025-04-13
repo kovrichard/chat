@@ -35,3 +35,9 @@ export function debounce(func: Function, wait = 100) {
     timeout = setTimeout(later, wait);
   };
 }
+
+export function ensure(condition: any, message: string): asserts condition {
+  if (!condition) {
+    throw new Error(message);
+  }
+}
