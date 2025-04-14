@@ -23,7 +23,6 @@ type ChatStatus = "submitted" | "streaming" | "ready" | "error";
 interface ChatContextType {
   id: string;
   messages: Message[];
-  input: string;
   model: Model;
   setModelId: (modelId: string) => void;
   setMessages: (messages: Message[]) => void;
@@ -32,7 +31,6 @@ interface ChatContextType {
   stop: () => void;
   reload: (options?: { body?: Record<string, any> }) => void;
   append: (message: Message) => void;
-  setInput: (input: string) => void;
 }
 
 const ChatContext = createContext<ChatContextType | null>(null);
@@ -53,42 +51,32 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const {
-    id,
-    messages,
-    input,
-    setMessages,
-    handleInputChange,
-    status,
-    stop,
-    reload,
-    append,
-    setInput,
-  } = useChat({
-    id: conversationId,
-    body: { model: model.id },
-    onResponse: () => {
-      scrollDown();
-    },
-    onFinish: (message: Message) => {
-      queryClient.invalidateQueries({ queryKey: ["subscription"] });
+  const { id, messages, setMessages, handleInputChange, status, stop, reload, append } =
+    useChat({
+      id: conversationId,
+      body: { model: model.id },
+      onResponse: () => {
+        scrollDown();
+      },
+      onFinish: (message: Message) => {
+        queryClient.invalidateQueries({ queryKey: ["subscription"] });
 
-      addMessage.mutateAsync({
-        message,
-        conversationId,
-      });
-
-      if (messages.length === 1) {
-        const titleMessages = [messages[0], message];
-
-        updateTitle.mutateAsync({
+        addMessage.mutateAsync({
+          message,
           conversationId,
-          messages: titleMessages,
         });
-      }
-      scrollDown();
-    },
-  });
+
+        if (messages.length === 1) {
+          const titleMessages = [messages[0], message];
+
+          updateTitle.mutateAsync({
+            conversationId,
+            messages: titleMessages,
+          });
+        }
+        scrollDown();
+      },
+    });
 
   useEffect(() => {
     setModel(getModel(modelId) as Model);
@@ -103,7 +91,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       value={{
         id,
         messages,
-        input,
         model,
         setModelId,
         setMessages,
@@ -112,7 +99,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         stop,
         reload,
         append,
-        setInput,
       }}
     >
       {children}

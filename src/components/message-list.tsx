@@ -18,8 +18,7 @@ export function MessagesList({
   id: string;
 }) {
   const router = useRouter();
-  const { messages, status, setMessages, setModelId, setInput, reload } =
-    useChatContext();
+  const { messages, status, setMessages, setModelId, reload } = useChatContext();
   const { data: conversation } = useConversation(id, initialConversation);
   const hasReloaded = useRef(false);
   const lastMessageIndex = messages.length - 1;
@@ -40,7 +39,6 @@ export function MessagesList({
   useEffect(() => {
     if (!hasReloaded.current && messages.length === 1) {
       hasReloaded.current = true;
-      setInput("");
       reload({ body: { firstMessage: true } });
     }
   }, [messages.length, reload]);
