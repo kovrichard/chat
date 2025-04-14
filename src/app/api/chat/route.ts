@@ -14,6 +14,7 @@ import { google } from "@ai-sdk/google";
 import { perplexity } from "@ai-sdk/perplexity";
 import { xai } from "@ai-sdk/xai";
 import {
+  Message,
   extractReasoningMiddleware,
   smoothStream,
   streamText,
@@ -96,6 +97,13 @@ export async function POST(req: NextRequest) {
     return new Response("Invalid model", { status: 400 });
   }
 
+  if (firstMessage) {
+    await saveNewConversation(id, modelId, messages);
+  } else {
+    const lastMessage = messages[messages.length - 1];
+    await saveUserMessage(lastMessage.content, id);
+  }
+
   const result = streamText({
     model,
     messages,
@@ -105,35 +113,7 @@ export async function POST(req: NextRequest) {
       delayInMs: 10,
     }),
     onFinish: async (result: OnFinishResult) => {
-      if (firstMessage) {
-        // This is a new conversation, create it with both messages
-        const conversation = {
-          id,
-          title: "New Chat",
-          model: modelId,
-          messages: [
-            {
-              ...messages[0],
-              parts: undefined,
-            },
-            {
-              id: uuidv4(),
-              content: result.text,
-              role: "assistant",
-              reasoning: result.reasoning || null,
-              signature: null,
-            },
-          ],
-          lastMessageAt: new Date(),
-        };
-
-        await saveConversation(conversation);
-      } else {
-        // This is an existing conversation, just save the messages
-        const lastMessage = messages[messages.length - 1];
-        await saveUserMessage(lastMessage.content, id);
-        await saveResultAsAssistantMessage(result, id);
-      }
+      await saveResultAsAssistantMessage(result, id);
       await decrementFreeMessages(user.id);
     },
     onError: (error) => {
@@ -145,4 +125,23 @@ export async function POST(req: NextRequest) {
   console.log(`Response time: ${end - start}ms`);
 
   return result.toDataStreamResponse({ sendReasoning: true });
+}
+
+async function saveNewConversation(id: string, modelId: string, messages: Message[]) {
+  const conversation = {
+    id,
+    title: "New Chat",
+    model: modelId,
+    messages: [
+      {
+        ...messages[0],
+        parts: undefined,
+        reasoning: null,
+        signature: null,
+      },
+    ],
+    lastMessageAt: new Date(),
+  };
+
+  await saveConversation(conversation);
 }
