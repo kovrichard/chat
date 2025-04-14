@@ -54,19 +54,14 @@ export function useConversation(id: string, initialConversation?: any) {
       const response = await fetch(`/api/conversations/${id}`);
       const data = await response.json();
 
-      const processedMessages = processMessages(data.messages);
-
       return {
         ...data,
-        messages: processedMessages,
+        messages: processMessages(data.messages),
       };
     },
     initialData: () => {
       if (initialConversation) {
-        return {
-          ...initialConversation,
-          messages: processMessages(initialConversation.messages),
-        };
+        return initialConversation;
       }
       return null;
     },
