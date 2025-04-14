@@ -6,9 +6,16 @@ import conf from "@/lib/config";
 import { canonicalUrl, metaDescription, metaTitle, openGraph } from "@/lib/metadata";
 import { Providers } from "@/lib/query-client";
 import { cn } from "@/lib/utils";
+import type { Viewport } from "next";
 import { ThemeProvider } from "next-themes";
 import React from "react";
 import { Toaster } from "sonner";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  interactiveWidget: "resizes-content",
+};
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
