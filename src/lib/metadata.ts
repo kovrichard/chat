@@ -1,15 +1,15 @@
 import { Metadata } from "next";
 
-export const metaTitle = "Catalyst - Next.js Starter Kit";
+export const metaTitle = "Fyzz.chat - One platform for every AI mind";
 export const metaDescription =
-  "Catalyst is a Next.js starter kit that helps you build modern web applications faster and easier than ever before.";
-export const canonicalUrl = "https://catalyst.richardkovacs.dev";
+  "Fyzz.chat is your gateway to seamless conversations with a growing collection of AI models like GPT, Claude, Llama, Perplexity, and more. Experience the future of AI-powered communication in one intuitive platform.";
+export const canonicalUrl = "https://www.fyzz.chat";
 
 export const openGraph: Metadata["openGraph"] = {
   title: metaTitle,
   description: metaDescription,
   type: "website",
-  siteName: "Catalyst",
+  siteName: "Fyzz.chat",
   locale: "en_US",
   images: [
     {

@@ -2,10 +2,10 @@ import { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Catalyst - Next.js Starter Kit",
-    short_name: "Catalyst",
+    name: "Fyzz.chat - One platform for every AI mind",
+    short_name: "Fyzz.chat",
     description:
-      "Catalyst is a Next.js starter kit that helps you build modern web applications faster and easier than ever before.",
+      "Fyzz.chat is your gateway to seamless conversations with a growing collection of AI models like GPT, Claude, Llama, Perplexity, and more. Experience the future of AI-powered communication in one intuitive platform.",
     start_url: "/",
     display: "standalone",
     icons: [
