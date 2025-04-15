@@ -31,6 +31,12 @@ const azure = createAzure({
   apiVersion: "2024-12-01-preview",
 });
 
+const azure41 = createAzure({
+  apiVersion: "2024-04-01-preview",
+  apiKey: process.env.AZURE_GPT41_API_KEY,
+  resourceName: process.env.AZURE_GPT41_RESOURCE_NAME,
+});
+
 const reasoningFireworks = (model: string) => {
   return wrapLanguageModel({
     model: fireworks(model),
@@ -39,6 +45,7 @@ const reasoningFireworks = (model: string) => {
 };
 
 const allowedModels = {
+  "gpt-4.1": azure41("gpt-4.1"),
   "4o-mini": azure("gpt-4o-mini"),
   "o3-mini": azure("o3-mini"),
   "claude-3-7-sonnet": anthropic("claude-3-7-sonnet-20250219"),
