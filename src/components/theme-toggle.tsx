@@ -42,7 +42,7 @@ export function ThemeToggle({ className }: { className?: string }) {
         size="icon"
         aria-label="Toggle theme"
         className={cn(
-          "rounded-full size-7 transition-all duration-300",
+          "rounded-full size-8 transition-all duration-300",
           "group-hover:opacity-0 group-hover:translate-x-[100%]"
         )}
       >
@@ -64,7 +64,7 @@ export function ThemeToggle({ className }: { className?: string }) {
             size="icon"
             aria-label={t.name}
             className={cn(
-              "rounded-full size-7",
+              "rounded-full size-8",
               t.id === theme && "bg-accent text-accent-foreground"
             )}
             onClick={() => setTheme(t.id)}
