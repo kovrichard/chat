@@ -25,7 +25,7 @@ import { v4 as uuidv4 } from "uuid";
 
 const limiter = rateLimit(10, 60);
 
-export const maxDuration = 30;
+export const maxDuration = 55;
 
 const azure = createAzure({
   apiVersion: "2024-12-01-preview",
@@ -103,6 +103,8 @@ export async function POST(req: NextRequest) {
     const lastMessage = messages[messages.length - 1];
     await saveUserMessage(lastMessage.content, id);
   }
+
+  console.log("messages", messages);
 
   const result = streamText({
     model,
