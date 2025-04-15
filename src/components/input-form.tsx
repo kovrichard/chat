@@ -30,7 +30,7 @@ const InputForm = forwardRef<
   const createConversationOptimistic = useCreateConversationOptimistic();
   const addMessage = useAddMessage();
   const { input, setInput } = useInputStore();
-  const { id, model, status, append, stop } = useChatContext();
+  const { id, model, status, stop } = useChatContext();
   const { data: subscription } = useQuery({
     queryKey: ["subscription"],
     queryFn: async () => {
@@ -88,13 +88,6 @@ const InputForm = forwardRef<
         },
         conversationId: id,
       });
-      setTimeout(() => {
-        append({
-          id: uuidv4(),
-          role: "user",
-          content: input,
-        });
-      }, 200);
       setInput("");
     }
   }

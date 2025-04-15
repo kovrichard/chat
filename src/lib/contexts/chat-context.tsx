@@ -86,6 +86,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     scrollDown();
   }, [messages.length, status]);
 
+  useEffect(() => {
+    const lastMessage = messages[messages.length - 1];
+
+    if (status === "ready" && lastMessage && lastMessage.role === "user") {
+      reload();
+    }
+  }, [messages.length, status, reload]);
+
   return (
     <ChatContext.Provider
       value={{

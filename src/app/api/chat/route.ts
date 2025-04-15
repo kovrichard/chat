@@ -1,5 +1,5 @@
-import { auth } from "@/auth";
 import { saveConversation } from "@/lib/actions/conversations";
+import { getConversation } from "@/lib/dao/conversations";
 import {
   OnFinishResult,
   saveResultAsAssistantMessage,
@@ -97,21 +97,21 @@ export async function POST(req: NextRequest) {
     return new Response("Out of available messages", { status: 400 });
   }
 
-  const { id, messages, model: modelId, firstMessage } = await req.json();
+  const { id, messages, model: modelId } = await req.json();
   const model = allowedModels[modelId as keyof typeof allowedModels];
 
   if (!model) {
     return new Response("Invalid model", { status: 400 });
   }
 
-  if (firstMessage) {
+  const conversation = await getConversation(id);
+
+  if (!conversation) {
     await saveNewConversation(id, modelId, messages);
   } else {
     const lastMessage = messages[messages.length - 1];
     await saveUserMessage(lastMessage.content, id);
   }
-
-  console.log("messages", messages);
 
   const result = streamText({
     model,

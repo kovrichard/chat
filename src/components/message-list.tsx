@@ -18,9 +18,8 @@ export function MessagesList({
   id: string;
 }) {
   const router = useRouter();
-  const { messages, status, setMessages, setModelId, reload } = useChatContext();
+  const { messages, status, setMessages, setModelId } = useChatContext();
   const { data: conversation } = useConversation(id, initialConversation);
-  const hasReloaded = useRef(false);
   const lastMessageIndex = messages.length - 1;
 
   useEffect(() => {
@@ -35,13 +34,6 @@ export function MessagesList({
       setModelId(conversation.model);
     }
   }, [conversation, setMessages, setModelId]);
-
-  useEffect(() => {
-    if (!hasReloaded.current && messages.length === 1) {
-      hasReloaded.current = true;
-      reload({ body: { firstMessage: true } });
-    }
-  }, [messages.length, reload]);
 
   const memoizedConversationMessages = useMemo(() => {
     return conversation?.messages?.map((message: any) => (
