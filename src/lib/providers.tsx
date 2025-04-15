@@ -62,6 +62,10 @@ export const providers: Provider[] = [
         name: "GPT-4.1",
       },
       {
+        id: "4.1-nano",
+        name: "GPT-4.1 nano",
+      },
+      {
         id: "4o-mini",
         name: "GPT-4o mini",
       },
