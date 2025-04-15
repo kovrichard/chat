@@ -3,8 +3,8 @@
 import { useChatContext } from "@/lib/contexts/chat-context";
 import { useConversation } from "@/lib/queries/conversations";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
-import { memo, useEffect, useRef } from "react";
+import { memo, useEffect, useMemo } from "react";
+import LastMessage from "./last-message";
 import { MessageItem } from "./message-item";
 import { LoadingDots } from "./ui/loading-dots";
 
@@ -18,9 +18,8 @@ export function MessagesList({
   id: string;
 }) {
   const router = useRouter();
-  const { messages, status, setMessages, setModelId } = useChatContext();
+  const { status, setMessages, setModelId } = useChatContext();
   const { data: conversation } = useConversation(id, initialConversation);
-  const lastMessageIndex = messages.length - 1;
 
   useEffect(() => {
     if (!conversation) {
@@ -41,21 +40,10 @@ export function MessagesList({
     ));
   }, [conversation?.messages]);
 
-  const memoizedLastMessage = useMemo(() => {
-    if (
-      messages?.length > 0 &&
-      messages[lastMessageIndex].role === "assistant" &&
-      status !== "ready"
-    ) {
-      return <MemoizedMessageItem message={messages[lastMessageIndex]} />;
-    }
-    return null;
-  }, [messages, lastMessageIndex, status]);
-
   return (
     <div className="flex flex-col max-w-5xl mx-auto gap-4 px-4 sm:px-8 pt-8">
       {memoizedConversationMessages}
-      {memoizedLastMessage}
+      <LastMessage />
       {status === "submitted" && <LoadingDots className="text-muted-foreground" />}
       <div id="messages-end" />
     </div>
