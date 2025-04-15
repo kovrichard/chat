@@ -12,6 +12,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { FormEvent, KeyboardEvent, forwardRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 
+import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { useInputStore } from "@/stores/input-store";
 import { PartialConversation } from "@/types/chat";
@@ -25,6 +26,7 @@ const InputForm = forwardRef<
 >(({ plan, freeMessages, className }, ref) => {
   const router = useRouter();
   const pathname = usePathname();
+  const isMobile = useMediaQuery("(max-width: 640px)");
   const createConversationOptimistic = useCreateConversationOptimistic();
   const addMessage = useAddMessage();
   const { input, setInput } = useInputStore();
@@ -42,7 +44,7 @@ const InputForm = forwardRef<
   });
 
   function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey && !isMobile) {
       e.preventDefault();
       handleSendMessage(e);
     }
@@ -111,7 +113,7 @@ const InputForm = forwardRef<
         <TextareaAutosize
           id="message-input"
           ref={ref}
-          placeholder="(Shift + Enter for new line)"
+          placeholder={isMobile ? "Enter message" : "(Shift + Enter for new line)"}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
