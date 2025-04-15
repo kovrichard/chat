@@ -26,11 +26,9 @@ interface ChatContextType {
   model: Model;
   setModelId: (modelId: string) => void;
   setMessages: (messages: Message[]) => void;
-  handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   status: ChatStatus;
   stop: () => void;
   reload: (options?: { body?: Record<string, any> }) => void;
-  append: (message: Message) => void;
 }
 
 const ChatContext = createContext<ChatContextType | null>(null);
@@ -51,32 +49,31 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const { id, messages, setMessages, handleInputChange, status, stop, reload, append } =
-    useChat({
-      id: conversationId,
-      body: { model: model.id },
-      onResponse: () => {
-        scrollDown();
-      },
-      onFinish: (message: Message) => {
-        queryClient.invalidateQueries({ queryKey: ["subscription"] });
+  const { id, messages, setMessages, status, stop, reload } = useChat({
+    id: conversationId,
+    body: { model: model.id },
+    onResponse: () => {
+      scrollDown();
+    },
+    onFinish: (message: Message) => {
+      queryClient.invalidateQueries({ queryKey: ["subscription"] });
 
-        addMessage.mutateAsync({
-          message,
+      addMessage.mutateAsync({
+        message,
+        conversationId,
+      });
+
+      if (messages.length === 1) {
+        const titleMessages = [messages[0], message];
+
+        updateTitle.mutateAsync({
           conversationId,
+          messages: titleMessages,
         });
-
-        if (messages.length === 1) {
-          const titleMessages = [messages[0], message];
-
-          updateTitle.mutateAsync({
-            conversationId,
-            messages: titleMessages,
-          });
-        }
-        scrollDown();
-      },
-    });
+      }
+      scrollDown();
+    },
+  });
 
   useEffect(() => {
     setModel(getModel(modelId) as Model);
@@ -102,11 +99,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         model,
         setModelId,
         setMessages,
-        handleInputChange,
         status,
         stop,
         reload,
-        append,
       }}
     >
       {children}
