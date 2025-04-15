@@ -5,6 +5,7 @@ import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { Feature, providers } from "@/lib/providers";
 import { useUpdateConversationModel } from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import React from "react";
 import { Button } from "./ui/button";
@@ -42,8 +43,13 @@ export function ModelMenu() {
     return (
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild className="hidden md:block">
-          <Button variant="ghost" size="sm" className="-ml-2 -mb-4">
-            {model.name}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="md:flex items-center gap-2 -ml-2 -mb-4"
+          >
+            <span>{model.name}</span>
+            <ChevronDown size={16} />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[300px] p-0" align="start">
