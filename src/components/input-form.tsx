@@ -102,7 +102,7 @@ const InputForm = forwardRef<
   return (
     <div
       className={cn(
-        "flex-none pt-1 sm:px-4 sm:pb-4 max-w-5xl w-full mx-auto bg-background",
+        "flex-none pt-1 sm:px-4 sm:pb-4 max-w-5xl w-full mx-auto bg-background rounded-b-[20px]",
         className
       )}
     >
