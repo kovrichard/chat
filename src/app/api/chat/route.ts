@@ -1,4 +1,5 @@
 import { saveConversation } from "@/lib/actions/conversations";
+import systemPrompt from "@/lib/backend/prompts/system-prompt";
 import { getConversation } from "@/lib/dao/conversations";
 import {
   OnFinishResult,
@@ -117,6 +118,7 @@ export async function POST(req: NextRequest) {
     model,
     messages,
     maxSteps: 5,
+    system: systemPrompt,
     providerOptions: getProviderOptions(modelId),
     experimental_transform: smoothStream({
       delayInMs: 10,
