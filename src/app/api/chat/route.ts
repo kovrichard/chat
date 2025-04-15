@@ -48,6 +48,7 @@ const reasoningFireworks = (model: string) => {
 const allowedModels = {
   "gpt-4.1": azure41("gpt-4.1"),
   "4.1-nano": azure41("gpt-4.1-nano"),
+  "4.1-mini": azure41("gpt-4.1-mini"),
   "4o-mini": azure("gpt-4o-mini"),
   "o3-mini": azure("o3-mini"),
   "claude-3-7-sonnet": anthropic("claude-3-7-sonnet-20250219"),
