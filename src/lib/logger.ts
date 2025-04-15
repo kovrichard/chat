@@ -13,7 +13,7 @@ class CustomTransport extends Transport {
     });
 
     const body = {
-      name: "Catalyst",
+      name: "Fyzz.chat",
       level: info.level,
       context: {},
       message: info.message,

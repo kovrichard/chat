@@ -29,7 +29,7 @@ export async function AppSidebar() {
   return (
     <Sidebar className="border-none">
       <SidebarHeader className="flex-col items-center gap-4 py-4 pl-4 pr-4 md:pr-2">
-        <p className="text-lg font-bold flex-1 text-center">Chat</p>
+        <p className="text-lg font-bold flex-1 text-center">Fyzz.chat</p>
         <Button asChild className="w-full gap-2">
           <Link href="/chat" prefetch>
             <Plus className="h-4 w-4" />
