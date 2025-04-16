@@ -42,19 +42,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [model, setModel] = useState<Model>(getModel("4o-mini") as Model);
   const [modelId, setModelId] = useState<string>("4o-mini");
 
-  function scrollDown() {
-    const messagesEnd = document.getElementById("messages-end");
-    if (messagesEnd) {
-      messagesEnd.scrollIntoView({ behavior: "instant" });
-    }
-  }
-
   const { id, messages, setMessages, status, stop, reload } = useChat({
     id: conversationId,
     body: { model: model.id },
-    onResponse: () => {
-      scrollDown();
-    },
     onFinish: (message: Message) => {
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
 
@@ -71,17 +61,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           messages: titleMessages,
         });
       }
-      scrollDown();
     },
   });
 
   useEffect(() => {
     setModel(getModel(modelId) as Model);
   }, [modelId]);
-
-  useEffect(() => {
-    scrollDown();
-  }, [messages.length, status]);
 
   useEffect(() => {
     const lastMessage = messages[messages.length - 1];
