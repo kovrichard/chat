@@ -2,6 +2,7 @@
 
 import { useConversations, useDeleteConversation } from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
+import { useSearchStore } from "@/stores/search-store";
 import { PartialConversation } from "@/types/chat";
 import { MessageSquare, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -37,30 +38,32 @@ function groupConversationsByTime(conversations: PartialConversation[]) {
     older: [] as PartialConversation[],
   };
 
-  conversations.forEach((conv) => {
-    const convDate = new Date(conv.lastMessageAt);
+  conversations
+    .filter((conv) => !!conv)
+    .forEach((conv) => {
+      const convDate = new Date(conv.lastMessageAt);
 
-    if (convDate >= today) {
-      groups.today.push(conv);
-    } else if (convDate >= yesterday && convDate < today) {
-      groups.yesterday.push(conv);
-    } else if (convDate >= lastWeek && convDate < yesterday) {
-      groups.lastWeek.push(conv);
-    } else {
-      groups.older.push(conv);
-    }
-  });
+      if (convDate >= today) {
+        groups.today.push(conv);
+      } else if (convDate >= yesterday && convDate < today) {
+        groups.yesterday.push(conv);
+      } else if (convDate >= lastWeek && convDate < yesterday) {
+        groups.lastWeek.push(conv);
+      } else {
+        groups.older.push(conv);
+      }
+    });
 
   return groups;
 }
 
 export default function ChatSidebar({ conversations }: { conversations: any }) {
   const { id } = useParams();
+  const { searchQuery } = useSearchStore();
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useConversations(conversations);
+    useConversations(conversations, searchQuery);
   const observerRef = useRef<IntersectionObserver>();
   const loadMoreRef = useRef<HTMLDivElement>(null);
-
   const allConversations = data?.pages.flatMap((page) => page.conversations) || [];
   const groupedConversations = groupConversationsByTime(allConversations);
 

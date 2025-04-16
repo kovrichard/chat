@@ -13,6 +13,7 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import ChatSidebar from "./chat-sidebar";
 import ProfileMenu from "./profile-menu";
+import { SearchField } from "./search-field";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import {
@@ -36,6 +37,7 @@ export async function AppSidebar() {
             New Chat
           </Link>
         </Button>
+        <SearchField />
       </SidebarHeader>
       <SidebarContent className="relative pl-2 pr-2 md:pr-0">
         <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-sidebar to-transparent pointer-events-none z-10" />

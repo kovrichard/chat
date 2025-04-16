@@ -35,7 +35,8 @@ export async function getConversation(id: string) {
 
 export async function getConversations(
   page: number,
-  limit: number
+  limit: number,
+  search?: string
 ): Promise<{ conversations: any[]; hasMore: boolean }> {
   const userId = await getUserIdFromSession();
   const skip = (page - 1) * limit;
@@ -44,6 +45,18 @@ export async function getConversations(
     prisma.conversation.findMany({
       where: {
         userId,
+        ...(search
+          ? {
+              OR: [
+                { title: { contains: search, mode: "insensitive" } },
+                {
+                  messages: {
+                    some: { content: { contains: search, mode: "insensitive" } },
+                  },
+                },
+              ],
+            }
+          : {}),
       },
       select: {
         id: true,

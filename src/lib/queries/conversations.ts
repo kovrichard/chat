@@ -16,14 +16,21 @@ import { deleteMessageChainAfter } from "../actions/messages";
 
 const conversationKeys = {
   detail: (id: string) => ["conversations", id] as const,
-  list: (page: number) => ["conversations", "list", page] as const,
+  list: (page: number, search?: string) =>
+    ["conversations", "list", page, search] as const,
 };
 
-export function useConversations(conversations: any) {
+export function useConversations(conversations: any, search?: string) {
   return useInfiniteQuery({
-    queryKey: conversationKeys.list(1),
+    queryKey: conversationKeys.list(1, search),
     queryFn: async ({ pageParam = 1 }) => {
-      const response = await fetch(`/api/conversations?page=${pageParam}&limit=15`);
+      const searchParams = new URLSearchParams({
+        page: pageParam.toString(),
+        limit: "15",
+        ...(search ? { search } : {}),
+      });
+
+      const response = await fetch(`/api/conversations?${searchParams.toString()}`);
       const data = await response.json();
       return {
         conversations: data.conversations,
