@@ -116,3 +116,18 @@
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+tr {
+  border-top: 1px solid hsl(var(--border));
+  background: var(--background);
+}
+
+th,
+td {
+  padding: 6px 13px;
+  border: 1px solid hsl(var(--border));
+}
+
+table tr:nth-child(2n) {
+  background: hsl(var(--muted));
+}
