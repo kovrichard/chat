@@ -17,13 +17,12 @@ import { processMessages } from "../message-processor";
 
 const conversationKeys = {
   detail: (id: string) => ["conversations", id] as const,
-  list: (page: number, search?: string) =>
-    ["conversations", "list", page, search] as const,
+  list: (page: number) => ["conversations", "list", page] as const,
 };
 
 export function useConversations(conversations: any, search?: string) {
   return useInfiniteQuery({
-    queryKey: conversationKeys.list(1, search),
+    queryKey: conversationKeys.list(1),
     queryFn: async ({ pageParam = 1 }) => {
       const searchParams = new URLSearchParams({
         page: pageParam.toString(),
