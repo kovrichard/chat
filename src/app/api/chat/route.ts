@@ -24,7 +24,7 @@ import {
 import { NextRequest } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 
-const limiter = rateLimit(10, 60);
+const limiter = rateLimit(50, 60);
 
 export const maxDuration = 55;
 

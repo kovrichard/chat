@@ -2,7 +2,7 @@ import { getConversations } from "@/lib/dao/conversations";
 import rateLimit from "@/lib/rate-limiter";
 import { NextRequest, NextResponse } from "next/server";
 
-const limiter = rateLimit(10, 30);
+const limiter = rateLimit(500, 60);
 
 export async function GET(req: NextRequest) {
   const response = limiter(req);
