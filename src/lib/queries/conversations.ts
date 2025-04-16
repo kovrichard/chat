@@ -13,7 +13,6 @@ import {
 } from "@tanstack/react-query";
 import { Message } from "ai";
 import { deleteMessageChainAfter } from "../actions/messages";
-import { processMessages } from "../message-processor";
 
 const conversationKeys = {
   detail: (id: string) => ["conversations", id] as const,
