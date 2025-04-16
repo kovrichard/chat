@@ -27,6 +27,7 @@ interface ChatContextType {
   setModelId: (modelId: string) => void;
   setMessages: (messages: Message[]) => void;
   status: ChatStatus;
+  error?: Error;
   stop: () => void;
   reload: (options?: { body?: Record<string, any> }) => void;
 }
@@ -42,7 +43,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [model, setModel] = useState<Model>(getModel("4o-mini") as Model);
   const [modelId, setModelId] = useState<string>("4o-mini");
 
-  const { id, messages, setMessages, status, stop, reload } = useChat({
+  const { id, messages, setMessages, status, error, stop, reload } = useChat({
     id: conversationId,
     body: { model: model.id },
     onFinish: (message: Message) => {
@@ -87,6 +88,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         setModelId,
         setMessages,
         status,
+        error,
         stop,
         reload,
       }}

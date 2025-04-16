@@ -137,7 +137,10 @@ export async function POST(req: NextRequest) {
   const end = Date.now();
   console.log(`Response time: ${end - start}ms`);
 
-  return result.toDataStreamResponse({ sendReasoning: true });
+  return result.toDataStreamResponse({
+    sendReasoning: true,
+    getErrorMessage: (error: any) => error.data.error.code,
+  });
 }
 
 async function saveNewConversation(id: string, modelId: string, messages: Message[]) {

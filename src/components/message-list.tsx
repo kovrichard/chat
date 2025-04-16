@@ -18,7 +18,7 @@ export function MessagesList({
   id: string;
 }) {
   const router = useRouter();
-  const { status, setMessages, setModelId } = useChatContext();
+  const { status, setMessages, setModelId, error } = useChatContext();
   const { data: conversation } = useConversation(id, initialConversation);
 
   useEffect(() => {
@@ -43,6 +43,17 @@ export function MessagesList({
   return (
     <div className="flex flex-col max-w-5xl mx-auto gap-4 px-4 sm:px-8 pt-8">
       {memoizedConversationMessages}
+      {error && error.message === "content_filter" && (
+        <div className="flex flex-col gap-1">
+          <div className="text-destructive p-4 border border-destructive rounded-lg">
+            <p>
+              Uh oh! This message was a little too spicy. Please try again in a different
+              conversation.
+            </p>
+          </div>
+          <span className="h-8" />
+        </div>
+      )}
       <LastMessage />
       {status === "submitted" && <LoadingDots className="text-muted-foreground" />}
       <div id="messages-end" />

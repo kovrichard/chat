@@ -30,7 +30,7 @@ const InputForm = forwardRef<
   const createConversationOptimistic = useCreateConversationOptimistic();
   const addMessage = useAddMessage();
   const { input, setInput } = useInputStore();
-  const { id, model, status, stop } = useChatContext();
+  const { id, model, status, stop, error } = useChatContext();
   const { data: subscription } = useQuery({
     queryKey: ["subscription"],
     queryFn: async () => {
@@ -138,7 +138,12 @@ const InputForm = forwardRef<
               <IconPlayerStop size={16} />
             </Button>
           ) : (
-            <Button type="submit" size="icon" className="shrink-0 size-9">
+            <Button
+              type="submit"
+              size="icon"
+              className="shrink-0 size-9"
+              disabled={error && error.message === "content_filter"}
+            >
               <Send size={16} />
             </Button>
           )}
