@@ -5,6 +5,7 @@ import { memo, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { tomorrow } from "react-syntax-highlighter/dist/esm/styles/prism";
+import remarkGfm from "remark-gfm";
 // xonokai, tomorrow, twilight, prism
 import { ThinkingIndicator } from "./thinking-indicator";
 import { Button } from "./ui/button";
@@ -125,6 +126,7 @@ const MemoizedMarkdownBlock = memo(
   ({ content }: { content: string }) => {
     return (
       <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
         components={{
           code({ node, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || "");
