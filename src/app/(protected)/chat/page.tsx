@@ -62,7 +62,10 @@ export default function ChatPage() {
               <DialogTitle>We have {numModels} models</DialogTitle>
               <DialogDescription>Which one should you use?</DialogDescription>
               <div className="flex flex-col gap-4 py-4">
-                <p>Small (mini, nano, etc.) models are faster, but less accurate.</p>
+                <p>
+                  Small (mini, nano, etc.) models are faster, but less accurate. They are
+                  still enough for most use cases.
+                </p>
                 <p>
                   Models with the <Brain className="inline-flex text-yellow-500" /> icon
                   next to them will think a bit before responding. Use them for complex
