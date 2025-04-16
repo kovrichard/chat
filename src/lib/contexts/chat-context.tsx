@@ -66,10 +66,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setModel(getModel(modelId) as Model);
+    console.log(`Model set to ${modelId}`);
   }, [modelId]);
 
   useEffect(() => {
     const lastMessage = messages[messages.length - 1];
+    console.log(`Last message: ${lastMessage}`);
 
     if (status === "ready" && lastMessage && lastMessage.role === "user") {
       reload();
