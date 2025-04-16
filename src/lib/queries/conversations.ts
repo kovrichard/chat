@@ -13,6 +13,7 @@ import {
 } from "@tanstack/react-query";
 import { Message } from "ai";
 import { deleteMessageChainAfter } from "../actions/messages";
+import { processMessages } from "../message-processor";
 
 const conversationKeys = {
   detail: (id: string) => ["conversations", id] as const,
@@ -60,9 +61,11 @@ export function useConversation(id: string, initialConversation?: any) {
       const response = await fetch(`/api/conversations/${id}`);
       const data = await response.json();
 
-      return data;
+      return {
+        ...data,
+        messages: processMessages(data.messages),
+      };
     },
-    staleTime: 5000,
     initialData: () => {
       if (initialConversation) {
         return initialConversation;
@@ -123,7 +126,10 @@ export function useDeleteConversation() {
     mutationFn: ({ conversationId }: { conversationId: string }) =>
       deleteConversation(conversationId),
     onSuccess: (_, { conversationId }) => {
-      queryClient.invalidateQueries({ queryKey: conversationKeys.list(1) });
+      queryClient.invalidateQueries({
+        queryKey: ["conversations", "list"],
+        type: "all",
+      });
       queryClient.invalidateQueries({
         queryKey: conversationKeys.detail(conversationId),
       });
@@ -182,7 +188,7 @@ export function useAddMessage() {
       queryClient.invalidateQueries({
         queryKey: conversationKeys.detail(conversationId),
       });
-      queryClient.invalidateQueries({ queryKey: conversationKeys.list(1) });
+      queryClient.invalidateQueries({ queryKey: ["conversations", "list"] });
     },
   });
 }
@@ -197,7 +203,7 @@ export function useRegenerateMessage() {
     }: { messageId: string; conversationId: string }) =>
       deleteMessageChainAfter(messageId, conversationId),
     onSuccess: (_, { conversationId }) => {
-      queryClient.invalidateQueries({ queryKey: conversationKeys.list(1) });
+      queryClient.invalidateQueries({ queryKey: ["conversations", "list"] });
 
       queryClient.invalidateQueries({
         queryKey: conversationKeys.detail(conversationId),

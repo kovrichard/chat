@@ -16,10 +16,5 @@ export async function GET(
 
   const conversation = await getConversation(id);
 
-  const processedConversation = {
-    ...conversation,
-    messages: processMessages(conversation?.messages || []),
-  };
-
-  return NextResponse.json(processedConversation);
+  return NextResponse.json(conversation);
 }
