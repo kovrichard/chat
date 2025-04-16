@@ -82,6 +82,18 @@ export async function getConversations(
     prisma.conversation.count({
       where: {
         userId,
+        ...(search
+          ? {
+              OR: [
+                { title: { contains: search, mode: "insensitive" } },
+                {
+                  messages: {
+                    some: { content: { contains: search, mode: "insensitive" } },
+                  },
+                },
+              ],
+            }
+          : {}),
       },
     }),
   ]);
