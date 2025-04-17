@@ -138,6 +138,8 @@ export async function POST(req: NextRequest) {
   const end = Date.now();
   console.log(`Response time: ${end - start}ms`);
 
+  result.consumeStream();
+
   return result.toDataStreamResponse({
     sendReasoning: true,
     getErrorMessage: (error: any) => error.data.error.code,
