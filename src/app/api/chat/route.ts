@@ -33,7 +33,7 @@ const azure = createAzure({
 });
 
 const azure41 = createAzure({
-  apiVersion: "2024-04-01-preview",
+  apiVersion: "2024-12-01-preview",
   apiKey: process.env.AZURE_GPT41_API_KEY,
   resourceName: process.env.AZURE_GPT41_RESOURCE_NAME,
 });
@@ -46,8 +46,8 @@ const reasoningFireworks = (model: string) => {
 };
 
 const allowedModels = {
+  "o4-mini": azure41("o4-mini"),
   "gpt-4.1": azure41("gpt-4.1"),
-  "4.1-nano": azure41("gpt-4.1-nano"),
   "4.1-mini": azure41("gpt-4.1-mini"),
   "4o-mini": azure("gpt-4o-mini"),
   "o3-mini": azure("o3-mini"),
@@ -121,6 +121,7 @@ export async function POST(req: NextRequest) {
     messages,
     maxSteps: 5,
     system: systemPrompt,
+    temperature: modelId === "o4-mini" ? 1 : undefined,
     providerOptions: getProviderOptions(modelId),
     experimental_transform: smoothStream({
       delayInMs: 10,

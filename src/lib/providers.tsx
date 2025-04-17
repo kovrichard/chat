@@ -58,12 +58,13 @@ export const providers: Provider[] = [
     icon: LazyOpenAI,
     models: [
       {
-        id: "gpt-4.1",
-        name: "GPT-4.1",
+        id: "o4-mini",
+        name: "o4-mini",
+        features: [reasoning],
       },
       {
-        id: "4.1-nano",
-        name: "GPT-4.1 nano",
+        id: "gpt-4.1",
+        name: "GPT-4.1",
       },
       {
         id: "4.1-mini",
