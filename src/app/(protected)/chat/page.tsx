@@ -9,13 +9,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useChatContext } from "@/lib/contexts/chat-context";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { providers } from "@/lib/providers";
 import { useInputStore } from "@/stores/input-store";
-import { IconBrain, IconGlobe } from "@tabler/icons-react";
-import { Globe } from "lucide-react";
-import { Brain } from "lucide-react";
+import { Brain, CodeXml, Globe } from "lucide-react";
 import { useEffect } from "react";
 
 const models = providers.map((provider) => provider.models).flat();
@@ -57,35 +56,39 @@ export default function ChatPage() {
           <DialogTrigger asChild>
             <Button variant="outline">Which model should I use?</Button>
           </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
+          <DialogContent className="px-0">
+            <DialogHeader className="px-6">
               <DialogTitle>We have {numModels} models</DialogTitle>
               <DialogDescription>Which one should you use?</DialogDescription>
-              <div className="flex flex-col gap-4 py-4">
+            </DialogHeader>
+            <ScrollArea className="max-h-[350px]">
+              <div className="flex flex-col gap-4 px-6">
                 <p>
                   Small (mini, nano, etc.) models are faster, but less accurate. They are
                   still enough for most use cases.
                 </p>
                 <p>
                   Models with the <Brain className="inline-flex text-yellow-500" /> icon
-                  next to them will think a bit before responding. Use them for complex
-                  questions.
+                  take time to respond. Use them for complex questions.
                 </p>
                 <p>
                   Models with the <Globe className="inline-flex text-blue-500" /> icon
-                  next to them have internet access. Use them for questions that require
-                  the latest information.
+                  have internet access. Use them for up-to-date information.
                 </p>
                 <p>
-                  All models are general-purpose. Try them out and see which one works
-                  best for you.
+                  Models with the <CodeXml className="inline-flex text-green-500" /> icon
+                  are ideal for coding questions.
+                </p>
+                <p>
+                  All models are general-purpose. Experiment to find the best fit for you.
                 </p>
                 <p>
                   Click the model's {isMobile ? "icon" : "name"} in the lower left corner
-                  of the input field to select a different one.
+                  of the input field to switch models.
                 </p>
               </div>
-            </DialogHeader>
+              <div className="sm:hidden absolute bottom-0 left-0 right-0 max-w-5xl mx-auto h-6 bg-gradient-to-t from-background to-transparent pointer-events-none z-10 rounded-t-xl" />
+            </ScrollArea>
           </DialogContent>
         </Dialog>
         <ul className="flex flex-col">
