@@ -1,8 +1,4 @@
-export interface Message {
-  content?: string;
-  reasoning: string | null;
-  signature: string | null;
-}
+import { Message } from "@prisma/client";
 
 interface ProcessedMessage {
   content?: string;
@@ -22,6 +18,13 @@ interface ProcessedMessage {
 
 function processMessage(message: Message): ProcessedMessage {
   const parts: ProcessedMessage["parts"] = [];
+
+  if (message.parts) {
+    return {
+      ...message,
+      parts: JSON.parse(message.parts as string),
+    };
+  }
 
   if (message.reasoning) {
     const details: ProcessedMessage["parts"][0]["details"] = [];
