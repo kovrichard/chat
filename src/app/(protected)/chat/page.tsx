@@ -87,7 +87,6 @@ export default function ChatPage() {
                   of the input field to switch models.
                 </p>
               </div>
-              <div className="sm:hidden absolute bottom-0 left-0 right-0 max-w-5xl mx-auto h-6 bg-gradient-to-t from-background to-transparent pointer-events-none z-10 rounded-t-xl" />
             </ScrollArea>
           </DialogContent>
         </Dialog>
