@@ -1,6 +1,6 @@
 import { saveConversation } from "@/lib/actions/conversations";
 import systemPrompt from "@/lib/backend/prompts/system-prompt";
-import { getConversation } from "@/lib/dao/conversations";
+import { appendMessageToConversation, getConversation } from "@/lib/dao/conversations";
 import { saveMessage } from "@/lib/dao/messages";
 import { decrementFreeMessages, getUserFromSession } from "@/lib/dao/users";
 import rateLimit from "@/lib/rate-limiter";
@@ -12,6 +12,7 @@ import { perplexity } from "@ai-sdk/perplexity";
 import { xai } from "@ai-sdk/xai";
 import {
   UIMessage,
+  appendClientMessage,
   appendResponseMessages,
   extractReasoningMiddleware,
   smoothStream,
@@ -96,21 +97,22 @@ export async function POST(req: NextRequest) {
     return new Response("Out of available messages", { status: 400 });
   }
 
-  const { id, messages, model: modelId } = await req.json();
+  const { id, message, model: modelId } = await req.json();
   const model = allowedModels[modelId as keyof typeof allowedModels];
 
   if (!model) {
     return new Response("Invalid model", { status: 400 });
   }
 
-  let conversation = await getConversation(id);
-  const lastMessage = messages[messages.length - 1];
-
-  if (!conversation) {
-    conversation = await saveNewConversation(id, modelId, messages);
-  } else {
-    await saveMessage(lastMessage, id);
+  if (!(await getConversation(id))) {
+    await saveNewConversation(id, modelId);
   }
+
+  const conversation = await appendMessageToConversation(message, id);
+  const messages = appendClientMessage({
+    messages: conversation.messages,
+    message,
+  });
 
   const result = streamText({
     model,
@@ -124,12 +126,7 @@ export async function POST(req: NextRequest) {
     }),
     onFinish: async ({ response }) => {
       const updatedMessages = appendResponseMessages({
-        messages:
-          conversation?.messages.concat(lastMessage).map((message) => ({
-            ...message,
-            reasoning: message.reasoning ?? undefined,
-            role: message.role as "user" | "assistant" | "system" | "data",
-          })) ?? [],
+        messages,
         responseMessages: response.messages,
       });
 
@@ -152,13 +149,13 @@ export async function POST(req: NextRequest) {
   });
 }
 
-async function saveNewConversation(id: string, modelId: string, messages: UIMessage[]) {
+async function saveNewConversation(id: string, modelId: string) {
   const conversation = {
     id,
     title: "New Chat",
     model: modelId,
-    messages: messages,
     lastMessageAt: new Date(),
+    messages: [],
   };
 
   return saveConversation(conversation);

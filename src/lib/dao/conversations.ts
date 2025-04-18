@@ -2,6 +2,7 @@ import "server-only";
 
 import { getUserIdFromSession } from "@/lib/dao/users";
 import prisma from "@/lib/prisma";
+import { UIMessage } from "ai";
 
 export async function getConversation(id: string) {
   const userId = await getUserIdFromSession();
@@ -16,13 +17,6 @@ export async function getConversation(id: string) {
       title: true,
       model: true,
       messages: {
-        select: {
-          id: true,
-          content: true,
-          role: true,
-          reasoning: true,
-          signature: true,
-        },
         orderBy: {
           createdAt: "asc",
         },
@@ -103,5 +97,45 @@ export async function getConversations(
   return {
     conversations,
     hasMore,
+  };
+}
+
+export async function appendMessageToConversation(
+  message: UIMessage,
+  conversationId: string
+) {
+  const userId = await getUserIdFromSession();
+
+  await prisma.message.create({
+    data: {
+      ...message,
+      parts: JSON.stringify(message.parts),
+      toolInvocations: JSON.stringify(message.toolInvocations),
+      conversationId,
+    },
+  });
+
+  const updatedConversation = await prisma.conversation.update({
+    where: {
+      id: conversationId,
+      userId,
+    },
+    data: {
+      lastMessageAt: new Date(),
+    },
+    include: {
+      messages: true,
+    },
+  });
+
+  return {
+    ...updatedConversation,
+    messages: updatedConversation.messages.map((message) => ({
+      ...message,
+      role: message.role as "system" | "user" | "assistant" | "data",
+      reasoning: message.reasoning ?? undefined,
+      parts: JSON.parse(message.parts as string),
+      toolInvocations: JSON.parse(message.toolInvocations as string),
+    })),
   };
 }
