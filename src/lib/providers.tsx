@@ -1,4 +1,4 @@
-import { Brain, Globe, LucideProps } from "lucide-react";
+import { Brain, CodeXml, Globe, LucideProps } from "lucide-react";
 import dynamic from "next/dynamic";
 import { ComponentType, ForwardRefExoticComponent, RefAttributes } from "react";
 
@@ -52,6 +52,13 @@ const search: Feature = {
   color: "text-blue-500",
 };
 
+const coding: Feature = {
+  name: "Coding",
+  description: "Excels at coding tasks",
+  icon: CodeXml,
+  color: "text-green-500",
+};
+
 export const providers: Provider[] = [
   {
     name: "OpenAI",
@@ -65,10 +72,12 @@ export const providers: Provider[] = [
       {
         id: "gpt-4.1",
         name: "GPT-4.1",
+        features: [coding],
       },
       {
         id: "4.1-mini",
         name: "GPT-4.1 mini",
+        features: [coding],
       },
       {
         id: "4o-mini",
