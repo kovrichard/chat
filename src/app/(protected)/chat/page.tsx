@@ -62,7 +62,7 @@ export default function ChatPage() {
               <DialogDescription>Which one should you use?</DialogDescription>
             </DialogHeader>
             <ScrollArea className="max-h-[350px]">
-              <div className="flex flex-col gap-4 px-6">
+              <div className="flex flex-col gap-4 px-6 pb-4 sm:pb-0">
                 <p>
                   Small (mini, nano, etc.) models are faster, but less accurate. They are
                   still enough for most use cases.
