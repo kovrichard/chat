@@ -5,9 +5,10 @@ import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { Feature, providers } from "@/lib/providers";
 import { useUpdateConversationModel } from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Info } from "lucide-react";
 import { useState } from "react";
 import React from "react";
+import { HoverPopover } from "./hover-popover";
 import { Button } from "./ui/button";
 import {
   Command,
@@ -122,8 +123,11 @@ function StatusList({ setOpen }: { setOpen: (open: boolean) => void }) {
               >
                 <span>{model.name}</span>
                 {model.features?.map((feature: Feature) => (
-                  <Tooltip key={feature.name}>
-                    <TooltipTrigger asChild>
+                  <HoverPopover key={feature.name} content={feature.description}>
+                    <div
+                      className="ml-2 rounded-full p-1"
+                      onClick={(e) => e.stopPropagation()} // Prevent triggering the CommandItem's onSelect
+                    >
                       <feature.icon
                         size={16}
                         className={cn(
@@ -131,9 +135,8 @@ function StatusList({ setOpen }: { setOpen: (open: boolean) => void }) {
                           "group-data-[selected='true']:text-accent-foreground"
                         )}
                       />
-                    </TooltipTrigger>
-                    <TooltipContent>{feature.description}</TooltipContent>
-                  </Tooltip>
+                    </div>
+                  </HoverPopover>
                 ))}
               </CommandItem>
             ))}
