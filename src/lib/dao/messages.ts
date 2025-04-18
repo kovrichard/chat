@@ -2,6 +2,8 @@ import "server-only";
 
 import { getUserIdFromSession } from "@/lib/dao/users";
 import prisma from "@/lib/prisma";
+import { Message, UIMessage } from "ai";
+import { v4 as uuidv4 } from "uuid";
 
 type ReasoningDetail =
   | {
@@ -20,39 +22,16 @@ export type OnFinishResult = {
   reasoningDetails?: ReasoningDetail[];
 };
 
-export async function saveResultAsAssistantMessage(
-  result: OnFinishResult,
-  conversationId: string
-) {
-  const reasoning = result.reasoning;
-  const signature = result.reasoningDetails?.find(
-    (detail) => detail.type === "text"
-  )?.signature;
-  const content = result.text;
-
-  await saveMessage(content, "assistant", conversationId, reasoning, signature);
-}
-
-export async function saveUserMessage(content: string, conversationId: string) {
-  await saveMessage(content, "user", conversationId);
-}
-
-async function saveMessage(
-  content: string,
-  role: string,
-  conversationId: string,
-  reasoning?: string,
-  signature?: string
-) {
+export async function saveMessage(message: Message | UIMessage, conversationId: string) {
   const userId = await getUserIdFromSession();
 
   const newMessage = await prisma.message.create({
     data: {
-      content,
-      role,
-      reasoning,
+      ...message,
+      id: uuidv4(),
+      parts: JSON.stringify(message.parts),
+      toolInvocations: JSON.stringify(message.toolInvocations),
       conversationId,
-      signature,
     },
   });
 

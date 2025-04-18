@@ -23,8 +23,15 @@ export async function saveConversation(conversation: PartialConversation) {
         },
       },
       messages: {
-        create: conversation.messages,
+        create: conversation.messages.map((message) => ({
+          ...message,
+          parts: JSON.stringify(message.parts),
+          toolInvocations: JSON.stringify(message.toolInvocations),
+        })),
       },
+    },
+    include: {
+      messages: true,
     },
   });
 

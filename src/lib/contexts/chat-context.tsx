@@ -46,9 +46,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const { id, messages, setMessages, status, error, stop, reload } = useChat({
     id: conversationId,
     body: { model: model.id },
+    sendExtraMessageFields: true,
     onFinish: (message: Message) => {
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
-
       addMessage.mutateAsync({
         message,
         conversationId,

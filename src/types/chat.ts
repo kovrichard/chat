@@ -1,8 +1,7 @@
 import { Conversation, Message } from "@prisma/client";
-
-type PartialMessage = Omit<Message, "conversationId" | "createdAt" | "updatedAt">;
+import { UIMessage } from "ai";
 
 export type PartialConversation = Omit<
-  Conversation & { messages: PartialMessage[] },
+  Conversation & { messages: UIMessage[] },
   "userId" | "createdAt" | "updatedAt"
 >;

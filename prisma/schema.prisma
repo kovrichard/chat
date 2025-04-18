@@ -68,6 +68,8 @@ model Message {
   role              String
   reasoning         String?
   signature         String?
+  parts             Json?
+  toolInvocations   Json?
   conversationId    String   @map("conversation_id")
   conversation      Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   createdAt         DateTime @default(now()) @map("created_at")

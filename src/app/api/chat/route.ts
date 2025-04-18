@@ -1,11 +1,7 @@
 import { saveConversation } from "@/lib/actions/conversations";
 import systemPrompt from "@/lib/backend/prompts/system-prompt";
 import { getConversation } from "@/lib/dao/conversations";
-import {
-  OnFinishResult,
-  saveResultAsAssistantMessage,
-  saveUserMessage,
-} from "@/lib/dao/messages";
+import { saveMessage } from "@/lib/dao/messages";
 import { decrementFreeMessages, getUserFromSession } from "@/lib/dao/users";
 import rateLimit from "@/lib/rate-limiter";
 import { AnthropicProviderOptions, anthropic } from "@ai-sdk/anthropic";
@@ -15,14 +11,14 @@ import { google } from "@ai-sdk/google";
 import { perplexity } from "@ai-sdk/perplexity";
 import { xai } from "@ai-sdk/xai";
 import {
-  Message,
+  UIMessage,
+  appendResponseMessages,
   extractReasoningMiddleware,
   smoothStream,
   streamText,
   wrapLanguageModel,
 } from "ai";
 import { NextRequest } from "next/server";
-import { v4 as uuidv4 } from "uuid";
 
 const limiter = rateLimit(50, 60);
 
@@ -107,13 +103,13 @@ export async function POST(req: NextRequest) {
     return new Response("Invalid model", { status: 400 });
   }
 
-  const conversation = await getConversation(id);
+  let conversation = await getConversation(id);
+  const lastMessage = messages[messages.length - 1];
 
   if (!conversation) {
-    await saveNewConversation(id, modelId, messages);
+    conversation = await saveNewConversation(id, modelId, messages);
   } else {
-    const lastMessage = messages[messages.length - 1];
-    await saveUserMessage(lastMessage.content, id);
+    await saveMessage(lastMessage, id);
   }
 
   const result = streamText({
@@ -126,8 +122,18 @@ export async function POST(req: NextRequest) {
     experimental_transform: smoothStream({
       delayInMs: 10,
     }),
-    onFinish: async (result: OnFinishResult) => {
-      await saveResultAsAssistantMessage(result, id);
+    onFinish: async ({ response }) => {
+      const updatedMessages = appendResponseMessages({
+        messages:
+          conversation?.messages.concat(lastMessage).map((message) => ({
+            ...message,
+            reasoning: message.reasoning ?? undefined,
+            role: message.role as "user" | "assistant" | "system" | "data",
+          })) ?? [],
+        responseMessages: response.messages,
+      });
+
+      await saveMessage(updatedMessages[updatedMessages.length - 1], id);
       await decrementFreeMessages(user.id);
     },
     onError: (error) => {
@@ -146,21 +152,14 @@ export async function POST(req: NextRequest) {
   });
 }
 
-async function saveNewConversation(id: string, modelId: string, messages: Message[]) {
+async function saveNewConversation(id: string, modelId: string, messages: UIMessage[]) {
   const conversation = {
     id,
     title: "New Chat",
     model: modelId,
-    messages: [
-      {
-        ...messages[0],
-        parts: undefined,
-        reasoning: null,
-        signature: null,
-      },
-    ],
+    messages: messages,
     lastMessageAt: new Date(),
   };
 
-  await saveConversation(conversation);
+  return saveConversation(conversation);
 }
