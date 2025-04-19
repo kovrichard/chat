@@ -4,19 +4,40 @@ import { Button } from "@/components/ui/button";
 import { useChatContext } from "@/lib/contexts/chat-context";
 import { useAddMessage, useCreateConversation } from "@/lib/queries/conversations";
 import { IconPlayerStop } from "@tabler/icons-react";
-import { Send } from "lucide-react";
+import { Paperclip, Send, Trash } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { FormEvent, KeyboardEvent, forwardRef } from "react";
+import {
+  ClipboardEvent,
+  FormEvent,
+  KeyboardEvent,
+  forwardRef,
+  useEffect,
+  useRef,
+} from "react";
 import TextareaAutosize from "react-textarea-autosize";
 
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { cn } from "@/lib/utils";
+import { useFileStore } from "@/stores/file-store";
 import { useInputStore } from "@/stores/input-store";
 import { useModelStore } from "@/stores/model-store";
 import { PartialConversation } from "@/types/chat";
 import { useQuery } from "@tanstack/react-query";
+import { Attachment } from "ai";
+import Image from "next/image";
 import { v4 as uuidv4 } from "uuid";
 import { ModelMenu } from "./model-menu";
+import { AspectRatio } from "./ui/aspect-ratio";
+import { Input } from "./ui/input";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+
+function fileToAttachment(file: File): Attachment {
+  return {
+    name: file.name,
+    contentType: file.type,
+    url: URL.createObjectURL(file),
+  };
+}
 
 const InputForm = forwardRef<
   HTMLTextAreaElement,
@@ -30,6 +51,8 @@ const InputForm = forwardRef<
   const { input, setInput } = useInputStore();
   const { model } = useModelStore();
   const { id, status, stop, error, setInput: setChatInput } = useChatContext();
+  const { files, setFiles } = useFileStore();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: subscription } = useQuery({
     queryKey: ["subscription"],
@@ -85,12 +108,59 @@ const InputForm = forwardRef<
           id: uuidv4(),
           content: input,
           role: "user",
+          experimental_attachments: files ? Array.from(files).map(fileToAttachment) : [],
         },
         conversationId: id,
       });
       setInput("");
     }
   }
+
+  function _handlePaste(e: ClipboardEvent<HTMLTextAreaElement>) {
+    const clipboardItems = e.clipboardData.items;
+
+    // Check if clipboard contains any non-text content
+    const hasNonTextContent = Array.from(clipboardItems).some(
+      (item) => !item.type.startsWith("text/")
+    );
+
+    if (hasNonTextContent) {
+      e.preventDefault();
+
+      // Only process if it's an allowed image type
+      const imageItems = Array.from(clipboardItems).filter(
+        (item) =>
+          item.type === "image/png" ||
+          item.type === "image/jpeg" ||
+          item.type === "image/jpg"
+      );
+
+      if (imageItems.length > 0) {
+        const newFiles = new DataTransfer();
+        // First add existing files if any
+        if (files) {
+          Array.from(files).forEach((existingFile) => {
+            newFiles.items.add(existingFile);
+          });
+        }
+        // Then append the new images
+        imageItems.forEach((imageItem) => {
+          const file = imageItem.getAsFile();
+          if (file) {
+            newFiles.items.add(file);
+          }
+        });
+
+        setFiles(newFiles.files);
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (!files && fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }, [files]);
 
   return (
     <div
@@ -103,6 +173,44 @@ const InputForm = forwardRef<
         onSubmit={handleSendMessage}
         className="flex flex-col items-end border rounded-t-xl sm:rounded-b-xl p-4 bg-card"
       >
+        <div
+          className="flex items-center w-full gap-2 transition-all duration-300"
+          style={{
+            marginBottom: files && files.length > 0 ? "16px" : "0px",
+            height: files && files.length > 0 ? "54px" : "0px",
+          }}
+        >
+          {Array.from(files || []).map((file, index) => (
+            <div key={`${file.name}-${index}`} className="relative w-24">
+              <AspectRatio ratio={16 / 9} className="bg-muted">
+                <Image
+                  src={URL.createObjectURL(file)}
+                  alt={file.name}
+                  fill
+                  className="size-full rounded-md object-cover"
+                />
+              </AspectRatio>
+              <Button
+                type="button"
+                size="icon"
+                variant="ghost"
+                className="absolute -top-3 -right-3 rounded-full size-6 bg-muted border"
+                onClick={() => {
+                  const fileList = Array.from(files || []);
+                  const newFiles = new DataTransfer();
+                  for (let i = 0; i < fileList.length; i++) {
+                    if (fileList[i] !== file) {
+                      newFiles.items.add(fileList[i]);
+                    }
+                  }
+                  setFiles(newFiles.files);
+                }}
+              >
+                <Trash size={12} />
+              </Button>
+            </div>
+          ))}
+        </div>
         <TextareaAutosize
           id="message-input"
           ref={ref}
@@ -110,8 +218,21 @@ const InputForm = forwardRef<
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
+          // onPaste={_handlePaste}
           rows={1}
           className="flex min-h-10 max-h-80 w-full bg-transparent placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 text-sm resize-none"
+        />
+        <Input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          onChange={(event) => {
+            if (event.target.files) {
+              setFiles(event.target.files);
+            }
+          }}
+          accept="image/png,image/jpeg,image/jpg"
+          className="hidden"
         />
         <div className="flex items-center w-full gap-2">
           <ModelMenu />
@@ -128,6 +249,29 @@ const InputForm = forwardRef<
               </p>
             )}
           </div>
+          {/* <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  className="shrink-0 size-9"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={
+                    !model.features?.some(
+                      (feature) => feature.name === "Images"
+                    )
+                  }
+                >
+                  <Paperclip size={16} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Attach images</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider> */}
           {status === "submitted" || status === "streaming" ? (
             <Button
               type="submit"
@@ -142,7 +286,9 @@ const InputForm = forwardRef<
               type="submit"
               size="icon"
               className="shrink-0 size-9"
-              disabled={error && error.message === "content_filter"}
+              disabled={
+                input.trim() === "" || (error && error.message === "content_filter")
+              }
             >
               <Send size={16} />
             </Button>
