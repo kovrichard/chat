@@ -44,15 +44,18 @@ export function useConversations(conversations: any, search?: string) {
     },
     getNextPageParam: (lastPage) => lastPage.nextPage,
     initialPageParam: 1,
-    initialData: () => ({
-      pages: [
-        {
-          conversations: conversations.conversations,
-          nextPage: conversations.hasMore ? 1 : undefined,
-        },
-      ],
-      pageParams: [1],
-    }),
+    initialData: !search
+      ? () => ({
+          pages: [
+            {
+              conversations: conversations.conversations,
+              nextPage: conversations.hasMore ? 1 : undefined,
+            },
+          ],
+          pageParams: [1],
+        })
+      : undefined,
+    placeholderData: (previousData) => previousData,
   });
 }
 

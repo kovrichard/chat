@@ -60,8 +60,10 @@ function groupConversationsByTime(conversations: PartialConversation[]) {
 export default function ChatSidebar({ conversations }: { conversations: any }) {
   const { id } = useParams();
   const { searchQuery } = useSearchStore();
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useConversations(conversations, searchQuery);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useConversations(
+    conversations,
+    searchQuery
+  );
   const observerRef = useRef<IntersectionObserver>();
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const allConversations = data?.pages.flatMap((page) => page.conversations) || [];
@@ -95,89 +97,66 @@ export default function ChatSidebar({ conversations }: { conversations: any }) {
 
   return (
     <div className="flex flex-col flex-1 overflow-auto no-scrollbar">
-      {isLoading ? (
-        <SidebarGroup className="flex flex-col gap-1">
-          <SidebarGroupLabel className="text-muted-foreground p-1">
-            Just a moment...
-          </SidebarGroupLabel>
+      {groupedConversations.today.length > 0 && (
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-primary/70">Today</SidebarGroupLabel>
           <SidebarGroupContent className="space-y-1">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="rounded-md p-3">
-                <div className="flex flex-col items-start gap-2">
-                  <div className="flex w-full items-center gap-2">
-                    <div className="size-4 rounded-full bg-muted animate-pulse" />
-                    <div className="h-4 w-28 rounded-full bg-muted animate-pulse" />
-                  </div>
-                  <div className="h-4 w-full rounded-full bg-muted animate-pulse" />
-                </div>
-              </div>
+            {groupedConversations.today.map((chat: PartialConversation) => (
+              <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
             ))}
           </SidebarGroupContent>
         </SidebarGroup>
-      ) : (
-        <>
-          {groupedConversations.today.length > 0 && (
-            <SidebarGroup>
-              <SidebarGroupLabel className="text-primary/70">Today</SidebarGroupLabel>
-              <SidebarGroupContent className="space-y-1">
-                {groupedConversations.today.map((chat: PartialConversation) => (
-                  <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
-                ))}
-              </SidebarGroupContent>
-            </SidebarGroup>
-          )}
-          {groupedConversations.yesterday.length > 0 && (
-            <SidebarGroup>
-              <SidebarGroupLabel className="text-primary/70">Yesterday</SidebarGroupLabel>
-              <SidebarGroupContent className="space-y-1">
-                {groupedConversations.yesterday.map((chat: PartialConversation) => (
-                  <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
-                ))}
-              </SidebarGroupContent>
-            </SidebarGroup>
-          )}
-          {groupedConversations.lastWeek.length > 0 && (
-            <SidebarGroup>
-              <SidebarGroupLabel className="text-primary/70">
-                Previous 7 days
-              </SidebarGroupLabel>
-              <SidebarGroupContent className="space-y-1">
-                {groupedConversations.lastWeek.map((chat: PartialConversation) => (
-                  <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
-                ))}
-              </SidebarGroupContent>
-            </SidebarGroup>
-          )}
-          {groupedConversations.older.length > 0 && (
-            <SidebarGroup>
-              <SidebarGroupLabel className="text-primary/70">Older</SidebarGroupLabel>
-              <SidebarGroupContent className="space-y-1">
-                {groupedConversations.older.map((chat: PartialConversation) => (
-                  <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
-                ))}
-              </SidebarGroupContent>
-            </SidebarGroup>
-          )}
-          {/* Load more trigger */}
-          {isFetchingNextPage && (
-            <div ref={loadMoreRef} className="h-4 w-full">
-              <div className="flex items-center justify-center p-2">
-                <div className="flex gap-1">
-                  <div className="size-2 rounded-full bg-muted animate-bounce [animation-delay:-0.3s]"></div>
-                  <div className="size-2 rounded-full bg-muted animate-bounce [animation-delay:-0.15s]"></div>
-                  <div className="size-2 rounded-full bg-muted animate-bounce"></div>
-                </div>
-              </div>
+      )}
+      {groupedConversations.yesterday.length > 0 && (
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-primary/70">Yesterday</SidebarGroupLabel>
+          <SidebarGroupContent className="space-y-1">
+            {groupedConversations.yesterday.map((chat: PartialConversation) => (
+              <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
+            ))}
+          </SidebarGroupContent>
+        </SidebarGroup>
+      )}
+      {groupedConversations.lastWeek.length > 0 && (
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-primary/70">
+            Previous 7 days
+          </SidebarGroupLabel>
+          <SidebarGroupContent className="space-y-1">
+            {groupedConversations.lastWeek.map((chat: PartialConversation) => (
+              <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
+            ))}
+          </SidebarGroupContent>
+        </SidebarGroup>
+      )}
+      {groupedConversations.older.length > 0 && (
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-primary/70">Older</SidebarGroupLabel>
+          <SidebarGroupContent className="space-y-1">
+            {groupedConversations.older.map((chat: PartialConversation) => (
+              <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
+            ))}
+          </SidebarGroupContent>
+        </SidebarGroup>
+      )}
+      {/* Load more trigger */}
+      {isFetchingNextPage && (
+        <div ref={loadMoreRef} className="h-4 w-full">
+          <div className="flex items-center justify-center p-2">
+            <div className="flex gap-1">
+              <div className="size-2 rounded-full bg-muted animate-bounce [animation-delay:-0.3s]"></div>
+              <div className="size-2 rounded-full bg-muted animate-bounce [animation-delay:-0.15s]"></div>
+              <div className="size-2 rounded-full bg-muted animate-bounce"></div>
             </div>
-          )}
-          {allConversations.length === 0 && searchQuery && (
-            <SidebarGroup>
-              <SidebarGroupLabel className="inline-flex items-center justify-center text-muted-foreground">
-                No conversations found
-              </SidebarGroupLabel>
-            </SidebarGroup>
-          )}
-        </>
+          </div>
+        </div>
+      )}
+      {allConversations.length === 0 && searchQuery && (
+        <SidebarGroup>
+          <SidebarGroupLabel className="inline-flex items-center justify-center text-muted-foreground">
+            No conversations found
+          </SidebarGroupLabel>
+        </SidebarGroup>
       )}
     </div>
   );
