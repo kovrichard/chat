@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 
-export const metaTitle = "Fyzz.chat - One platform for every AI mind";
+export const metaTitle = "Fyzz.chat - Chat with the best AI models, all in one place";
 export const metaDescription =
-  "Fyzz.chat is your gateway to seamless conversations with a growing collection of AI models like GPT, Claude, Llama, Perplexity, and more. Experience the future of AI-powered communication in one intuitive platform.";
+  "One platform for GPT, Perplexity, Gemini, and more. Chat, speak with PDFs, and analyze images.";
 export const canonicalUrl = "https://www.fyzz.chat";
 
 export const openGraph: Metadata["openGraph"] = {

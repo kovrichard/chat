@@ -2,10 +2,10 @@ import { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Fyzz.chat - One platform for every AI mind",
+    name: "Fyzz.chat - Chat with the best AI models, all in one place",
     short_name: "Fyzz.chat",
     description:
-      "Fyzz.chat is your gateway to seamless conversations with a growing collection of AI models like GPT, Claude, Llama, Perplexity, and more. Experience the future of AI-powered communication in one intuitive platform.",
+      "One platform for GPT, Perplexity, Gemini, and more. Chat, speak with PDFs, and analyze images.",
     start_url: "/",
     display: "standalone",
     icons: [
