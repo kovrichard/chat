@@ -296,7 +296,7 @@ const InputForm = forwardRef<
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Attach images</p>
+                <p>Attach files</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider> */}
