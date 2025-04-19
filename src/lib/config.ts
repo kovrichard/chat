@@ -22,6 +22,10 @@ const schema = z.object({
   stripeWebhookSecret: z.string().default(""),
   stripePortalReturnUrl: z.string().default("http://localhost:3000/chat"),
   stripeTrialSubscriptionPriceId: z.string().default(""),
+
+  // AWS
+  awsRegion: z.string().default("eu-central-1"),
+  awsUploadsBucket: z.string().default(""),
 });
 
 const envVars = {
@@ -44,6 +48,10 @@ const envVars = {
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
   stripePortalReturnUrl: process.env.STRIPE_PORTAL_RETURN_URL,
   stripeTrialSubscriptionPriceId: process.env.STRIPE_TRIAL_SUBSCRIPTION_PRICE_ID,
+
+  // AWS
+  awsRegion: process.env.AWS_REGION,
+  awsUploadsBucket: process.env.AWS_UPLOADS_BUCKET,
 };
 
 const conf = schema.parse(envVars);
