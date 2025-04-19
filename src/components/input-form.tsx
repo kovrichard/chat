@@ -132,7 +132,8 @@ const InputForm = forwardRef<
         (item) =>
           item.type === "image/png" ||
           item.type === "image/jpeg" ||
-          item.type === "image/jpg"
+          item.type === "image/jpg" ||
+          item.type === "image/webp"
       );
 
       if (imageItems.length > 0) {
@@ -231,7 +232,7 @@ const InputForm = forwardRef<
               setFiles(event.target.files);
             }
           }}
-          accept="image/png,image/jpeg,image/jpg"
+          accept="image/png,image/jpeg,image/jpg,image/webp"
           className="hidden"
         />
         <div className="flex items-center w-full gap-2">
