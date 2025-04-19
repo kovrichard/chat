@@ -2,7 +2,6 @@ import {
   deleteConversation,
   saveConversation,
   saveConversationModel,
-  updateConversationTitle,
 } from "@/lib/actions/conversations";
 import { PartialConversation } from "@/types/chat";
 import {
@@ -17,12 +16,18 @@ import { processMessages } from "../message-processor";
 
 export const conversationKeys = {
   detail: (id: string) => ["conversations", id] as const,
-  list: () => ["conversations", "list"] as const,
+  list: (search?: string) => {
+    const keys = ["conversations", "list"];
+    if (search) {
+      keys.push(search);
+    }
+    return keys;
+  },
 };
 
 export function useConversations(conversations: any, search?: string) {
   return useInfiniteQuery({
-    queryKey: conversationKeys.list(),
+    queryKey: conversationKeys.list(search),
     queryFn: async ({ pageParam = 1 }) => {
       const searchParams = new URLSearchParams({
         page: pageParam.toString(),
@@ -74,35 +79,6 @@ export function useConversation(id: string, initialConversation?: any) {
   });
 }
 
-export function useUpdateConversationTitle() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({
-      conversationId,
-      messages,
-    }: { conversationId: string; messages: Message[] }) =>
-      updateConversationTitle(conversationId, messages),
-    onSuccess: (updatedConversation) => {
-      // Update the conversation in all pages of the infinite query
-      queryClient.setQueryData(conversationKeys.list(), (old: any) => {
-        if (!old) return old;
-        return {
-          ...old,
-          pages: old.pages.map((page: any) => ({
-            ...page,
-            conversations: page.conversations.map((conv: PartialConversation) =>
-              conv.id === updatedConversation.id
-                ? { ...conv, title: updatedConversation.title }
-                : conv
-            ),
-          })),
-        };
-      });
-    },
-  });
-}
-
 export function useUpdateConversationModel() {
   const queryClient = useQueryClient();
 
@@ -125,16 +101,19 @@ export function useDeleteConversation() {
     mutationFn: ({ conversationId }: { conversationId: string }) =>
       deleteConversation(conversationId),
     onSuccess: (_, { conversationId }) => {
-      // iterate over the pages and remove the conversation from the pages that contain it
-      queryClient.setQueryData(conversationKeys.list(), (old: any) => ({
-        ...old,
-        pages: old.pages.map((page: any) => ({
-          ...page,
-          conversations: page.conversations.filter(
-            (conv: PartialConversation) => conv.id !== conversationId
-          ),
-        })),
-      }));
+      // Update all conversation list caches (including filtered ones)
+      const queries = queryClient.getQueriesData({ queryKey: ["conversations", "list"] });
+      queries.forEach(([queryKey]) => {
+        queryClient.setQueryData(queryKey, (old: any) => ({
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            conversations: page.conversations.filter(
+              (conv: PartialConversation) => conv.id !== conversationId
+            ),
+          })),
+        }));
+      });
     },
   });
 }
@@ -163,24 +142,27 @@ export function useAddMessage() {
         messages: [...(old.messages || []), optimisticMessage],
       }));
 
-      // Update conversation list cache
-      queryClient.setQueryData(conversationKeys.list(), (old: any) => {
-        if (!old) return old;
-        return {
-          ...old,
-          pages: old.pages.map((page: any) => ({
-            ...page,
-            conversations: page.conversations.map((conv: PartialConversation) =>
-              conv.id === conversationId
-                ? {
-                    ...conv,
-                    messages: [...(conv.messages || []), optimisticMessage],
-                    lastMessageAt: optimisticMessage.createdAt,
-                  }
-                : conv
-            ),
-          })),
-        };
+      // Update all conversation list caches (including filtered ones)
+      const queries = queryClient.getQueriesData({ queryKey: ["conversations", "list"] });
+      queries.forEach(([queryKey]) => {
+        queryClient.setQueryData(queryKey, (old: any) => {
+          if (!old) return old;
+          return {
+            ...old,
+            pages: old.pages.map((page: any) => ({
+              ...page,
+              conversations: page.conversations.map((conv: PartialConversation) =>
+                conv.id === conversationId
+                  ? {
+                      ...conv,
+                      messages: [...(conv.messages || []), optimisticMessage],
+                      lastMessageAt: optimisticMessage.createdAt,
+                    }
+                  : conv
+              ),
+            })),
+          };
+        });
       });
 
       return optimisticMessage;
@@ -190,7 +172,7 @@ export function useAddMessage() {
       queryClient.invalidateQueries({
         queryKey: conversationKeys.detail(conversationId),
       });
-      queryClient.invalidateQueries({ queryKey: ["conversations", "list"] });
+      queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
     },
   });
 }
@@ -205,7 +187,7 @@ export function useRegenerateMessage() {
     }: { messageId: string; conversationId: string }) =>
       deleteMessageChainAfter(messageId, conversationId),
     onSuccess: (_, { conversationId }) => {
-      queryClient.invalidateQueries({ queryKey: ["conversations", "list"] });
+      queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
 
       queryClient.invalidateQueries({
         queryKey: conversationKeys.detail(conversationId),
@@ -221,21 +203,39 @@ export function useCreateConversation() {
     mutationFn: (conversation: PartialConversation) => saveConversation(conversation),
     onSuccess: (newConversation) => {
       if (newConversation) {
+        // Update conversation detail
         queryClient.setQueryData(
           conversationKeys.detail(newConversation.id),
           newConversation
         );
-        queryClient.setQueryData(conversationKeys.list(), (old: any) => {
-          if (!old) return old;
-          return {
-            ...old,
-            pages: [
-              {
-                conversations: [newConversation, ...(old.pages[0]?.conversations || [])],
-              },
-              ...old.pages.slice(1),
-            ],
-          };
+
+        // Get all conversation list queries
+        const queries = queryClient.getQueriesData({
+          queryKey: ["conversations", "list"],
+        });
+        queries.forEach(([queryKey]) => {
+          // Only update the unfiltered list optimistically
+          if (queryKey.length === 2) {
+            // ["conversations", "list"]
+            queryClient.setQueryData(queryKey, (old: any) => {
+              if (!old) return old;
+              return {
+                ...old,
+                pages: [
+                  {
+                    conversations: [
+                      newConversation,
+                      ...(old.pages[0]?.conversations || []),
+                    ],
+                  },
+                  ...old.pages.slice(1),
+                ],
+              };
+            });
+          } else {
+            // Invalidate filtered queries to trigger a refetch
+            queryClient.invalidateQueries({ queryKey });
+          }
         });
       }
     },
@@ -244,7 +244,7 @@ export function useCreateConversation() {
       queryClient.invalidateQueries({
         queryKey: conversationKeys.detail(newConversation.id),
       });
-      queryClient.invalidateQueries({ queryKey: ["conversations", "list"] });
+      queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
     },
   });
 }

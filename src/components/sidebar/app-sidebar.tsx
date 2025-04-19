@@ -37,7 +37,7 @@ export async function AppSidebar() {
             New Chat
           </Link>
         </Button>
-        {/* <SearchField /> */}
+        <SearchField />
       </SidebarHeader>
       <SidebarContent className="relative pl-2 pr-2 md:pr-0">
         <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-sidebar to-transparent pointer-events-none z-10" />

@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Input } from "../ui/input";
 
 export function SearchField() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState<string>("");
   const { setSearchQuery } = useSearchStore();
   const debouncedSetSearchQuery = useCallback(
     debounce((value: string) => setSearchQuery(value), 300),
@@ -14,7 +14,7 @@ export function SearchField() {
   );
 
   useEffect(() => {
-    debouncedSetSearchQuery(search);
+    debouncedSetSearchQuery(search || undefined);
   }, [search, debouncedSetSearchQuery]);
 
   return (
