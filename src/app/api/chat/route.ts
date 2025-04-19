@@ -113,8 +113,13 @@ export async function POST(req: NextRequest) {
   const { experimental_attachments, ...textMessage } = message;
 
   if (experimental_attachments) {
-    const attachments = await uploadAttachments(experimental_attachments, user.id, id);
-    textMessage.files = attachments;
+    try {
+      const attachments = await uploadAttachments(experimental_attachments, user.id, id);
+      textMessage.files = attachments;
+    } catch (error) {
+      console.error(error);
+      return new Response("file_too_large", { status: 400 });
+    }
   }
 
   if (existingConversation?.messages.length === 1) {

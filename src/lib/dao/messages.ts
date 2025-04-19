@@ -54,6 +54,15 @@ export async function uploadAttachments(
   userId: number,
   conversationId: string
 ) {
+  // Validate file sizes upfront before starting any uploads
+  for (const attachment of messageAttachments) {
+    const base64Data = attachment.url.split(",")[1];
+    const decodedData = Buffer.from(base64Data, "base64");
+    if (decodedData.length > 25 * 1024 * 1024) {
+      throw new Error(`File "${attachment.name}" exceeds the maximum size limit of 25MB`);
+    }
+  }
+
   const attachments = await Promise.all(
     messageAttachments.map(async (attachment: Attachment) => {
       const base64Data = attachment.url.split(",")[1];
