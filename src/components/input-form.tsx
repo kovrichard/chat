@@ -199,7 +199,7 @@ const InputForm = forwardRef<
         >
           {Array.from(files || []).map((file, index) => (
             <div key={`${file.name}-${index}`} className="relative w-24">
-              <AspectRatio ratio={16 / 9} className="bg-muted rounded-md">
+              <AspectRatio ratio={16 / 9} className="bg-muted">
                 <TooltipProvider>
                   <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
@@ -211,7 +211,7 @@ const InputForm = forwardRef<
                           className="size-full rounded-md object-cover"
                         />
                       ) : (
-                        <div className="flex items-center justify-center h-full">
+                        <div className="flex items-center justify-center h-full border rounded-md">
                           <FileText size={24} />
                         </div>
                       )}
