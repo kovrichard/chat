@@ -123,11 +123,11 @@ function StatusList({ setOpen }: { setOpen: (open: boolean) => void }) {
                 }}
                 className="group flex justify-between pl-6"
               >
-                <span>{model.name}</span>
+                <span className="mr-auto">{model.name}</span>
                 {model.features?.map((feature: Feature) => (
                   <HoverPopover key={feature.name} content={feature.description}>
                     <div
-                      className="ml-2 rounded-full p-1"
+                      className="rounded-full p-1"
                       onClick={(e) => e.stopPropagation()} // Prevent triggering the CommandItem's onSelect
                     >
                       <feature.icon
