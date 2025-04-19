@@ -2,12 +2,12 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { CreditCard, MessageCircle, MessageSquare } from "lucide-react";
-import { SignOut } from "./signout-button";
 import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-} from "./ui/dropdown-menu";
+} from "../ui/dropdown-menu";
+import { SignOut } from "./signout-button";
 
 export default function ProfileMenu({
   hasCustomerId,

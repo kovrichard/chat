@@ -3,7 +3,7 @@
 import { debounce } from "@/lib/utils";
 import { useSearchStore } from "@/stores/search-store";
 import { useCallback, useEffect, useState } from "react";
-import { Input } from "./ui/input";
+import { Input } from "../ui/input";
 
 export function SearchField() {
   const [search, setSearch] = useState("");

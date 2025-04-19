@@ -18,10 +18,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "./ui/alert-dialog";
-import { AnimatedTitle } from "./ui/animated-title";
-import { Button } from "./ui/button";
-import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel } from "./ui/sidebar";
+} from "../ui/alert-dialog";
+import { AnimatedTitle } from "../ui/animated-title";
+import { Button } from "../ui/button";
+import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel } from "../ui/sidebar";
 
 function groupConversationsByTime(conversations: PartialConversation[]) {
   const now = new Date();

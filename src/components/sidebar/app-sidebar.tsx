@@ -11,16 +11,16 @@ import { getConversations } from "@/lib/dao/conversations";
 import { getUserFromSession } from "@/lib/dao/users";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import ChatSidebar from "./chat-sidebar";
-import ProfileMenu from "./profile-menu";
-import { SearchField } from "./search-field";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Button } from "./ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "../ui/dropdown-menu";
+import ChatSidebar from "./chat-sidebar";
+import ProfileMenu from "./profile-menu";
+import { SearchField } from "./search-field";
 
 export async function AppSidebar() {
   const userData = getUserFromSession();
