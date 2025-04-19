@@ -1,4 +1,5 @@
 import { updateConversationTitle } from "@/lib/actions/conversations";
+import { uploadFile } from "@/lib/aws/s3";
 import systemPrompt from "@/lib/backend/prompts/system-prompt";
 import { appendMessageToConversation, getConversation } from "@/lib/dao/conversations";
 import { saveMessage } from "@/lib/dao/messages";
@@ -11,6 +12,7 @@ import { google } from "@ai-sdk/google";
 import { perplexity } from "@ai-sdk/perplexity";
 import { xai } from "@ai-sdk/xai";
 import {
+  Attachment,
   appendClientMessage,
   appendResponseMessages,
   extractReasoningMiddleware,
@@ -19,6 +21,7 @@ import {
   wrapLanguageModel,
 } from "ai";
 import { NextRequest } from "next/server";
+import { v4 as uuidv4 } from "uuid";
 
 const limiter = rateLimit(50, 60);
 
@@ -107,6 +110,32 @@ export async function POST(req: NextRequest) {
   let existingMessages;
 
   const { experimental_attachments, ...textMessage } = message;
+
+  if (experimental_attachments) {
+    const attachments = await Promise.all(
+      experimental_attachments.map(async (attachment: Attachment) => {
+        const base64Data = attachment.url.split(",")[1];
+        const decodedData = Buffer.from(base64Data, "base64");
+
+        const blob = new Blob([decodedData], { type: attachment.contentType });
+
+        const fileId = uuidv4();
+        const filePath = `${user.id}/${id}/${fileId}`;
+
+        const file = new File([blob], attachment.name || fileId, {
+          type: attachment.contentType,
+        });
+
+        await uploadFile(file, filePath);
+        return {
+          name: attachment.name || fileId,
+          contentType: attachment.contentType,
+          url: filePath,
+        };
+      })
+    );
+    textMessage.files = attachments;
+  }
 
   if (existingConversation?.messages.length === 1) {
     existingMessages = existingConversation.messages;

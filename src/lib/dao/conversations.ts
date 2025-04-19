@@ -1,8 +1,10 @@
 import "server-only";
 
+import conf from "@/lib/config";
 import { getUserIdFromSession } from "@/lib/dao/users";
 import prisma from "@/lib/prisma";
 import { Message } from "@prisma/client";
+import { JsonArray } from "@prisma/client/runtime/library";
 import { UIMessage } from "ai";
 
 export async function getConversation(id: string) {
@@ -25,10 +27,14 @@ export async function getConversation(id: string) {
     },
   });
 
-  return {
-    ...conversation,
-    messages: mapMessages(conversation?.messages || []),
-  };
+  if (conversation) {
+    return {
+      ...conversation,
+      messages: await mapMessages(conversation?.messages || []),
+    };
+  } else {
+    return null;
+  }
 }
 
 export async function getConversations(
@@ -132,18 +138,32 @@ export async function appendMessageToConversation(
     },
   });
 
-  return {
-    ...updatedConversation,
-    messages: mapMessages(updatedConversation.messages),
-  };
+  if (updatedConversation) {
+    return {
+      ...updatedConversation,
+      messages: await mapMessages(updatedConversation.messages),
+    };
+  } else {
+    return null;
+  }
 }
 
-function mapMessages(messages: Message[]) {
-  return messages.map((message) => ({
-    ...message,
-    role: message.role as "system" | "user" | "assistant" | "data",
-    reasoning: message.reasoning ?? undefined,
-    parts: JSON.parse(message.parts as string),
-    toolInvocations: JSON.parse(message.toolInvocations as string),
-  }));
+async function mapMessages(messages: Message[]) {
+  const mappedMessages = await Promise.all(
+    messages.map(async (message) => ({
+      ...message,
+      role: message.role as "system" | "user" | "assistant" | "data",
+      reasoning: message.reasoning ?? undefined,
+      parts: JSON.parse(message.parts as string),
+      toolInvocations: JSON.parse(message.toolInvocations as string),
+      experimental_attachments:
+        (message.files as JsonArray[])?.map((file: any) => ({
+          name: file.name,
+          contentType: file.contentType,
+          url: `https://${conf.awsUploadsBucket}/${file.url}`,
+        })) ?? [],
+    }))
+  );
+
+  return mappedMessages;
 }

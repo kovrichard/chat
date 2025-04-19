@@ -7,6 +7,14 @@ const nextConfig = {
         return config;
     },
     output: "standalone",
+    images: {
+        remotePatterns: [
+            {
+                hostname: "cdn.fyzz.chat",
+                protocol: "https",
+            }
+        ]
+    }
 };
 
 const withBundleAnalyzer = NextBundleAnalyzer({
