@@ -8,7 +8,9 @@ import LastMessage from "./last-message";
 import { MessageItem } from "./message-item";
 import { LoadingDots } from "./ui/loading-dots";
 
+import { useFileStore } from "@/stores/file-store";
 import { useModelStore } from "@/stores/model-store";
+
 const MemoizedMessageItem = memo(MessageItem);
 
 export function MessagesList({
@@ -18,11 +20,16 @@ export function MessagesList({
   initialConversation?: any;
   id: string;
 }) {
+  const router = useRouter();
   const { status, error } = useChatContext();
   const { setModel } = useModelStore();
+  const { files } = useFileStore();
   const { data: conversation } = useConversation(id, initialConversation);
 
   useEffect(() => {
+    if (!conversation) {
+      router.push("/chat");
+    }
     if (conversation?.model) {
       setModel(conversation.model);
     }
@@ -50,7 +57,8 @@ export function MessagesList({
       )}
       <LastMessage />
       {status === "submitted" && <LoadingDots className="text-muted-foreground" />}
-      <div id="messages-end" />
+      <div id="messages-end" className="h-4" />
+      {files && files.length > 0 && <div className="h-[54px] w-1" />}
     </div>
   );
 }

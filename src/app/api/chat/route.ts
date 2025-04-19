@@ -106,10 +106,12 @@ export async function POST(req: NextRequest) {
   const existingConversation = await getConversation(id);
   let existingMessages;
 
+  const { experimental_attachments, ...textMessage } = message;
+
   if (existingConversation?.messages.length === 1) {
     existingMessages = existingConversation.messages;
   } else {
-    const conversation = await appendMessageToConversation(message, id);
+    const conversation = await appendMessageToConversation(textMessage, id);
     existingMessages = conversation?.messages || [];
   }
 

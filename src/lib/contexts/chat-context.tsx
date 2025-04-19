@@ -1,5 +1,6 @@
 "use client";
 
+import { useFileStore } from "@/stores/file-store";
 import { useModelStore } from "@/stores/model-store";
 import { useChat } from "@ai-sdk/react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -28,6 +29,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const addMessage = useAddMessage();
   const { model } = useModelStore();
   const sentRef = useRef(false);
+  const { files, setFiles } = useFileStore();
 
   const { id, messages, status, input, setInput, handleSubmit, error, stop } = useChat({
     id: conversationId,
@@ -59,7 +61,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (status === "ready" && input && conversationId && !sentRef.current) {
       sentRef.current = true;
-      handleSubmit();
+      handleSubmit(new Event("submit"), {
+        experimental_attachments: files,
+      });
+      setFiles(undefined);
     }
 
     if (!input) {

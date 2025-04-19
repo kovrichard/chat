@@ -1,6 +1,7 @@
 import { Message } from "ai";
 import { Copy } from "lucide-react";
 import { marked } from "marked";
+import Image from "next/image";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -194,12 +195,25 @@ export function MessageContent({ message }: { message: Message }) {
 
   if (message.role === "user") {
     return (
-      <div
-        className="rounded-lg p-4 border whitespace-pre-wrap break-words bg-card text-card-foreground"
-        data-role="user"
-        style={{ wordBreak: "break-word" }}
-      >
-        {message.content}
+      <div className="flex flex-col gap-2 items-end">
+        {message.experimental_attachments?.map((attachment, index) => (
+          <div key={`${message.id}-attachment-${index}`}>
+            <Image
+              src={attachment.url}
+              alt={attachment.name || ""}
+              width={300}
+              height={300}
+              className="rounded-lg"
+            />
+          </div>
+        ))}
+        <div
+          className="rounded-lg p-4 border whitespace-pre-wrap break-words bg-card text-card-foreground w-fit"
+          data-role="user"
+          style={{ wordBreak: "break-word" }}
+        >
+          <p>{message.content}</p>
+        </div>
       </div>
     );
   }
