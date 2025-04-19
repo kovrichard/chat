@@ -2,13 +2,15 @@
 
 import "server-only";
 
+import { deleteFile } from "@/lib/aws/s3";
+import { uploadAttachments } from "@/lib/dao/messages";
 import { getUserIdFromSession } from "@/lib/dao/users";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 import { PartialConversation } from "@/types/chat";
 import { openai } from "@ai-sdk/openai";
+import { JsonValue } from "@prisma/client/runtime/library";
 import { Message, generateText } from "ai";
-import { uploadAttachments } from "../dao/messages";
-import { logger } from "../logger";
 
 export async function saveConversation(conversation: PartialConversation) {
   const userId = await getUserIdFromSession();
@@ -94,6 +96,24 @@ export async function saveConversationModel(conversationId: string, modelId: str
 
 export async function deleteConversation(conversationId: string) {
   const userId = await getUserIdFromSession();
+
+  const conversation = await prisma.conversation.findUnique({
+    where: { id: conversationId, userId },
+    include: {
+      messages: true,
+    },
+  });
+
+  const attachments =
+    conversation?.messages
+      .flatMap((message) => (message.files as JsonValue[])?.map((file: any) => file?.url))
+      .filter((url) => !!url) || [];
+
+  await Promise.all(
+    attachments.map(async (attachment) => {
+      await deleteFile(attachment);
+    })
+  );
 
   await prisma.conversation.delete({ where: { id: conversationId, userId } });
 }

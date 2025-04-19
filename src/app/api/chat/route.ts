@@ -108,23 +108,25 @@ export async function POST(req: NextRequest) {
   }
 
   const existingConversation = await getConversation(id);
-  let existingMessages;
+  let existingMessages: Message[] = [];
 
   const { experimental_attachments, ...textMessage } = message;
 
-  if (experimental_attachments) {
-    try {
-      const attachments = await uploadAttachments(experimental_attachments, user.id, id);
-      textMessage.files = attachments;
-    } catch (error) {
-      console.error(error);
-      return new Response("file_too_large", { status: 400 });
+  if (existingConversation?.messages && existingConversation.messages.length > 1) {
+    if (experimental_attachments) {
+      try {
+        const attachments = await uploadAttachments(
+          experimental_attachments,
+          user.id,
+          id
+        );
+        textMessage.files = attachments;
+      } catch (error) {
+        console.error(error);
+        return new Response("file_too_large", { status: 400 });
+      }
     }
-  }
 
-  if (existingConversation?.messages.length === 1) {
-    existingMessages = existingConversation.messages;
-  } else {
     const conversation = await appendMessageToConversation(textMessage, id);
     existingMessages = conversation?.messages || [];
   }
