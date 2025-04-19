@@ -7,10 +7,25 @@ import prisma from "@/lib/prisma";
 import { PartialConversation } from "@/types/chat";
 import { openai } from "@ai-sdk/openai";
 import { Message, generateText } from "ai";
+import { uploadAttachments } from "../dao/messages";
 import { logger } from "../logger";
 
 export async function saveConversation(conversation: PartialConversation) {
   const userId = await getUserIdFromSession();
+
+  const messages = await Promise.all(
+    conversation.messages.map(async (message) => ({
+      ...message,
+      experimental_attachments: undefined,
+      parts: JSON.stringify(message.parts),
+      toolInvocations: JSON.stringify(message.toolInvocations),
+      files: await uploadAttachments(
+        message.experimental_attachments || [],
+        userId,
+        conversation.id
+      ),
+    }))
+  );
 
   const newConversation = await prisma.conversation.create({
     data: {
@@ -23,11 +38,7 @@ export async function saveConversation(conversation: PartialConversation) {
         },
       },
       messages: {
-        create: conversation.messages.map((message) => ({
-          ...message,
-          parts: JSON.stringify(message.parts),
-          toolInvocations: JSON.stringify(message.toolInvocations),
-        })),
+        create: messages,
       },
     },
     include: {

@@ -39,6 +39,22 @@ function fileToAttachment(file: File): Attachment {
   };
 }
 
+async function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      resolve(reader.result as string); // Cast to string
+    };
+
+    reader.onerror = (error) => {
+      reject(error);
+    };
+
+    reader.readAsDataURL(file); // Read the file as a data URL
+  });
+}
+
 const InputForm = forwardRef<
   HTMLTextAreaElement,
   { plan: string; freeMessages: number; className?: string }
@@ -95,6 +111,15 @@ const InputForm = forwardRef<
             content: input,
             role: "user",
             parts: [{ type: "text", text: input }],
+            experimental_attachments: files
+              ? await Promise.all(
+                  Array.from(files).map(async (file: File) => ({
+                    name: file.name,
+                    contentType: file.type,
+                    url: await fileToBase64(file),
+                  }))
+                )
+              : [],
           },
         ],
         lastMessageAt: new Date(),
