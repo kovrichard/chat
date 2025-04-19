@@ -1,4 +1,4 @@
-import { Brain, CodeXml, Globe, LucideProps } from "lucide-react";
+import { Brain, CodeXml, Globe, Image, LucideProps } from "lucide-react";
 import dynamic from "next/dynamic";
 import { ComponentType, ForwardRefExoticComponent, RefAttributes } from "react";
 
@@ -59,6 +59,13 @@ const coding: Feature = {
   color: "text-green-500",
 };
 
+const images: Feature = {
+  name: "Images",
+  description: "Supports images",
+  icon: Image,
+  color: "text-orange-500",
+};
+
 export const providers: Provider[] = [
   {
     name: "OpenAI",
@@ -67,21 +74,22 @@ export const providers: Provider[] = [
       {
         id: "o4-mini",
         name: "o4-mini",
-        features: [reasoning],
+        features: [images, reasoning],
       },
       {
         id: "gpt-4.1",
         name: "GPT-4.1",
-        features: [coding],
+        features: [images, coding],
       },
       {
         id: "4.1-mini",
         name: "GPT-4.1 mini",
-        features: [coding],
+        features: [images, coding],
       },
       {
         id: "4o-mini",
         name: "GPT-4o mini",
+        features: [images],
       },
       {
         id: "o3-mini",
@@ -97,6 +105,7 @@ export const providers: Provider[] = [
       {
         id: "claude-3-7-sonnet",
         name: "Claude 3.7 Sonnet",
+        features: [images],
       },
       // {
       //   id: "claude-3-7-sonnet-reasoning",
@@ -106,10 +115,12 @@ export const providers: Provider[] = [
       {
         id: "claude-3-5-sonnet",
         name: "Claude 3.5 Sonnet",
+        features: [images],
       },
       {
         id: "claude-3-5-haiku",
         name: "Claude 3.5 Haiku",
+        features: [images],
       },
     ],
   },
@@ -120,11 +131,12 @@ export const providers: Provider[] = [
       {
         id: "gemini-2.0-flash",
         name: "Gemini 2.0 Flash",
-        features: [search],
+        features: [images, search],
       },
       {
         id: "gemini-2.0-flash-lite",
         name: "Gemini 2.0 Flash Lite",
+        features: [images],
       },
     ],
   },
@@ -158,10 +170,12 @@ export const providers: Provider[] = [
       {
         id: "llama-4-scout",
         name: "Llama 4 Scout",
+        features: [images],
       },
       {
         id: "llama-4-maverick",
         name: "Llama 4 Maverick",
+        features: [images],
       },
     ],
   },
