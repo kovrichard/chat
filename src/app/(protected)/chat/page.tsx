@@ -14,7 +14,7 @@ import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { providers } from "@/lib/providers";
 import { useInputStore } from "@/stores/input-store";
 import { useModelStore } from "@/stores/model-store";
-import { Brain, CodeXml, Globe, Image } from "lucide-react";
+import { Brain, CodeXml, FileText, Globe, Image } from "lucide-react";
 import { useEffect } from "react";
 
 const models = providers.map((provider) => provider.models).flat();
@@ -66,6 +66,10 @@ export default function ChatPage() {
                 <p>
                   Models with the <Image className="inline-flex text-orange-500" /> can
                   analyze uploaded images.
+                </p>
+                <p>
+                  Models with the <FileText className="inline-flex text-purple-500" />{" "}
+                  icon can analyze uploaded PDFs.
                 </p>
                 <p>
                   Models with the <Brain className="inline-flex text-yellow-500" /> icon
