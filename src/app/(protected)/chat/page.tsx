@@ -14,7 +14,7 @@ import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { providers } from "@/lib/providers";
 import { useInputStore } from "@/stores/input-store";
 import { useModelStore } from "@/stores/model-store";
-import { Brain, CodeXml, Globe } from "lucide-react";
+import { Brain, CodeXml, Globe, Image } from "lucide-react";
 import { useEffect } from "react";
 
 const models = providers.map((provider) => provider.models).flat();
@@ -64,8 +64,8 @@ export default function ChatPage() {
             <ScrollArea className="max-h-[350px]">
               <div className="flex flex-col gap-4 px-6 pb-4 sm:pb-0">
                 <p>
-                  Small (mini, nano, etc.) models are faster, but less accurate. They are
-                  still enough for most use cases.
+                  Models with the <Image className="inline-flex text-orange-500" /> can
+                  analyze uploaded images.
                 </p>
                 <p>
                   Models with the <Brain className="inline-flex text-yellow-500" /> icon
@@ -73,14 +73,15 @@ export default function ChatPage() {
                 </p>
                 <p>
                   Models with the <Globe className="inline-flex text-blue-500" /> icon
-                  have internet access. Use them for up-to-date information.
+                  have internet access.
                 </p>
                 <p>
                   Models with the <CodeXml className="inline-flex text-green-500" /> icon
                   are ideal for coding questions.
                 </p>
                 <p>
-                  All models are general-purpose. Experiment to find the best fit for you.
+                  But generally, all models are general-purpose. Experiment to find the
+                  best fit for you.
                 </p>
                 <p>
                   Click the model's {isMobile ? "icon" : "name"} in the lower left corner
