@@ -4,6 +4,7 @@ import systemPrompt from "@/lib/backend/prompts/system-prompt";
 import { appendMessageToConversation, getConversation } from "@/lib/dao/conversations";
 import { saveMessage } from "@/lib/dao/messages";
 import { decrementFreeMessages, getUserFromSession } from "@/lib/dao/users";
+import { getModel } from "@/lib/providers";
 import rateLimit from "@/lib/rate-limiter";
 import { AnthropicProviderOptions, anthropic } from "@ai-sdk/anthropic";
 import { createAzure } from "@ai-sdk/azure";
@@ -13,6 +14,7 @@ import { perplexity } from "@ai-sdk/perplexity";
 import { xai } from "@ai-sdk/xai";
 import {
   Attachment,
+  Message,
   appendClientMessage,
   appendResponseMessages,
   extractReasoningMiddleware,
@@ -112,28 +114,7 @@ export async function POST(req: NextRequest) {
   const { experimental_attachments, ...textMessage } = message;
 
   if (experimental_attachments) {
-    const attachments = await Promise.all(
-      experimental_attachments.map(async (attachment: Attachment) => {
-        const base64Data = attachment.url.split(",")[1];
-        const decodedData = Buffer.from(base64Data, "base64");
-
-        const blob = new Blob([decodedData], { type: attachment.contentType });
-
-        const fileId = uuidv4();
-        const filePath = `${user.id}/${id}/${fileId}`;
-
-        const file = new File([blob], attachment.name || fileId, {
-          type: attachment.contentType,
-        });
-
-        await uploadFile(file, filePath);
-        return {
-          name: attachment.name || fileId,
-          contentType: attachment.contentType,
-          url: filePath,
-        };
-      })
-    );
+    const attachments = await uploadAttachments(experimental_attachments, user.id, id);
     textMessage.files = attachments;
   }
 
@@ -149,9 +130,11 @@ export async function POST(req: NextRequest) {
     message,
   });
 
+  const filteredMessages = filterMessages(messages, modelId);
+
   const result = streamText({
     model,
-    messages,
+    messages: filteredMessages,
     maxSteps: 5,
     system: systemPrompt,
     temperature: modelId === "o4-mini" ? 1 : undefined,
@@ -185,5 +168,64 @@ export async function POST(req: NextRequest) {
   return result.toDataStreamResponse({
     sendReasoning: true,
     getErrorMessage: (error: any) => error.data.error.code,
+  });
+}
+
+async function uploadAttachments(
+  messageAttachments: Attachment[],
+  userId: number,
+  conversationId: string
+) {
+  const attachments = await Promise.all(
+    messageAttachments.map(async (attachment: Attachment) => {
+      const base64Data = attachment.url.split(",")[1];
+      const decodedData = Buffer.from(base64Data, "base64");
+
+      const blob = new Blob([decodedData], { type: attachment.contentType });
+
+      const fileId = uuidv4();
+      const filePath = `${userId}/${conversationId}/${fileId}`;
+
+      const file = new File([blob], attachment.name || fileId, {
+        type: attachment.contentType,
+      });
+
+      await uploadFile(file, filePath);
+      return {
+        name: attachment.name || fileId,
+        contentType: attachment.contentType,
+        url: filePath,
+      };
+    })
+  );
+
+  return attachments;
+}
+
+function filterMessages(messages: Message[], modelId: string) {
+  const model = getModel(modelId);
+  const imageSupport =
+    model?.features?.some((feature) => feature.name === "Images") || false;
+  const pdfSupport = model?.features?.some((feature) => feature.name === "PDFs") || false;
+
+  return messages.map((message: Message) => ({
+    ...message,
+    experimental_attachments: filterUnsupportedAttachments(
+      message.experimental_attachments || [],
+      imageSupport,
+      pdfSupport
+    ),
+  }));
+}
+
+function filterUnsupportedAttachments(
+  attachments: Attachment[],
+  imageSupport: boolean,
+  pdfSupport: boolean
+) {
+  return attachments.filter((attachment) => {
+    if (imageSupport && attachment.contentType?.startsWith("image/")) return true;
+    if (pdfSupport && attachment.contentType?.startsWith("application/pdf")) return true;
+    return false;
   });
 }
