@@ -134,7 +134,11 @@ export async function appendMessageToConversation(
       lastMessageAt: new Date(),
     },
     include: {
-      messages: true,
+      messages: {
+        orderBy: {
+          createdAt: "asc",
+        },
+      },
     },
   });
 
