@@ -1,8 +1,8 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { readNotifications } from "@/lib/actions/notifications";
 import { Notification } from "@prisma/client";
-import { Button } from "./ui/button";
 
 export default function MarkAllAsReadButton({
   notifications,

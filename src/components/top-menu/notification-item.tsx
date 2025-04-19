@@ -1,12 +1,12 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { readNotification } from "@/lib/actions/notifications";
 import { formatTimeAgo } from "@/lib/utils";
 import { Notification } from "@prisma/client";
 import { IconDots } from "@tabler/icons-react";
 import Link from "next/link";
 import React from "react";
-import { Button } from "./ui/button";
 
 export function NotificationItem({
   notification,
