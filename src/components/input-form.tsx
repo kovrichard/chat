@@ -251,7 +251,7 @@ const InputForm = forwardRef<
             )}
           </div>
           {/* <TooltipProvider>
-            <Tooltip>
+            <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                 <Button
                   type="button"
