@@ -1,8 +1,9 @@
 import "server-only";
 
+import { uploadFile } from "@/lib/aws/s3";
 import { getUserIdFromSession } from "@/lib/dao/users";
 import prisma from "@/lib/prisma";
-import { Message, UIMessage } from "ai";
+import { Attachment, Message, UIMessage } from "ai";
 import { v4 as uuidv4 } from "uuid";
 
 type ReasoningDetail =
@@ -46,4 +47,35 @@ export async function saveMessage(message: Message | UIMessage, conversationId: 
   });
 
   return newMessage;
+}
+
+export async function uploadAttachments(
+  messageAttachments: Attachment[],
+  userId: number,
+  conversationId: string
+) {
+  const attachments = await Promise.all(
+    messageAttachments.map(async (attachment: Attachment) => {
+      const base64Data = attachment.url.split(",")[1];
+      const decodedData = Buffer.from(base64Data, "base64");
+
+      const blob = new Blob([decodedData], { type: attachment.contentType });
+
+      const fileId = uuidv4();
+      const filePath = `${userId}/${conversationId}/${fileId}`;
+
+      const file = new File([blob], attachment.name || fileId, {
+        type: attachment.contentType,
+      });
+
+      await uploadFile(file, filePath);
+      return {
+        name: attachment.name || fileId,
+        contentType: attachment.contentType,
+        url: filePath,
+      };
+    })
+  );
+
+  return attachments;
 }

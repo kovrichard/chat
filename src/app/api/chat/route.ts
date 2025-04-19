@@ -1,8 +1,7 @@
 import { updateConversationTitle } from "@/lib/actions/conversations";
-import { uploadFile } from "@/lib/aws/s3";
 import systemPrompt from "@/lib/backend/prompts/system-prompt";
 import { appendMessageToConversation, getConversation } from "@/lib/dao/conversations";
-import { saveMessage } from "@/lib/dao/messages";
+import { saveMessage, uploadAttachments } from "@/lib/dao/messages";
 import { decrementFreeMessages, getUserFromSession } from "@/lib/dao/users";
 import { getModel } from "@/lib/providers";
 import rateLimit from "@/lib/rate-limiter";
@@ -169,37 +168,6 @@ export async function POST(req: NextRequest) {
     sendReasoning: true,
     getErrorMessage: (error: any) => error.data.error.code,
   });
-}
-
-async function uploadAttachments(
-  messageAttachments: Attachment[],
-  userId: number,
-  conversationId: string
-) {
-  const attachments = await Promise.all(
-    messageAttachments.map(async (attachment: Attachment) => {
-      const base64Data = attachment.url.split(",")[1];
-      const decodedData = Buffer.from(base64Data, "base64");
-
-      const blob = new Blob([decodedData], { type: attachment.contentType });
-
-      const fileId = uuidv4();
-      const filePath = `${userId}/${conversationId}/${fileId}`;
-
-      const file = new File([blob], attachment.name || fileId, {
-        type: attachment.contentType,
-      });
-
-      await uploadFile(file, filePath);
-      return {
-        name: attachment.name || fileId,
-        contentType: attachment.contentType,
-        url: filePath,
-      };
-    })
-  );
-
-  return attachments;
 }
 
 function filterMessages(messages: Message[], modelId: string) {
