@@ -70,6 +70,7 @@ model Message {
   signature         String?
   parts             Json?
   toolInvocations   Json?
+  files             Json?
   conversationId    String   @map("conversation_id")
   conversation      Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   createdAt         DateTime @default(now()) @map("created_at")
