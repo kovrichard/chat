@@ -35,9 +35,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       return { message: messages[messages.length - 1], id, model: model.id };
     },
     sendExtraMessageFields: true,
-    onFinish: (message: Message) => {
+    onFinish: async (message: Message) => {
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
-      addMessage.mutateAsync({
+      await addMessage.mutateAsync({
         message,
         conversationId,
       });
@@ -50,7 +50,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
       if (conversation?.title === "New Chat") {
         queryClient.invalidateQueries({
-          queryKey: conversationKeys.list(1),
+          queryKey: conversationKeys.list(),
         });
       }
     },
