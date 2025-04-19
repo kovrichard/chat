@@ -159,8 +159,8 @@ export default function ChatSidebar({ conversations }: { conversations: any }) {
             </SidebarGroup>
           )}
           {/* Load more trigger */}
-          <div ref={loadMoreRef} className="h-4 w-full">
-            {isFetchingNextPage && (
+          {isFetchingNextPage && (
+            <div ref={loadMoreRef} className="h-4 w-full">
               <div className="flex items-center justify-center p-2">
                 <div className="flex gap-1">
                   <div className="size-2 rounded-full bg-muted animate-bounce [animation-delay:-0.3s]"></div>
@@ -168,8 +168,15 @@ export default function ChatSidebar({ conversations }: { conversations: any }) {
                   <div className="size-2 rounded-full bg-muted animate-bounce"></div>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
+          {allConversations.length === 0 && searchQuery && (
+            <SidebarGroup>
+              <SidebarGroupLabel className="inline-flex items-center justify-center text-muted-foreground">
+                No conversations found
+              </SidebarGroupLabel>
+            </SidebarGroup>
+          )}
         </>
       )}
     </div>
