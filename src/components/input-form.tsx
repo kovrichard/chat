@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useChatContext } from "@/lib/contexts/chat-context";
 import { useAddMessage, useCreateConversation } from "@/lib/queries/conversations";
 import { IconPlayerStop } from "@tabler/icons-react";
-import { Paperclip, Send, Trash } from "lucide-react";
+import { FileText, Paperclip, Send, Trash } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   ClipboardEvent,
@@ -53,6 +53,8 @@ const InputForm = forwardRef<
   const { id, status, stop, error, setInput: setChatInput } = useChatContext();
   const { files, setFiles } = useFileStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageSupport = model.features?.some((feature) => feature.name === "Images");
+  const pdfSupport = model.features?.some((feature) => feature.name === "PDFs");
 
   const { data: subscription } = useQuery({
     queryKey: ["subscription"],
@@ -127,7 +129,14 @@ const InputForm = forwardRef<
     if (hasNonTextContent) {
       e.preventDefault();
 
-      // Only process if it's an allowed image type
+      const newFiles = new DataTransfer();
+      // First add existing files if any
+      if (files) {
+        Array.from(files).forEach((existingFile) => {
+          newFiles.items.add(existingFile);
+        });
+      }
+
       const imageItems = Array.from(clipboardItems).filter(
         (item) =>
           item.type === "image/png" ||
@@ -136,17 +145,24 @@ const InputForm = forwardRef<
           item.type === "image/webp"
       );
 
-      if (imageItems.length > 0) {
-        const newFiles = new DataTransfer();
-        // First add existing files if any
-        if (files) {
-          Array.from(files).forEach((existingFile) => {
-            newFiles.items.add(existingFile);
-          });
-        }
-        // Then append the new images
+      if (imageItems.length > 0 && imageSupport) {
         imageItems.forEach((imageItem) => {
           const file = imageItem.getAsFile();
+          if (file) {
+            newFiles.items.add(file);
+          }
+        });
+
+        setFiles(newFiles.files);
+      }
+
+      const pdfItems = Array.from(clipboardItems).filter(
+        (item) => item.type === "application/pdf"
+      );
+
+      if (pdfItems.length > 0 && pdfSupport) {
+        pdfItems.forEach((pdfItem) => {
+          const file = pdfItem.getAsFile();
           if (file) {
             newFiles.items.add(file);
           }
@@ -183,19 +199,34 @@ const InputForm = forwardRef<
         >
           {Array.from(files || []).map((file, index) => (
             <div key={`${file.name}-${index}`} className="relative w-24">
-              <AspectRatio ratio={16 / 9} className="bg-muted">
-                <Image
-                  src={URL.createObjectURL(file)}
-                  alt={file.name}
-                  fill
-                  className="size-full rounded-md object-cover"
-                />
+              <AspectRatio ratio={16 / 9} className="bg-muted rounded-md">
+                <TooltipProvider>
+                  <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      {file.type.startsWith("image/") ? (
+                        <Image
+                          src={URL.createObjectURL(file)}
+                          alt={file.name}
+                          fill
+                          className="size-full rounded-md object-cover"
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center h-full">
+                          <FileText size={24} />
+                        </div>
+                      )}
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{file.name}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </AspectRatio>
               <Button
                 type="button"
                 size="icon"
                 variant="ghost"
-                className="absolute -top-3 -right-3 rounded-full size-6 bg-muted border"
+                className="absolute -top-3 -right-3 rounded-full size-6 bg-muted border z-10"
                 onClick={() => {
                   const fileList = Array.from(files || []);
                   const newFiles = new DataTransfer();
@@ -232,7 +263,7 @@ const InputForm = forwardRef<
               setFiles(event.target.files);
             }
           }}
-          accept="image/png,image/jpeg,image/jpg,image/webp"
+          accept={`${imageSupport ? "image/png,image/jpeg,image/jpg,image/webp" : ""}${imageSupport && pdfSupport ? "," : ""}${pdfSupport ? "application/pdf" : ""}`}
           className="hidden"
         />
         <div className="flex items-center w-full gap-2">
@@ -259,11 +290,7 @@ const InputForm = forwardRef<
                   variant="ghost"
                   className="shrink-0 size-9"
                   onClick={() => fileInputRef.current?.click()}
-                  disabled={
-                    !model.features?.some(
-                      (feature) => feature.name === "Images"
-                    )
-                  }
+                  disabled={!imageSupport && !pdfSupport}
                 >
                   <Paperclip size={16} />
                 </Button>
