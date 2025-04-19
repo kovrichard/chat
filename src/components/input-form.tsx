@@ -2,10 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useChatContext } from "@/lib/contexts/chat-context";
-import {
-  useAddMessage,
-  useCreateConversationOptimistic,
-} from "@/lib/queries/conversations";
+import { useAddMessage, useCreateConversation } from "@/lib/queries/conversations";
 import { IconPlayerStop } from "@tabler/icons-react";
 import { Send } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
@@ -15,6 +12,7 @@ import TextareaAutosize from "react-textarea-autosize";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { useInputStore } from "@/stores/input-store";
+import { useModelStore } from "@/stores/model-store";
 import { PartialConversation } from "@/types/chat";
 import { useQuery } from "@tanstack/react-query";
 import { v4 as uuidv4 } from "uuid";
@@ -27,10 +25,12 @@ const InputForm = forwardRef<
   const router = useRouter();
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width: 640px)");
-  const createConversationOptimistic = useCreateConversationOptimistic();
+  const createConversation = useCreateConversation();
   const addMessage = useAddMessage();
   const { input, setInput } = useInputStore();
-  const { id, model, status, stop, error } = useChatContext();
+  const { model } = useModelStore();
+  const { id, status, stop, error, setInput: setChatInput } = useChatContext();
+
   const { data: subscription } = useQuery({
     queryKey: ["subscription"],
     queryFn: async () => {
@@ -43,14 +43,14 @@ const InputForm = forwardRef<
     },
   });
 
-  function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
+  async function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey && !isMobile) {
       e.preventDefault();
-      handleSendMessage(e);
+      await handleSendMessage(e);
     }
   }
 
-  function handleSendMessage(
+  async function handleSendMessage(
     e: FormEvent<HTMLFormElement> | KeyboardEvent<HTMLTextAreaElement>
   ) {
     e.preventDefault();
@@ -74,12 +74,13 @@ const InputForm = forwardRef<
         ],
         lastMessageAt: new Date(),
       };
-
-      createConversationOptimistic.mutate(optimisticConversation);
+      await createConversation.mutateAsync(optimisticConversation);
+      setChatInput(input);
       setInput("");
       router.push(`/chat/${conversationId}`);
     } else {
-      addMessage.mutate({
+      setChatInput(input);
+      await addMessage.mutateAsync({
         message: {
           id: uuidv4(),
           content: input,

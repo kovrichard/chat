@@ -8,6 +8,7 @@ import LastMessage from "./last-message";
 import { MessageItem } from "./message-item";
 import { LoadingDots } from "./ui/loading-dots";
 
+import { useModelStore } from "@/stores/model-store";
 const MemoizedMessageItem = memo(MessageItem);
 
 export function MessagesList({
@@ -17,22 +18,15 @@ export function MessagesList({
   initialConversation?: any;
   id: string;
 }) {
-  const router = useRouter();
-  const { status, setMessages, setModelId, error } = useChatContext();
+  const { status, error } = useChatContext();
+  const { setModel } = useModelStore();
   const { data: conversation } = useConversation(id, initialConversation);
 
   useEffect(() => {
-    if (!conversation) {
-      router.push("/chat");
-    }
-    if (conversation?.messages) {
-      setMessages(conversation.messages);
-    }
-
     if (conversation?.model) {
-      setModelId(conversation.model);
+      setModel(conversation.model);
     }
-  }, [conversation, setMessages, setModelId]);
+  }, [conversation]);
 
   const memoizedConversationMessages = useMemo(() => {
     return conversation?.messages?.map((message: any) => (

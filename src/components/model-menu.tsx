@@ -5,6 +5,7 @@ import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { Feature, providers } from "@/lib/providers";
 import { useUpdateConversationModel } from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
+import { useModelStore } from "@/stores/model-store";
 import { ChevronDown, Info } from "lucide-react";
 import { useState } from "react";
 import React from "react";
@@ -27,7 +28,6 @@ import {
   DrawerTrigger,
 } from "./ui/drawer";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 function getProviderIcon(modelId: string) {
   const provider = providers.find((p) => p.models.some((m) => m.id === modelId));
@@ -36,7 +36,7 @@ function getProviderIcon(modelId: string) {
 
 export function ModelMenu() {
   const [open, setOpen] = useState(false);
-  const { model } = useChatContext();
+  const { model } = useModelStore();
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const providerIcon = getProviderIcon(model.id);
 
@@ -83,11 +83,13 @@ export function ModelMenu() {
 }
 
 function StatusList({ setOpen }: { setOpen: (open: boolean) => void }) {
-  const { id, model, setModelId } = useChatContext();
+  const { id } = useChatContext();
+
+  const { model, setModel } = useModelStore();
   const updateModel = useUpdateConversationModel();
 
   const handleModelChange = (value: string) => {
-    setModelId(value);
+    setModel(value);
 
     if (id) {
       updateModel.mutateAsync({ conversationId: id, model: value });

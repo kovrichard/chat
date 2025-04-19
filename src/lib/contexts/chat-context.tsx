@@ -1,20 +1,11 @@
 "use client";
 
+import { useModelStore } from "@/stores/model-store";
 import { useChat } from "@ai-sdk/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Message } from "ai";
 import { useParams } from "next/navigation";
-import React, {
-  createContext,
-  useContext,
-  ReactNode,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { v4 as uuidv4 } from "uuid";
-import { getModel } from "../providers";
-import { Model } from "../providers";
+import React, { createContext, useContext, ReactNode, useEffect, useRef } from "react";
 import { useAddMessage } from "../queries/conversations";
 import { useUpdateConversationTitle } from "../queries/conversations";
 
@@ -23,29 +14,26 @@ type ChatStatus = "submitted" | "streaming" | "ready" | "error";
 interface ChatContextType {
   id: string;
   messages: Message[];
-  model: Model;
-  setModelId: (modelId: string) => void;
-  setMessages: (messages: Message[]) => void;
+  setInput: (input: string) => void;
   status: ChatStatus;
   error?: Error;
   stop: () => void;
-  reload: (options?: { body?: Record<string, any> }) => void;
 }
 
 const ChatContext = createContext<ChatContextType | null>(null);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
   const params = useParams();
-  const conversationId = useMemo(() => (params.id as string) || uuidv4(), [params.id]);
+  const conversationId = params.id as string;
   const queryClient = useQueryClient();
   const updateTitle = useUpdateConversationTitle();
   const addMessage = useAddMessage();
-  const [model, setModel] = useState<Model>(getModel("4o-mini") as Model);
-  const [modelId, setModelId] = useState<string>("4o-mini");
+  const { model } = useModelStore();
+  const sentRef = useRef(false);
 
-  const { id, messages, setMessages, status, error, stop, reload } = useChat({
+  const { id, messages, status, input, setInput, handleSubmit, error, stop } = useChat({
     id: conversationId,
-    experimental_prepareRequestBody({ messages, id }) {
+    experimental_prepareRequestBody: ({ messages, id }) => {
       return { message: messages[messages.length - 1], id, model: model.id };
     },
     sendExtraMessageFields: true,
@@ -68,31 +56,25 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    setModel(getModel(modelId) as Model);
-    console.log(`Model set to ${modelId}`);
-  }, [modelId]);
-
-  useEffect(() => {
-    const lastMessage = messages[messages.length - 1];
-    console.log(`Last message: ${lastMessage}`);
-
-    if (status === "ready" && lastMessage && lastMessage.role === "user") {
-      reload();
+    if (status === "ready" && input && conversationId && !sentRef.current) {
+      sentRef.current = true;
+      handleSubmit();
     }
-  }, [messages.length, status, reload]);
+
+    if (!input) {
+      sentRef.current = false;
+    }
+  }, [status, input, handleSubmit, conversationId]);
 
   return (
     <ChatContext.Provider
       value={{
         id,
         messages,
-        model,
-        setModelId,
-        setMessages,
+        setInput,
         status,
         error,
         stop,
-        reload,
       }}
     >
       {children}

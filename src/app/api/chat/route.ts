@@ -104,13 +104,18 @@ export async function POST(req: NextRequest) {
     return new Response("Invalid model", { status: 400 });
   }
 
-  if (!(await getConversation(id))) {
-    await saveNewConversation(id, modelId);
+  const existingConversation = await getConversation(id);
+  let existingMessages;
+
+  if (existingConversation?.messages.length === 1) {
+    existingMessages = existingConversation.messages;
+  } else {
+    const conversation = await appendMessageToConversation(message, id);
+    existingMessages = conversation.messages;
   }
 
-  const conversation = await appendMessageToConversation(message, id);
   const messages = appendClientMessage({
-    messages: conversation.messages,
+    messages: existingMessages,
     message,
   });
 
@@ -147,16 +152,4 @@ export async function POST(req: NextRequest) {
     sendReasoning: true,
     getErrorMessage: (error: any) => error.data.error.code,
   });
-}
-
-async function saveNewConversation(id: string, modelId: string) {
-  const conversation = {
-    id,
-    title: "New Chat",
-    model: modelId,
-    lastMessageAt: new Date(),
-    messages: [],
-  };
-
-  return saveConversation(conversation);
 }

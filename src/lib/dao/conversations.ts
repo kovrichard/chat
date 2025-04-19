@@ -2,6 +2,7 @@ import "server-only";
 
 import { getUserIdFromSession } from "@/lib/dao/users";
 import prisma from "@/lib/prisma";
+import { Message } from "@prisma/client";
 import { UIMessage } from "ai";
 
 export async function getConversation(id: string) {
@@ -24,7 +25,10 @@ export async function getConversation(id: string) {
     },
   });
 
-  return conversation;
+  return {
+    ...conversation,
+    messages: mapMessages(conversation?.messages || []),
+  };
 }
 
 export async function getConversations(
@@ -130,12 +134,16 @@ export async function appendMessageToConversation(
 
   return {
     ...updatedConversation,
-    messages: updatedConversation.messages.map((message) => ({
-      ...message,
-      role: message.role as "system" | "user" | "assistant" | "data",
-      reasoning: message.reasoning ?? undefined,
-      parts: JSON.parse(message.parts as string),
-      toolInvocations: JSON.parse(message.toolInvocations as string),
-    })),
+    messages: mapMessages(updatedConversation.messages),
   };
+}
+
+function mapMessages(messages: Message[]) {
+  return messages.map((message) => ({
+    ...message,
+    role: message.role as "system" | "user" | "assistant" | "data",
+    reasoning: message.reasoning ?? undefined,
+    parts: JSON.parse(message.parts as string),
+    toolInvocations: JSON.parse(message.toolInvocations as string),
+  }));
 }

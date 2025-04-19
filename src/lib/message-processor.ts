@@ -1,8 +1,12 @@
 import { Message } from "@prisma/client";
 
+interface RawMessage extends Omit<Message, "reasoning"> {
+  reasoning: string | undefined;
+}
+
 interface ProcessedMessage {
   content?: string;
-  reasoning: string | null;
+  reasoning: string | undefined;
   signature: string | null;
   parts: Array<{
     type: "text" | "reasoning";
@@ -16,13 +20,13 @@ interface ProcessedMessage {
   }>;
 }
 
-function processMessage(message: Message): ProcessedMessage {
+function processMessage(message: RawMessage): ProcessedMessage {
   const parts: ProcessedMessage["parts"] = [];
 
   if (message.parts) {
     return {
       ...message,
-      parts: JSON.parse(message.parts as string),
+      parts: message.parts as ProcessedMessage["parts"],
     };
   }
 
@@ -56,6 +60,6 @@ function processMessage(message: Message): ProcessedMessage {
   };
 }
 
-export function processMessages(messages: Message[]): ProcessedMessage[] {
+export function processMessages(messages: RawMessage[]): ProcessedMessage[] {
   return messages.map(processMessage);
 }

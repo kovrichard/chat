@@ -10,10 +10,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useChatContext } from "@/lib/contexts/chat-context";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { providers } from "@/lib/providers";
 import { useInputStore } from "@/stores/input-store";
+import { useModelStore } from "@/stores/model-store";
 import { Brain, CodeXml, Globe } from "lucide-react";
 import { useEffect } from "react";
 
@@ -28,7 +28,7 @@ const examples = [
 ];
 
 export default function ChatPage() {
-  const { setModelId } = useChatContext();
+  const { setModel } = useModelStore();
   const { setInput } = useInputStore();
   const isMobile = useMediaQuery("(max-width: 768px)");
 
@@ -45,7 +45,7 @@ export default function ChatPage() {
   };
 
   useEffect(() => {
-    setModelId("4o-mini");
+    setModel("4o-mini");
   }, []);
 
   return (

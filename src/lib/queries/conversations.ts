@@ -15,7 +15,7 @@ import { Message } from "ai";
 import { deleteMessageChainAfter } from "../actions/messages";
 import { processMessages } from "../message-processor";
 
-const conversationKeys = {
+export const conversationKeys = {
   detail: (id: string) => ["conversations", id] as const,
   list: (page: number) => ["conversations", "list", page] as const,
 };
@@ -207,6 +207,36 @@ export function useRegenerateMessage() {
       queryClient.invalidateQueries({
         queryKey: conversationKeys.detail(conversationId),
       });
+    },
+  });
+}
+
+export function useCreateConversation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (conversation: PartialConversation) => saveConversation(conversation),
+    onSuccess: (newConversation) => {
+      if (newConversation) {
+        queryClient.setQueryData(
+          conversationKeys.detail(newConversation.id),
+          newConversation
+        );
+        queryClient.setQueryData(conversationKeys.list(1), (old: any) => {
+          if (!old) return old;
+          return {
+            ...old,
+            pages: [...(old.pages || []), { conversations: [newConversation] }],
+          };
+        });
+      }
+    },
+    onError: (error, newConversation) => {
+      console.error("Error creating conversation:", error);
+      queryClient.invalidateQueries({
+        queryKey: conversationKeys.detail(newConversation.id),
+      });
+      queryClient.invalidateQueries({ queryKey: ["conversations", "list"] });
     },
   });
 }

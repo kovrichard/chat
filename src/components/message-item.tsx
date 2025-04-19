@@ -1,27 +1,11 @@
-import { useChatContext } from "@/lib/contexts/chat-context";
-import { useRegenerateMessage } from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
 import { Message } from "ai";
-import { Copy, RefreshCw } from "lucide-react";
+import { Copy } from "lucide-react";
 import { MessageContent } from "./message-content";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 
 export function MessageItem({ message }: { message: Message }) {
-  // const regenerateMessage = useRegenerateMessage();
-  // const { id, reload } = useChatContext();
-
-  // const handleRegenerateMessage = async () => {
-  //   const a = false;
-  //   if (a) {
-  //     await regenerateMessage.mutateAsync({
-  //       messageId: message.id,
-  //       conversationId: id,
-  //     });
-  //     reload({ body: { retry: true } });
-  //   }
-  // };
-
   return (
     <div
       className={cn(
