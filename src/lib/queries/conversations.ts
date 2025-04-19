@@ -226,7 +226,12 @@ export function useCreateConversation() {
           if (!old) return old;
           return {
             ...old,
-            pages: [...(old.pages || []), { conversations: [newConversation] }],
+            pages: [
+              {
+                conversations: [newConversation, ...(old.pages[0]?.conversations || [])],
+              },
+              ...old.pages.slice(1),
+            ],
           };
         });
       }

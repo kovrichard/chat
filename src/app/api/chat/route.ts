@@ -1,4 +1,4 @@
-import { saveConversation } from "@/lib/actions/conversations";
+import { updateConversationTitle } from "@/lib/actions/conversations";
 import systemPrompt from "@/lib/backend/prompts/system-prompt";
 import { appendMessageToConversation, getConversation } from "@/lib/dao/conversations";
 import { saveMessage } from "@/lib/dao/messages";
@@ -11,7 +11,6 @@ import { google } from "@ai-sdk/google";
 import { perplexity } from "@ai-sdk/perplexity";
 import { xai } from "@ai-sdk/xai";
 import {
-  UIMessage,
   appendClientMessage,
   appendResponseMessages,
   extractReasoningMiddleware,
@@ -111,7 +110,7 @@ export async function POST(req: NextRequest) {
     existingMessages = existingConversation.messages;
   } else {
     const conversation = await appendMessageToConversation(message, id);
-    existingMessages = conversation.messages;
+    existingMessages = conversation?.messages || [];
   }
 
   const messages = appendClientMessage({
@@ -134,6 +133,10 @@ export async function POST(req: NextRequest) {
         messages,
         responseMessages: response.messages,
       });
+
+      if (existingConversation?.title === "New Chat") {
+        await updateConversationTitle(id, updatedMessages);
+      }
 
       await saveMessage(updatedMessages[updatedMessages.length - 1], id);
       await decrementFreeMessages(user.id);

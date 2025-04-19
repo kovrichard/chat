@@ -6,8 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Message } from "ai";
 import { useParams } from "next/navigation";
 import React, { createContext, useContext, ReactNode, useEffect, useRef } from "react";
-import { useAddMessage } from "../queries/conversations";
-import { useUpdateConversationTitle } from "../queries/conversations";
+import { conversationKeys, useAddMessage } from "../queries/conversations";
 
 type ChatStatus = "submitted" | "streaming" | "ready" | "error";
 
@@ -26,7 +25,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const params = useParams();
   const conversationId = params.id as string;
   const queryClient = useQueryClient();
-  const updateTitle = useUpdateConversationTitle();
   const addMessage = useAddMessage();
   const { model } = useModelStore();
   const sentRef = useRef(false);
@@ -43,13 +41,16 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         message,
         conversationId,
       });
+      const conversation = queryClient.getQueryData<{
+        id: string;
+        model: string;
+        title: string;
+        messages: Message[];
+      }>(conversationKeys.detail(conversationId));
 
-      if (messages.length === 1) {
-        const titleMessages = [messages[0], message];
-
-        updateTitle.mutateAsync({
-          conversationId,
-          messages: titleMessages,
+      if (conversation?.title === "New Chat") {
+        queryClient.invalidateQueries({
+          queryKey: conversationKeys.list(1),
         });
       }
     },
