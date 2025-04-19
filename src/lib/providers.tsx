@@ -1,4 +1,4 @@
-import { Brain, CodeXml, Globe, Image, LucideProps } from "lucide-react";
+import { Brain, CodeXml, FileText, Globe, Image, LucideProps } from "lucide-react";
 import dynamic from "next/dynamic";
 import { ComponentType, ForwardRefExoticComponent, RefAttributes } from "react";
 
@@ -66,6 +66,13 @@ const images: Feature = {
   color: "text-orange-500",
 };
 
+const pdf: Feature = {
+  name: "PDFs",
+  description: "Supports PDFs",
+  icon: FileText,
+  color: "text-purple-500",
+};
+
 export const providers: Provider[] = [
   {
     name: "OpenAI",
@@ -105,7 +112,7 @@ export const providers: Provider[] = [
       {
         id: "claude-3-7-sonnet",
         name: "Claude 3.7 Sonnet",
-        features: [images],
+        features: [images, pdf],
       },
       // {
       //   id: "claude-3-7-sonnet-reasoning",
@@ -115,12 +122,12 @@ export const providers: Provider[] = [
       {
         id: "claude-3-5-sonnet",
         name: "Claude 3.5 Sonnet",
-        features: [images],
+        features: [images, pdf],
       },
       {
         id: "claude-3-5-haiku",
         name: "Claude 3.5 Haiku",
-        features: [images],
+        features: [images, pdf],
       },
     ],
   },
@@ -131,12 +138,12 @@ export const providers: Provider[] = [
       {
         id: "gemini-2.0-flash",
         name: "Gemini 2.0 Flash",
-        features: [images, search],
+        features: [images, pdf, search],
       },
       {
         id: "gemini-2.0-flash-lite",
         name: "Gemini 2.0 Flash Lite",
-        features: [images],
+        features: [images, pdf],
       },
     ],
   },

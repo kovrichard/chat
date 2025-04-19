@@ -1,5 +1,5 @@
 import { Message } from "ai";
-import { Copy } from "lucide-react";
+import { Copy, FileText } from "lucide-react";
 import { marked } from "marked";
 import Image from "next/image";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
@@ -196,17 +196,34 @@ export function MessageContent({ message }: { message: Message }) {
   if (message.role === "user") {
     return (
       <div className="flex flex-col gap-2 items-end">
-        {message.experimental_attachments?.map((attachment, index) => (
-          <div key={`${message.id}-attachment-${index}`}>
-            <Image
-              src={attachment.url}
-              alt={attachment.name || ""}
-              width={300}
-              height={300}
-              className="rounded-lg"
-            />
-          </div>
-        ))}
+        {message.experimental_attachments?.map((attachment, index) => {
+          if (attachment.contentType?.startsWith("image/")) {
+            return (
+              <div key={`${message.id}-attachment-${index}`}>
+                <Image
+                  src={attachment.url}
+                  alt={attachment.name || ""}
+                  width={300}
+                  height={300}
+                  className="rounded-lg"
+                />
+              </div>
+            );
+          }
+
+          if (attachment.contentType?.startsWith("application/pdf")) {
+            return (
+              <div
+                key={`${message.id}-attachment-${index}`}
+                className="flex items-center justify-center size-48 border rounded-lg"
+              >
+                <FileText size={24} />
+              </div>
+            );
+          }
+
+          return null;
+        })}
         <div
           className="rounded-lg p-4 border whitespace-pre-wrap break-words bg-card text-card-foreground w-fit"
           data-role="user"
