@@ -164,11 +164,11 @@ export async function lockConversation(conversationId: string): Promise<boolean>
           userId,
           OR: [
             { locked: false },
-            // Auto-release locks older than 5 minutes
+            // Auto-release locks older than 1 minute (Vercel function timeout)
             {
               locked: true,
               updatedAt: {
-                lt: new Date(Date.now() - 5 * 60 * 1000),
+                lt: new Date(Date.now() - 1 * 60 * 1000),
               },
             },
           ],
@@ -215,9 +215,9 @@ export async function isConversationLocked(conversationId: string): Promise<bool
       id: conversationId,
       userId,
       locked: true,
-      // Consider lock expired if older than 5 minutes
+      // Consider lock expired if older than 1 minute (Vercel function timeout)
       updatedAt: {
-        gt: new Date(Date.now() - 5 * 60 * 1000),
+        gt: new Date(Date.now() - 1 * 60 * 1000),
       },
     },
   });
