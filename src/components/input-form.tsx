@@ -143,7 +143,7 @@ const InputForm = forwardRef<
     }
   }
 
-  function _handlePaste(e: ClipboardEvent<HTMLTextAreaElement>) {
+  function handlePaste(e: ClipboardEvent<HTMLTextAreaElement>) {
     const clipboardItems = e.clipboardData.items;
 
     // Check if clipboard contains any non-text content
@@ -275,7 +275,7 @@ const InputForm = forwardRef<
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          // onPaste={_handlePaste}
+          onPaste={handlePaste}
           rows={1}
           className="flex min-h-10 max-h-80 w-full bg-transparent placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 text-sm resize-none"
         />
@@ -306,7 +306,7 @@ const InputForm = forwardRef<
               </p>
             )}
           </div>
-          {/* <TooltipProvider>
+          <TooltipProvider>
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                 <Button
@@ -324,7 +324,7 @@ const InputForm = forwardRef<
                 <p>Attach files</p>
               </TooltipContent>
             </Tooltip>
-          </TooltipProvider> */}
+          </TooltipProvider>
           {status === "submitted" || status === "streaming" ? (
             <Button
               type="submit"
