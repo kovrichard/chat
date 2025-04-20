@@ -1,6 +1,6 @@
 import "server-only";
 
-import conf from "@/lib/config";
+import { getFileUrlSigned } from "@/lib/aws/s3";
 import { getUserIdFromSession } from "@/lib/dao/users";
 import prisma from "@/lib/prisma";
 import { Message } from "@prisma/client";
@@ -164,7 +164,7 @@ async function mapMessages(messages: Message[]) {
         (message.files as JsonArray[])?.map((file: any) => ({
           name: file.name,
           contentType: file.contentType,
-          url: `https://${conf.awsUploadsBucket}/${file.url}`,
+          url: getFileUrlSigned(file.url),
         })) ?? [],
     }))
   );
