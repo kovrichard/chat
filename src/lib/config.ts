@@ -26,6 +26,8 @@ const schema = z.object({
   // AWS
   awsRegion: z.string().default("eu-central-1"),
   awsUploadsBucket: z.string().default(""),
+  awsCloudfrontKeyPairId: z.string().default(""),
+  awsCloudfrontPrivateKey: z.string().default(""),
 });
 
 const envVars = {
@@ -52,6 +54,8 @@ const envVars = {
   // AWS
   awsRegion: process.env.AWS_REGION,
   awsUploadsBucket: process.env.AWS_UPLOADS_BUCKET,
+  awsCloudfrontKeyPairId: process.env.AWS_CLOUDFRONT_KEY_PAIR_ID,
+  awsCloudfrontPrivateKey: process.env.AWS_CLOUDFRONT_PRIVATE_KEY,
 };
 
 const conf = schema.parse(envVars);
