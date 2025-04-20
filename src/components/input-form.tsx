@@ -1,9 +1,9 @@
 "use client";
 
+import IconPlayerStop from "@/components/icons/icon-player-stop";
 import { Button } from "@/components/ui/button";
 import { useChatContext } from "@/lib/contexts/chat-context";
 import { useAddMessage, useCreateConversation } from "@/lib/queries/conversations";
-import { IconPlayerStop } from "@tabler/icons-react";
 import { FileText, Paperclip, Send, Trash } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import {

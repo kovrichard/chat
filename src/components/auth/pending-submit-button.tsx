@@ -1,4 +1,4 @@
-import { IconLoader2 } from "@tabler/icons-react";
+import { LoaderCircle } from "lucide-react";
 import { Button, ButtonProps } from "../ui/button";
 
 export default function PendingSubmitButton({
@@ -14,7 +14,7 @@ export default function PendingSubmitButton({
 >) {
   return (
     <Button disabled={isPending} className={className} {...props}>
-      {isPending ? <IconLoader2 className="animate-spin" size={18} /> : text}
+      {isPending ? <LoaderCircle className="animate-spin" size={18} /> : text}
     </Button>
   );
 }

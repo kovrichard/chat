@@ -48,7 +48,6 @@
     "@radix-ui/react-slot": "1.2.0",
     "@radix-ui/react-tooltip": "1.2.3",
     "@react-email/components": "0.0.36",
-    "@tabler/icons-react": "3.21.0",
     "@tanstack/react-query": "5.69.0",
     "ai": "4.2.0",
     "bcrypt": "5.1.1",
