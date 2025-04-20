@@ -38,13 +38,13 @@ export default function ProfileMenu({
   return (
     <>
       <DropdownMenuLabel>My Account</DropdownMenuLabel>
+      <DropdownMenuSeparator />
+      <div className="flex items-center gap-2 h-9 px-2 py-1.5 text-muted-foreground text-sm">
+        <MessageSquare className="shrink-0" size={16} />
+        <span>Messages left: {subscription.freeMessages}</span>
+      </div>
       {hasCustomerId && (
         <>
-          <DropdownMenuSeparator />
-          <div className="flex items-center gap-2 h-9 px-2 py-1.5 text-muted-foreground text-sm">
-            <MessageSquare className="shrink-0" size={16} />
-            <span>Messages left: {subscription.freeMessages}</span>
-          </div>
           <DropdownMenuSeparator />
           <DropdownMenuItem className="p-0 h-10">
             <a
