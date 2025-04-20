@@ -2,7 +2,7 @@
 
 import "server-only";
 
-import { deleteFile } from "@/lib/aws/s3";
+import { awsConfigured, deleteFile } from "@/lib/aws/s3";
 import { uploadAttachments } from "@/lib/dao/messages";
 import { getUserIdFromSession } from "@/lib/dao/users";
 import { logger } from "@/lib/logger";
@@ -21,11 +21,13 @@ export async function saveConversation(conversation: PartialConversation) {
       experimental_attachments: undefined,
       parts: JSON.stringify(message.parts),
       toolInvocations: JSON.stringify(message.toolInvocations),
-      files: await uploadAttachments(
-        message.experimental_attachments || [],
-        userId,
-        conversation.id
-      ),
+      files: awsConfigured
+        ? await uploadAttachments(
+            message.experimental_attachments || [],
+            userId,
+            conversation.id
+          )
+        : [],
     }))
   );
 
@@ -104,16 +106,20 @@ export async function deleteConversation(conversationId: string) {
     },
   });
 
-  const attachments =
-    conversation?.messages
-      .flatMap((message) => (message.files as JsonValue[])?.map((file: any) => file?.url))
-      .filter((url) => !!url) || [];
+  if (awsConfigured) {
+    const attachments =
+      conversation?.messages
+        .flatMap((message) =>
+          (message.files as JsonValue[])?.map((file: any) => file?.url)
+        )
+        .filter((url) => !!url) || [];
 
-  await Promise.all(
-    attachments.map(async (attachment) => {
-      await deleteFile(attachment);
-    })
-  );
+    await Promise.all(
+      attachments.map(async (attachment) => {
+        await deleteFile(attachment);
+      })
+    );
+  }
 
   await prisma.conversation.delete({ where: { id: conversationId, userId } });
 }

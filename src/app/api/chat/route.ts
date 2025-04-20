@@ -1,4 +1,5 @@
 import { updateConversationTitle } from "@/lib/actions/conversations";
+import { awsConfigured } from "@/lib/aws/s3";
 import systemPrompt from "@/lib/backend/prompts/system-prompt";
 import { appendMessageToConversation, getConversation } from "@/lib/dao/conversations";
 import { saveMessage, uploadAttachments } from "@/lib/dao/messages";
@@ -113,7 +114,7 @@ export async function POST(req: NextRequest) {
   const { experimental_attachments, ...textMessage } = message;
 
   if (existingConversation?.messages && existingConversation.messages.length > 1) {
-    if (experimental_attachments) {
+    if (experimental_attachments && awsConfigured) {
       try {
         const attachments = await uploadAttachments(
           experimental_attachments,

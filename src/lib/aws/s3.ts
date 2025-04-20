@@ -1,12 +1,27 @@
 import conf from "@/lib/config";
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
+import { ensure } from "../utils";
 
-const client = new S3Client({
-  region: conf.awsRegion,
-});
+let client: S3Client | null = null;
+
+export const awsConfigured =
+  process.env.AWS_ACCESS_KEY_ID &&
+  process.env.AWS_SECRET_ACCESS_KEY &&
+  conf.awsRegion &&
+  conf.awsUploadsBucket &&
+  conf.awsCloudfrontKeyPairId &&
+  conf.awsCloudfrontPrivateKey;
+
+if (awsConfigured) {
+  client = new S3Client({
+    region: conf.awsRegion,
+  });
+}
 
 export async function uploadFile(file: File, key: string) {
+  ensure(client, "AWS is not configured");
+
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
 
@@ -23,6 +38,8 @@ export async function uploadFile(file: File, key: string) {
 }
 
 export async function deleteFile(key: string) {
+  ensure(client, "AWS is not configured");
+
   const command = new DeleteObjectCommand({
     Bucket: conf.awsUploadsBucket,
     Key: key,
@@ -34,6 +51,8 @@ export async function deleteFile(key: string) {
 }
 
 export function getFileUrlSigned(key: string) {
+  ensure(awsConfigured, "AWS is not configured");
+
   const cloudfrontDistributionDomain = `https://${conf.awsUploadsBucket}`;
   const url = `${cloudfrontDistributionDomain}/${key}`;
   const privateKey = conf.awsCloudfrontPrivateKey;

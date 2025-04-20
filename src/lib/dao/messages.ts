@@ -1,6 +1,6 @@
 import "server-only";
 
-import { uploadFile } from "@/lib/aws/s3";
+import { awsConfigured, uploadFile } from "@/lib/aws/s3";
 import { getUserIdFromSession } from "@/lib/dao/users";
 import prisma from "@/lib/prisma";
 import { Attachment, Message, UIMessage } from "ai";
@@ -77,7 +77,10 @@ export async function uploadAttachments(
         type: attachment.contentType,
       });
 
-      await uploadFile(file, filePath);
+      if (awsConfigured) {
+        await uploadFile(file, filePath);
+      }
+
       return {
         name: attachment.name || fileId,
         contentType: attachment.contentType,
