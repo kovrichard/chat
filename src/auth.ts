@@ -111,11 +111,12 @@ async function createNewUser(
     picture: picture,
   });
 
-  if (
+  const stripeConfigured =
     conf.stripeSecretKey &&
     conf.stripeWebhookSecret &&
-    conf.stripeTrialSubscriptionPriceId
-  ) {
+    conf.stripeTrialSubscriptionPriceId;
+
+  if (stripeConfigured) {
     const customer = await createStripeCustomer(user);
     await updateUserWithStripeCustomerId(user.id, customer.id);
     await createStripeTrialSubscription(user.id, customer.id);
