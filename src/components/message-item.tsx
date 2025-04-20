@@ -9,10 +9,8 @@ export function MessageItem({ message }: { message: Message }) {
   return (
     <div
       className={cn(
-        "flex flex-col gap-1 group",
-        message.role === "user"
-          ? "ml-auto max-w-[80%] sm:max-w-[60%] items-end"
-          : "mr-auto max-w-full"
+        "flex flex-col gap-1 group w-full",
+        message.role === "user" ? "ml-auto max-w-[80%] items-end" : "mr-auto max-w-full"
       )}
     >
       <MessageContent message={message} />

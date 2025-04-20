@@ -195,17 +195,18 @@ export function MessageContent({ message }: { message: Message }) {
 
   if (message.role === "user") {
     return (
-      <div className="flex flex-col gap-2 items-end">
+      <div className="flex flex-col gap-2 items-end w-full">
         {message.experimental_attachments?.map((attachment, index) => {
           if (attachment.contentType?.startsWith("image/")) {
             return (
-              <div key={`${message.id}-attachment-${index}`}>
-                <Image
+              <div
+                key={`${message.id}-attachment-${index}`}
+                className="relative w-full h-64 flex justify-end"
+              >
+                <img
                   src={attachment.url}
                   alt={attachment.name || ""}
-                  width={300}
-                  height={300}
-                  className="rounded-lg"
+                  className="absolute h-full rounded-lg object-contain"
                 />
               </div>
             );
