@@ -64,7 +64,7 @@ export default function ChatSidebar({ conversations }: { conversations: any }) {
     conversations,
     searchQuery
   );
-  const observerRef = useRef<IntersectionObserver>();
+  const observerRef = useRef<IntersectionObserver>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const allConversations = data?.pages.flatMap((page) => page.conversations) || [];
   const groupedConversations = groupConversationsByTime(allConversations);

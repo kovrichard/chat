@@ -60,7 +60,7 @@ const CodeBlock = memo(
     const [isStable, setIsStable] = useState(false);
     const codeRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef(children);
-    const timeoutRef = useRef<NodeJS.Timeout>();
+    const timeoutRef = useRef<NodeJS.Timeout>(null);
 
     useEffect(() => {
       setIsStable(false);

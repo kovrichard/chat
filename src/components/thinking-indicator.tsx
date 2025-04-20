@@ -16,7 +16,7 @@ interface ThinkingIndicatorProps {
 export function ThinkingIndicator({ reasoning }: ThinkingIndicatorProps) {
   const [isReasoning, setIsReasoning] = useState(true);
   const prevReasoningRef = useRef(reasoning);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout>(null);
 
   useEffect(() => {
     // Clear any existing timeout
