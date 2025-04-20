@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import Analytics from "@/components/analytics";
+import { Providers } from "@/components/providers";
 import conf from "@/lib/config";
 import { canonicalUrl, metaDescription, metaTitle, openGraph } from "@/lib/metadata";
-import { Providers } from "@/lib/query-client";
 import { cn } from "@/lib/utils";
 import type { Viewport } from "next";
 import { ThemeProvider } from "next-themes";
@@ -63,10 +63,8 @@ export default function RootLayout({
         )}
       >
         <Providers>
-          <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
-            {children}
-            <Toaster />
-          </ThemeProvider>
+          {children}
+          <Toaster />
         </Providers>
       </body>
     </html>
