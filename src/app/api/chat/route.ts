@@ -173,7 +173,16 @@ export async function POST(req: NextRequest) {
           await updateConversationTitle(id, updatedMessages);
         }
 
-        await saveMessage(updatedMessages[updatedMessages.length - 1], id);
+        const lastMessage = updatedMessages[updatedMessages.length - 1];
+        const sources = await result.sources;
+        sources.map((source) => {
+          lastMessage.parts?.push({
+            type: "source",
+            source,
+          });
+        });
+
+        await saveMessage(lastMessage, id);
         await decrementFreeMessages(user.id);
       } finally {
         await unlockConversation(id);
@@ -192,6 +201,7 @@ export async function POST(req: NextRequest) {
 
   return result.toDataStreamResponse({
     sendReasoning: true,
+    sendSources: true,
     getErrorMessage: (error: any) => error.data.error.code,
   });
 }

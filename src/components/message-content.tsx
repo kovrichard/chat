@@ -263,16 +263,34 @@ export function MessageContent({ message }: { message: Message }) {
             </SheetContent>
           </Sheet>
         )}
-        <div>
-          {blocks.map((block, index) => (
-            <div
-              key={`${message.id}-block-${index}`}
-              className="break-words"
-              style={{ wordBreak: "break-word" }}
-            >
-              <MemoizedMarkdownBlock content={block} />
+        <div className="flex flex-col gap-1">
+          <div>
+            {blocks.map((block, index) => (
+              <div
+                key={`${message.id}-block-${index}`}
+                className="break-words"
+                style={{ wordBreak: "break-word" }}
+              >
+                <MemoizedMarkdownBlock content={block} />
+              </div>
+            ))}
+          </div>
+          {message.parts?.some((part) => part.type === "source") && (
+            <div className="flex gap-2">
+              {message.parts
+                ?.filter((part) => part.type === "source")
+                .map((part, index) => (
+                  <a
+                    key={`source-${part.source.id}`}
+                    href={part.source.url}
+                    target="_blank"
+                    className="hover:text-accent"
+                  >
+                    [{index + 1}]
+                  </a>
+                ))}
             </div>
-          ))}
+          )}
         </div>
       </div>
     );
