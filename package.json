@@ -49,7 +49,6 @@
     "@react-email/components": "0.0.36",
     "@tanstack/react-query": "5.74.4",
     "ai": "4.3.9",
-    "bcrypt": "5.1.1",
     "bcryptjs": "3.0.2",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
