@@ -1,7 +1,13 @@
 import { updateConversationTitle } from "@/lib/actions/conversations";
 import { awsConfigured } from "@/lib/aws/s3";
 import systemPrompt from "@/lib/backend/prompts/system-prompt";
-import { appendMessageToConversation, getConversation } from "@/lib/dao/conversations";
+import {
+  appendMessageToConversation,
+  getConversation,
+  isConversationLocked,
+  lockConversation,
+  unlockConversation,
+} from "@/lib/dao/conversations";
 import { saveMessage, uploadAttachments } from "@/lib/dao/messages";
 import { decrementFreeMessages, getUserFromSession } from "@/lib/dao/users";
 import { getModel } from "@/lib/providers";
@@ -113,6 +119,12 @@ export async function POST(req: NextRequest) {
 
   const { experimental_attachments, ...textMessage } = message;
 
+  const lock = await acquireConversationLock(id);
+
+  if (!lock) {
+    return new Response("conversation_locked", { status: 400 });
+  }
+
   if (existingConversation?.messages && existingConversation.messages.length > 1) {
     if (experimental_attachments && awsConfigured) {
       try {
@@ -124,6 +136,7 @@ export async function POST(req: NextRequest) {
         textMessage.files = attachments;
       } catch (error) {
         console.error(error);
+        await unlockConversation(id);
         return new Response("file_too_large", { status: 400 });
       }
     }
@@ -150,20 +163,25 @@ export async function POST(req: NextRequest) {
       delayInMs: 10,
     }),
     onFinish: async ({ response }) => {
-      const updatedMessages = appendResponseMessages({
-        messages,
-        responseMessages: response.messages,
-      });
+      try {
+        const updatedMessages = appendResponseMessages({
+          messages,
+          responseMessages: response.messages,
+        });
 
-      if (existingConversation?.title === "New Chat") {
-        await updateConversationTitle(id, updatedMessages);
+        if (existingConversation?.title === "New Chat") {
+          await updateConversationTitle(id, updatedMessages);
+        }
+
+        await saveMessage(updatedMessages[updatedMessages.length - 1], id);
+        await decrementFreeMessages(user.id);
+      } finally {
+        await unlockConversation(id);
       }
-
-      await saveMessage(updatedMessages[updatedMessages.length - 1], id);
-      await decrementFreeMessages(user.id);
     },
-    onError: (error) => {
+    onError: async (error) => {
       console.error(error);
+      await unlockConversation(id);
     },
   });
 
@@ -176,6 +194,17 @@ export async function POST(req: NextRequest) {
     sendReasoning: true,
     getErrorMessage: (error: any) => error.data.error.code,
   });
+}
+
+async function acquireConversationLock(conversationId: string): Promise<boolean> {
+  for (let i = 0; i < 15; i++) {
+    const locked = await lockConversation(conversationId);
+    if (locked) {
+      return true;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 200));
+  }
+  return false;
 }
 
 function filterMessages(messages: Message[], modelId: string) {

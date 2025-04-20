@@ -6,6 +6,7 @@ import prisma from "@/lib/prisma";
 import { Message } from "@prisma/client";
 import { JsonArray } from "@prisma/client/runtime/library";
 import { UIMessage } from "ai";
+import { logger } from "../logger";
 
 export async function getConversation(id: string) {
   const userId = await getUserIdFromSession();
@@ -150,6 +151,78 @@ export async function appendMessageToConversation(
   } else {
     return null;
   }
+}
+
+export async function lockConversation(conversationId: string): Promise<boolean> {
+  const userId = await getUserIdFromSession();
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      const conversation = await tx.conversation.findFirst({
+        where: {
+          id: conversationId,
+          userId,
+          OR: [
+            { locked: false },
+            // Auto-release locks older than 5 minutes
+            {
+              locked: true,
+              updatedAt: {
+                lt: new Date(Date.now() - 5 * 60 * 1000),
+              },
+            },
+          ],
+        },
+      });
+
+      if (!conversation) {
+        throw new Error("Could not acquire lock");
+      }
+
+      await tx.conversation.update({
+        where: { id: conversationId },
+        data: {
+          locked: true,
+          updatedAt: new Date(), // Update timestamp when acquiring lock
+        },
+      });
+    });
+
+    return true;
+  } catch (error: any) {
+    logger.error(error);
+    return false;
+  }
+}
+
+export async function unlockConversation(conversationId: string): Promise<void> {
+  const userId = await getUserIdFromSession();
+
+  await prisma.conversation.update({
+    where: {
+      id: conversationId,
+      userId,
+    },
+    data: { locked: false },
+  });
+}
+
+export async function isConversationLocked(conversationId: string): Promise<boolean> {
+  const userId = await getUserIdFromSession();
+
+  const conversation = await prisma.conversation.findFirst({
+    where: {
+      id: conversationId,
+      userId,
+      locked: true,
+      // Consider lock expired if older than 5 minutes
+      updatedAt: {
+        gt: new Date(Date.now() - 5 * 60 * 1000),
+      },
+    },
+  });
+
+  return !!conversation;
 }
 
 async function mapMessages(messages: Message[]) {
