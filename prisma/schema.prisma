@@ -14,65 +14,70 @@ datasource db {
 }
 
 model User {
-  @@map("users")
 
-  id              Int      @id @default(autoincrement())
-  name            String
-  email           String @unique
-  password        String?
-  picture         String
-  subscription    String @default("free")
-  customerId      String? @map("customer_id")
-  freeMessages    Int @default(10) @map("free_messages")
-  notifications   Notification[]
-  conversations   Conversation[]
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+  id            Int            @id @default(autoincrement())
+  name          String
+  email         String         @unique
+  password      String?
+  picture       String
+  subscription  String         @default("free")
+  customerId    String?        @map("customer_id")
+  freeMessages  Int            @default(10) @map("free_messages")
+  notifications Notification[]
+  conversations Conversation[]
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+
+  @@map("users")
 }
 
 model Notification {
-  @@map("notifications")
 
-  id                Int      @id @default(autoincrement())
-  type              String
-  title             String
-  content           String
-  link              String?
-  read              Boolean @default(false)
-  archived          Boolean @default(false)
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId            Int      @map("user_id")
-  createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @updatedAt @map("updated_at")
+  id        Int      @id @default(autoincrement())
+  type      String
+  title     String
+  content   String
+  link      String?
+  read      Boolean  @default(false)
+  archived  Boolean  @default(false)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int      @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("notifications")
 }
 
 model Conversation {
-  @@map("conversations")
 
-  id                String   @id @default(uuid())
-  title             String
-  messages          Message[]
-  model             String
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId            Int      @map("user_id")
-  createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @updatedAt @map("updated_at")
-  lastMessageAt     DateTime @default(now()) @map("last_message_at")
+  id            String    @id @default(uuid())
+  title         String
+  messages      Message[]
+  model         String
+  
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        Int       @map("user_id")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  lastMessageAt DateTime  @default(now()) @map("last_message_at")
+
+  @@map("conversations")
 }
 
 model Message {
-  @@map("messages")
 
-  id                String   @id @default(uuid())
-  content           String
-  role              String
-  reasoning         String?
-  signature         String?
-  parts             Json?
-  toolInvocations   Json?
-  files             Json?
-  conversationId    String   @map("conversation_id")
-  conversation      Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @updatedAt @map("updated_at")
+  id              String       @id @default(uuid())
+  content         String
+  role            String
+  reasoning       String?
+  signature       String?
+  parts           Json?
+  toolInvocations Json?
+  files           Json?
+  conversationId  String       @map("conversation_id")
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+
+  @@map("messages")
 }
