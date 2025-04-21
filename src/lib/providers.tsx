@@ -136,6 +136,11 @@ export const providers: Provider[] = [
     icon: LazyGoogle,
     models: [
       {
+        id: "gemini-2.5-flash-preview",
+        name: "Gemini 2.5 Flash",
+        features: [images, pdf, search],
+      },
+      {
         id: "gemini-2.0-flash",
         name: "Gemini 2.0 Flash",
         features: [images, pdf, search],
