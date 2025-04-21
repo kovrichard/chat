@@ -7,7 +7,7 @@ import { PartialConversation } from "@/types/chat";
 import { MessageSquare, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useInView } from "react-intersection-observer";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -64,36 +64,18 @@ export default function ChatSidebar({ conversations }: { conversations: any }) {
     conversations,
     searchQuery
   );
-  const observerRef = useRef<IntersectionObserver>(null);
-  const loadMoreRef = useRef<HTMLDivElement>(null);
   const allConversations = data?.pages.flatMap((page) => page.conversations) || [];
   const groupedConversations = groupConversationsByTime(allConversations);
 
-  // Setup intersection observer for infinite scroll
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const first = entries[0];
-        if (first.isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      },
-      // Trigger when the new element is 1px from the bottom of the viewport
-      { threshold: 0 }
-    );
-
-    if (loadMoreRef.current) {
-      observer.observe(loadMoreRef.current);
-    }
-
-    observerRef.current = observer;
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
+  // Setup intersection observer for infinite scroll using react-intersection-observer
+  const { ref } = useInView({
+    onChange: (inView) => {
+      if (inView && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
       }
-    };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+    },
+    threshold: 0,
+  });
 
   return (
     <div className="flex flex-col flex-1 overflow-auto no-scrollbar">
@@ -139,9 +121,9 @@ export default function ChatSidebar({ conversations }: { conversations: any }) {
           </SidebarGroupContent>
         </SidebarGroup>
       )}
-      {/* Load more trigger */}
+
       {isFetchingNextPage && (
-        <div ref={loadMoreRef} className="h-4 w-full">
+        <div className="h-4 w-full pb-4">
           <div className="flex items-center justify-center p-2">
             <div className="flex gap-1">
               <div className="size-2 rounded-full bg-muted animate-bounce [animation-delay:-0.3s]"></div>
@@ -151,6 +133,8 @@ export default function ChatSidebar({ conversations }: { conversations: any }) {
           </div>
         </div>
       )}
+      {/* Intersection observer target */}
+      {hasNextPage && <div ref={ref} className="h-4 w-full pb-4" />}
       {allConversations.length === 0 && searchQuery && (
         <SidebarGroup>
           <SidebarGroupLabel className="inline-flex items-center justify-center text-muted-foreground">
