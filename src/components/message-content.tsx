@@ -1,16 +1,6 @@
-import { Message } from "ai";
-import { Copy, FileText } from "lucide-react";
-import { marked } from "marked";
-import Image from "next/image";
-import { memo, useEffect, useMemo, useRef, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { tomorrow } from "react-syntax-highlighter/dist/esm/styles/prism";
-import remarkGfm from "remark-gfm";
 // xonokai, tomorrow, twilight, prism
-import { ThinkingIndicator } from "./thinking-indicator";
-import { Button } from "./ui/button";
-import { ScrollArea } from "./ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Sheet,
   SheetContent,
@@ -18,7 +8,15 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "./ui/sheet";
+} from "@/components/ui/sheet";
+import { Message } from "ai";
+import { Copy, FileText } from "lucide-react";
+import { marked } from "marked";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { tomorrow } from "react-syntax-highlighter/dist/esm/styles/prism";
+import remarkGfm from "remark-gfm";
 
 function parseMarkdownIntoBlocks(markdown: string): string[] {
   const tokens = marked.lexer(markdown);
@@ -173,6 +171,14 @@ const MemoizedMarkdownBlock = memo(
               >
                 {children}
               </a>
+            );
+          },
+          table({ children }) {
+            return (
+              <ScrollArea className="w-full whitespace-nowrap">
+                <table className="border-collapse">{children}</table>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
             );
           },
         }}
