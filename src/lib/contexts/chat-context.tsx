@@ -48,7 +48,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         model: string;
         title: string;
         messages: Message[];
-      }>(conversationKeys.detail(conversationId));
+      }>(conversationKeys.details(conversationId));
 
       if (conversation?.title === "New Chat") {
         queryClient.invalidateQueries({

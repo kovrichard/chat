@@ -15,7 +15,8 @@ import { deleteMessageChainAfter } from "../actions/messages";
 import { processMessages } from "../message-processor";
 
 export const conversationKeys = {
-  detail: (id: string) => ["conversations", id] as const,
+  details: (id: string) => ["conversations", id, "details"] as const,
+  messages: (id: string) => ["conversations", id, "messages"] as const,
   list: (search?: string) => {
     const keys = ["conversations", "list"];
     if (search) {
@@ -61,21 +62,35 @@ export function useConversations(conversations: any, search?: string) {
 
 export function useConversation(id: string, initialConversation?: any) {
   return useQuery({
-    queryKey: conversationKeys.detail(id),
+    queryKey: conversationKeys.details(id),
     queryFn: async () => {
       if (!id) return null;
 
       const response = await fetch(`/api/conversations/${id}`);
       const data = await response.json();
 
-      return {
-        ...data,
-        messages: processMessages(data.messages),
-      };
+      return data;
     },
     initialData: () => {
       if (initialConversation) {
         return initialConversation;
+      }
+      return null;
+    },
+  });
+}
+
+export function useMessages(id: string, initialMessages?: any) {
+  return useQuery({
+    queryKey: conversationKeys.messages(id),
+    queryFn: async () => {
+      const response = await fetch(`/api/conversations/${id}/messages`);
+      const data = await response.json();
+      return processMessages(data.messages);
+    },
+    initialData: () => {
+      if (initialMessages) {
+        return initialMessages;
       }
       return null;
     },
@@ -89,7 +104,7 @@ export function useUpdateConversationModel() {
     mutationFn: ({ conversationId, model }: { conversationId: string; model: string }) =>
       saveConversationModel(conversationId, model),
     onSuccess: (updatedConversation, { conversationId }) => {
-      queryClient.setQueryData(conversationKeys.detail(conversationId), (old: any) => ({
+      queryClient.setQueryData(conversationKeys.details(conversationId), (old: any) => ({
         ...old,
         model: updatedConversation?.model,
       }));
@@ -140,10 +155,14 @@ export function useAddMessage() {
       };
 
       // Update conversation detail cache
-      queryClient.setQueryData(conversationKeys.detail(conversationId), (old: any) => ({
+      queryClient.setQueryData(conversationKeys.details(conversationId), (old: any) => ({
         ...old,
         messages: [...(old.messages || []), optimisticMessage],
       }));
+      queryClient.setQueryData(conversationKeys.messages(conversationId), (old: any) => [
+        ...(old || []),
+        optimisticMessage,
+      ]);
 
       // Update all conversation list caches (including filtered ones)
       const queries = queryClient.getQueriesData({ queryKey: ["conversations", "list"] });
@@ -173,7 +192,10 @@ export function useAddMessage() {
     onError: (_, { conversationId }) => {
       // Revert optimistic updates on error
       queryClient.invalidateQueries({
-        queryKey: conversationKeys.detail(conversationId),
+        queryKey: conversationKeys.details(conversationId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: conversationKeys.messages(conversationId),
       });
       queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
     },
@@ -193,7 +215,7 @@ export function useRegenerateMessage() {
       queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
 
       queryClient.invalidateQueries({
-        queryKey: conversationKeys.detail(conversationId),
+        queryKey: conversationKeys.details(conversationId),
       });
     },
   });
@@ -208,8 +230,12 @@ export function useCreateConversation() {
       if (newConversation) {
         // Update conversation detail
         queryClient.setQueryData(
-          conversationKeys.detail(newConversation.id),
+          conversationKeys.details(newConversation.id),
           newConversation
+        );
+        queryClient.setQueryData(
+          conversationKeys.messages(newConversation.id),
+          newConversation.messages
         );
 
         // Get all conversation list queries
@@ -245,7 +271,10 @@ export function useCreateConversation() {
     onError: (error, newConversation) => {
       console.error("Error creating conversation:", error);
       queryClient.invalidateQueries({
-        queryKey: conversationKeys.detail(newConversation.id),
+        queryKey: conversationKeys.details(newConversation.id),
+      });
+      queryClient.invalidateQueries({
+        queryKey: conversationKeys.messages(newConversation.id),
       });
       queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
     },

@@ -5,23 +5,25 @@ import { getUserIdFromSession } from "@/lib/dao/users";
 import prisma from "@/lib/prisma";
 import { Attachment, Message, UIMessage } from "ai";
 import { v4 as uuidv4 } from "uuid";
+import { mapMessages } from "./conversations";
 
-type ReasoningDetail =
-  | {
-      type: "text";
-      text: string;
-      signature?: string;
-    }
-  | {
-      type: "redacted";
-      data: string;
-    };
+export async function getMessages(conversationId: string, _page = 1, _limit = 15) {
+  const userId = await getUserIdFromSession();
 
-export type OnFinishResult = {
-  text: string;
-  reasoning?: string;
-  reasoningDetails?: ReasoningDetail[];
-};
+  const messages = await prisma.message.findMany({
+    where: {
+      conversation: {
+        id: conversationId,
+        userId,
+      },
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+
+  return mapMessages(messages);
+}
 
 export async function saveMessage(message: Message | UIMessage, conversationId: string) {
   const userId = await getUserIdFromSession();

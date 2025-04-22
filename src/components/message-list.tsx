@@ -1,7 +1,7 @@
 "use client";
 
 import { useChatContext } from "@/lib/contexts/chat-context";
-import { useConversation } from "@/lib/queries/conversations";
+import { useConversation, useMessages } from "@/lib/queries/conversations";
 import { useRouter } from "next/navigation";
 import { memo, useEffect, useMemo } from "react";
 import LastMessage from "./last-message";
@@ -15,9 +15,11 @@ const MemoizedMessageItem = memo(MessageItem);
 
 export function MessagesList({
   initialConversation,
+  initialMessages,
   id,
 }: {
   initialConversation?: any;
+  initialMessages?: any;
   id: string;
 }) {
   const router = useRouter();
@@ -25,6 +27,7 @@ export function MessagesList({
   const { setModel } = useModelStore();
   const { files } = useFileStore();
   const { data: conversation } = useConversation(id, initialConversation);
+  const { data: messages } = useMessages(id, initialMessages);
 
   useEffect(() => {
     if (!conversation) {
@@ -36,10 +39,10 @@ export function MessagesList({
   }, [conversation]);
 
   const memoizedConversationMessages = useMemo(() => {
-    return conversation?.messages?.map((message: any) => (
+    return messages.map((message: any) => (
       <MemoizedMessageItem key={message.id} message={message} />
     ));
-  }, [conversation?.messages]);
+  }, [messages]);
 
   return (
     <div className="flex flex-col max-w-5xl mx-auto gap-4 px-4 sm:px-8 pt-8">

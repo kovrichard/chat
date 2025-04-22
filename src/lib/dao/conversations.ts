@@ -225,7 +225,7 @@ export async function isConversationLocked(conversationId: string): Promise<bool
   return !!conversation;
 }
 
-async function mapMessages(messages: Message[]) {
+export async function mapMessages(messages: Message[]) {
   const mappedMessages = await Promise.all(
     messages.map(async (message) => ({
       ...message,
