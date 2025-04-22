@@ -15,5 +15,5 @@ export async function GET(
 
   const messages = await getMessages(id);
 
-  return NextResponse.json({ messages });
+  return NextResponse.json(messages);
 }

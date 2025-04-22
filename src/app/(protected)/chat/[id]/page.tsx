@@ -16,7 +16,7 @@ export default async function ChatPage({
   const messagesData = getMessages(id);
   const [conversation, messages] = await Promise.all([conversationData, messagesData]);
 
-  const formattedMessages = processMessages(messages);
+  const formattedMessages = processMessages(messages.messages);
 
   if (!conversation) {
     redirect("/chat");

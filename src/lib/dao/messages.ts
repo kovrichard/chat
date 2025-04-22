@@ -7,8 +7,39 @@ import { Attachment, Message, UIMessage } from "ai";
 import { v4 as uuidv4 } from "uuid";
 import { mapMessages } from "./conversations";
 
-export async function getMessages(conversationId: string, _page = 1, _limit = 15) {
+export async function getMessages(conversationId: string, page?: number, limit?: number) {
   const userId = await getUserIdFromSession();
+
+  if (page === undefined || limit === undefined) {
+    const messages = await prisma.message.findMany({
+      where: {
+        conversation: {
+          id: conversationId,
+          userId,
+        },
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+
+    return {
+      messages: await mapMessages(messages),
+      hasMore: false,
+    };
+  }
+
+  const totalMessages = await prisma.message.count({
+    where: {
+      conversation: {
+        id: conversationId,
+        userId,
+      },
+    },
+  });
+
+  const skip = Math.max(totalMessages - page * limit, 0);
+  const take = Math.min(limit, totalMessages - (page - 1) * limit);
 
   const messages = await prisma.message.findMany({
     where: {
@@ -20,9 +51,16 @@ export async function getMessages(conversationId: string, _page = 1, _limit = 15
     orderBy: {
       createdAt: "asc",
     },
+    skip,
+    take,
   });
 
-  return mapMessages(messages);
+  const hasMore = skip > 0;
+
+  return {
+    messages: await mapMessages(messages),
+    hasMore,
+  };
 }
 
 export async function saveMessage(message: Message | UIMessage, conversationId: string) {
