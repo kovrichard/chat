@@ -105,7 +105,7 @@ export async function appendMessageToConversation(
 ) {
   const userId = await getUserIdFromSession();
 
-  await prisma.message.create({
+  const newMessage = await prisma.message.create({
     data: {
       ...message,
       parts: JSON.stringify(message.parts),
@@ -114,7 +114,7 @@ export async function appendMessageToConversation(
     },
   });
 
-  const updatedConversation = await prisma.conversation.update({
+  await prisma.conversation.update({
     where: {
       id: conversationId,
       userId,
@@ -122,23 +122,9 @@ export async function appendMessageToConversation(
     data: {
       lastMessageAt: new Date(),
     },
-    include: {
-      messages: {
-        orderBy: {
-          createdAt: "asc",
-        },
-      },
-    },
   });
 
-  if (updatedConversation) {
-    return {
-      ...updatedConversation,
-      messages: await mapMessages(updatedConversation.messages),
-    };
-  } else {
-    return null;
-  }
+  return mapMessages([newMessage]);
 }
 
 export async function lockConversation(conversationId: string): Promise<boolean> {

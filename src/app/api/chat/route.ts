@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
     getMessages(id),
   ]);
 
-  let existingMessages: Message[] = [];
+  let existingMessages: Message[] = conversationMessages.messages;
 
   const { experimental_attachments, ...textMessage } = message;
 
@@ -131,25 +131,19 @@ export async function POST(req: NextRequest) {
     return new Response("conversation_locked", { status: 400 });
   }
 
-  if (conversationMessages.messages.length > 1) {
-    if (experimental_attachments && awsConfigured) {
-      try {
-        const attachments = await uploadAttachments(
-          experimental_attachments,
-          user.id,
-          id
-        );
-        textMessage.files = attachments;
-      } catch (error) {
-        console.error(error);
-        await unlockConversation(id);
-        return new Response("file_too_large", { status: 400 });
-      }
+  if (experimental_attachments && awsConfigured) {
+    try {
+      const attachments = await uploadAttachments(experimental_attachments, user.id, id);
+      textMessage.files = attachments;
+    } catch (error) {
+      console.error(error);
+      await unlockConversation(id);
+      return new Response("file_too_large", { status: 400 });
     }
-
-    const conversation = await appendMessageToConversation(textMessage, id);
-    existingMessages = conversation?.messages || [];
   }
+
+  const [newMessage] = await appendMessageToConversation(textMessage, id);
+  existingMessages = [...existingMessages, newMessage];
 
   const messages = appendClientMessage({
     messages: existingMessages,
