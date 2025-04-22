@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 24.00 100.00% 98.04%;
+    --background: 24.0 100.00% 98.04%;
     --foreground: 346.67 7.96% 22.16%;
     --card: 0 0% 100%;
     --card-foreground: 346.67 7.96% 22.16%;
@@ -14,7 +14,7 @@
     --primary-foreground: 0 0% 100%;
     --secondary: 8.57 100.00% 95.88%;
     --secondary-foreground: 9.91 47.33% 47.65%;
-    --muted: 15.00 100.00% 96.08%;
+    --muted: 15.0 100.00% 96.08%;
     --muted-foreground: 6.32 18.81% 39.61%;
     --accent: 26.11 98.50% 73.92%;
     --accent-foreground: 346.67 7.96% 22.16%;
@@ -29,7 +29,7 @@
     --chart-3: 23.86 100.00% 82.75%;
     --chart-4: 16.07 100% 78.04%;
     --chart-5: 9.58 54.84% 57.45%;
-    --sidebar-background: 15.00 100.00% 96.08%;
+    --sidebar-background: 15.0 100.00% 96.08%;
     --sidebar-foreground: 346.67 7.96% 22.16%;
     --sidebar-primary: 11.63 100% 68.63%;
     --sidebar-primary-foreground: 0 0% 100%;
@@ -42,11 +42,15 @@
     --font-mono: Ubuntu Mono, monospace;
     --shadow-2xs: 0px 6px 12px -3px hsl(0 0% 0% / 0.04);
     --shadow-xs: 0px 6px 12px -3px hsl(0 0% 0% / 0.04);
-    --shadow-sm: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 1px 2px -4px hsl(0 0% 0% / 0.09);
+    --shadow-sm: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 1px 2px -4px
+      hsl(0 0% 0% / 0.09);
     --shadow: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 1px 2px -4px hsl(0 0% 0% / 0.09);
-    --shadow-md: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 2px 4px -4px hsl(0 0% 0% / 0.09);
-    --shadow-lg: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 4px 6px -4px hsl(0 0% 0% / 0.09);
-    --shadow-xl: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 8px 10px -4px hsl(0 0% 0% / 0.09);
+    --shadow-md: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 2px 4px -4px
+      hsl(0 0% 0% / 0.09);
+    --shadow-lg: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 4px 6px -4px
+      hsl(0 0% 0% / 0.09);
+    --shadow-xl: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 8px 10px -4px
+      hsl(0 0% 0% / 0.09);
     --shadow-2xl: 0px 6px 12px -3px hsl(0 0% 0% / 0.22);
   }
 
@@ -88,13 +92,17 @@
     --font-mono: Ubuntu Mono, monospace;
     --shadow-2xs: 0px 6px 12px -3px hsl(0 0% 0% / 0.04);
     --shadow-xs: 0px 6px 12px -3px hsl(0 0% 0% / 0.04);
-    --shadow-sm: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 1px 2px -4px hsl(0 0% 0% / 0.09);
+    --shadow-sm: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 1px 2px -4px
+      hsl(0 0% 0% / 0.09);
     --shadow: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 1px 2px -4px hsl(0 0% 0% / 0.09);
-    --shadow-md: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 2px 4px -4px hsl(0 0% 0% / 0.09);
-    --shadow-lg: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 4px 6px -4px hsl(0 0% 0% / 0.09);
-    --shadow-xl: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 8px 10px -4px hsl(0 0% 0% / 0.09);
+    --shadow-md: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 2px 4px -4px
+      hsl(0 0% 0% / 0.09);
+    --shadow-lg: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 4px 6px -4px
+      hsl(0 0% 0% / 0.09);
+    --shadow-xl: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 8px 10px -4px
+      hsl(0 0% 0% / 0.09);
     --shadow-2xl: 0px 6px 12px -3px hsl(0 0% 0% / 0.22);
-  }  
+  }
 }
 
 @layer base {
@@ -113,8 +121,8 @@
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 tr {
