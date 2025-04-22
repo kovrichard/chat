@@ -261,7 +261,7 @@ export function MessageContent({ message }: { message: Message }) {
                 <div className="absolute top-4 left-0 right-0 w-full h-4 bg-gradient-to-b from-background to-transparent pointer-events-none z-10" />
                 <ScrollArea className="h-full px-6">
                   <p className="text-sm text-muted-foreground pt-2 pb-4">
-                    {message.parts?.[0].reasoning}
+                    {message.parts?.[1].reasoning}
                   </p>
                 </ScrollArea>
                 <div className="absolute bottom-6 left-0 right-0 w-full h-6 bg-gradient-to-t from-background to-transparent pointer-events-none z-10" />
