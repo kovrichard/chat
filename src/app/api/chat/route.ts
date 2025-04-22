@@ -4,11 +4,10 @@ import systemPrompt from "@/lib/backend/prompts/system-prompt";
 import {
   appendMessageToConversation,
   getConversation,
-  isConversationLocked,
   lockConversation,
   unlockConversation,
 } from "@/lib/dao/conversations";
-import { saveMessage, uploadAttachments } from "@/lib/dao/messages";
+import { getMessages, saveMessage, uploadAttachments } from "@/lib/dao/messages";
 import { decrementFreeMessages, getUserFromSession } from "@/lib/dao/users";
 import { getModel } from "@/lib/providers";
 import rateLimit from "@/lib/rate-limiter";
@@ -117,7 +116,13 @@ export async function POST(req: NextRequest) {
     return new Response("Invalid model", { status: 400 });
   }
 
-  const existingConversation = await getConversation(id);
+  const existingConversationData = getConversation(id);
+  const conversationMessagesData = getMessages(id);
+  const [existingConversation, conversationMessages] = await Promise.all([
+    existingConversationData,
+    conversationMessagesData,
+  ]);
+
   let existingMessages: Message[] = [];
 
   const { experimental_attachments, ...textMessage } = message;
@@ -128,7 +133,7 @@ export async function POST(req: NextRequest) {
     return new Response("conversation_locked", { status: 400 });
   }
 
-  if (existingConversation?.messages && existingConversation.messages.length > 1) {
+  if (conversationMessages.messages.length > 1) {
     if (experimental_attachments && awsConfigured) {
       try {
         const attachments = await uploadAttachments(

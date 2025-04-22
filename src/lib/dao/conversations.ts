@@ -20,22 +20,10 @@ export async function getConversation(id: string) {
       id: true,
       title: true,
       model: true,
-      messages: {
-        orderBy: {
-          createdAt: "asc",
-        },
-      },
     },
   });
 
-  if (conversation) {
-    return {
-      ...conversation,
-      messages: await mapMessages(conversation?.messages || []),
-    };
-  } else {
-    return null;
-  }
+  return conversation;
 }
 
 export async function getConversations(
