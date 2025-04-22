@@ -245,7 +245,7 @@ export function MessageContent({ message }: { message: Message }) {
   if (message.role === "assistant") {
     return (
       <div className="flex flex-col gap-4">
-        {message.parts?.[0]?.type === "reasoning" && (
+        {message.parts?.[1]?.type === "reasoning" && (
           <Sheet>
             <SheetTrigger className="text-sm text-muted-foreground mr-auto">
               Reasoning
