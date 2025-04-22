@@ -1,4 +1,4 @@
-import { Conversation, Message } from "@prisma/client";
+import { Conversation } from "@/lib/prisma/client";
 import { UIMessage } from "ai";
 
 export type PartialConversation = Omit<

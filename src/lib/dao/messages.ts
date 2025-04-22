@@ -2,7 +2,7 @@ import "server-only";
 
 import { awsConfigured, uploadFile } from "@/lib/aws/s3";
 import { getUserIdFromSession } from "@/lib/dao/users";
-import prisma from "@/lib/prisma";
+import prisma from "@/lib/prisma/prisma";
 import { Attachment, Message, UIMessage } from "ai";
 import { v4 as uuidv4 } from "uuid";
 import { mapMessages } from "./conversations";

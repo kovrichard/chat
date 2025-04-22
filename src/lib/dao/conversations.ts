@@ -2,8 +2,8 @@ import "server-only";
 
 import { awsConfigured, getFileUrlSigned } from "@/lib/aws/s3";
 import { getUserIdFromSession } from "@/lib/dao/users";
-import prisma from "@/lib/prisma";
-import { Message } from "@prisma/client";
+import { Message } from "@/lib/prisma/client";
+import prisma from "@/lib/prisma/prisma";
 import { JsonArray } from "@prisma/client/runtime/library";
 import { UIMessage } from "ai";
 import { logger } from "../logger";

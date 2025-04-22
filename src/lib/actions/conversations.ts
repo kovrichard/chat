@@ -6,7 +6,7 @@ import { awsConfigured, deleteFile } from "@/lib/aws/s3";
 import { uploadAttachments } from "@/lib/dao/messages";
 import { getUserIdFromSession } from "@/lib/dao/users";
 import { logger } from "@/lib/logger";
-import prisma from "@/lib/prisma";
+import prisma from "@/lib/prisma/prisma";
 import { PartialConversation } from "@/types/chat";
 import { openai } from "@ai-sdk/openai";
 import { JsonValue } from "@prisma/client/runtime/library";

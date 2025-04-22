@@ -1,4 +1,4 @@
-import { Message } from "@prisma/client";
+import { Message } from "@/lib/prisma/client";
 
 interface RawMessage extends Omit<Message, "reasoning"> {
   reasoning: string | undefined;

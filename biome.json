@@ -77,7 +77,10 @@
         "useGetterReturn": "error",
         "useValidTypeof": "error"
       }
-    }
+    },
+    "ignore": [
+      "src/lib/prisma/client/**"
+    ]
   },
   "javascript": {
     "formatter": {

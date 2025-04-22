@@ -28,6 +28,7 @@ FROM base AS prerelease
 
 # Use the dev node_modules for the prerelease stage to have typescript and other required dependencies
 COPY --from=install /temp/dev/node_modules ./node_modules
+COPY --from=install /temp/dev/src/lib/prisma/client ./src/lib/prisma/client
 COPY . .
 
 ARG AUTHORITY
