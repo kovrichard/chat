@@ -13,7 +13,7 @@ export default async function ChatPage({
   const { id } = await params;
 
   const conversationData = getConversation(id);
-  const messagesData = getMessages(id);
+  const messagesData = getMessages(id, 1, 15);
   const [conversation, messages] = await Promise.all([conversationData, messagesData]);
 
   const formattedMessages = processMessages(messages.messages);
