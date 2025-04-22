@@ -23,9 +23,10 @@ import ProfileMenu from "./profile-menu";
 import { SearchField } from "./search-field";
 
 export async function AppSidebar() {
-  const userData = getUserFromSession();
-  const conversationsData = getConversations(1, 15);
-  const [user, conversations] = await Promise.all([userData, conversationsData]);
+  const [user, conversations] = await Promise.all([
+    getUserFromSession(),
+    getConversations(1, 15),
+  ]);
 
   return (
     <Sidebar className="border-none">

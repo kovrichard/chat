@@ -116,11 +116,9 @@ export async function POST(req: NextRequest) {
     return new Response("Invalid model", { status: 400 });
   }
 
-  const existingConversationData = getConversation(id);
-  const conversationMessagesData = getMessages(id);
   const [existingConversation, conversationMessages] = await Promise.all([
-    existingConversationData,
-    conversationMessagesData,
+    getConversation(id),
+    getMessages(id),
   ]);
 
   let existingMessages: Message[] = [];
