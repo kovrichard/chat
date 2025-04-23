@@ -142,13 +142,18 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const [newMessage] = await appendMessageToConversation(textMessage, id);
-  existingMessages = [...existingMessages, newMessage];
+  let messages = existingMessages;
 
-  const messages = appendClientMessage({
-    messages: existingMessages,
-    message,
-  });
+  // Length > 1 to avoid saving the first message twice
+  if (message.content && messages.length > 1) {
+    const [newMessage] = await appendMessageToConversation(textMessage, id);
+    existingMessages = [...existingMessages, newMessage];
+
+    messages = appendClientMessage({
+      messages: existingMessages,
+      message,
+    });
+  }
 
   const filteredMessages = filterMessages(messages, modelId);
 

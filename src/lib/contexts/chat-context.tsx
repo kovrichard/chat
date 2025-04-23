@@ -7,6 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Message } from "ai";
 import { useParams } from "next/navigation";
 import React, { createContext, useContext, ReactNode, useEffect, useRef } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { conversationKeys, useAddMessage } from "../queries/conversations";
 
 type ChatStatus = "submitted" | "streaming" | "ready" | "error";
@@ -37,6 +38,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       return { message: messages[messages.length - 1], id, model: model.id };
     },
     sendExtraMessageFields: true,
+    generateId: () => uuidv4(),
     onFinish: async (message: Message) => {
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
       await addMessage.mutateAsync({

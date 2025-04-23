@@ -155,10 +155,6 @@ export function useAddMessage() {
       };
 
       // Update conversation detail cache
-      queryClient.setQueryData(conversationKeys.details(conversationId), (old: any) => ({
-        ...old,
-        messages: [...(old.messages || []), optimisticMessage],
-      }));
       queryClient.setQueryData(conversationKeys.messages(conversationId), (old: any) => [
         ...(old || []),
         optimisticMessage,
