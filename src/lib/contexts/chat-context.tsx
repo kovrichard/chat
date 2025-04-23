@@ -19,13 +19,14 @@ interface ChatContextType {
   status: ChatStatus;
   error?: Error;
   stop: () => void;
+  emptySubmit: () => void;
 }
 
 const ChatContext = createContext<ChatContextType | null>(null);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
   const params = useParams();
-  const conversationId = params.id as string;
+  const conversationId = (params.id as string) || uuidv4();
   const queryClient = useQueryClient();
   const addMessage = useAddMessage();
   const { model } = useModelStore();
@@ -35,7 +36,11 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const { id, messages, status, input, setInput, handleSubmit, error, stop } = useChat({
     id: conversationId,
     experimental_prepareRequestBody: ({ messages, id }) => {
-      return { message: messages[messages.length - 1], id, model: model.id };
+      return {
+        message: messages[messages.length - 1],
+        id,
+        model: model.id,
+      };
     },
     sendExtraMessageFields: true,
     generateId: () => uuidv4(),
@@ -74,6 +79,13 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     }
   }, [status, input, handleSubmit, conversationId]);
 
+  function emptySubmit() {
+    handleSubmit(new Event("submit"), {
+      allowEmptySubmit: true,
+    });
+    setFiles(undefined);
+  }
+
   return (
     <ChatContext.Provider
       value={{
@@ -83,6 +95,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         status,
         error,
         stop,
+        emptySubmit,
       }}
     >
       {children}

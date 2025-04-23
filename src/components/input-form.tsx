@@ -66,7 +66,14 @@ const InputForm = forwardRef<
   const addMessage = useAddMessage();
   const { input, setInput } = useInputStore();
   const { model } = useModelStore();
-  const { id, status, stop, error, setInput: setChatInput } = useChatContext();
+  const {
+    id,
+    status,
+    stop,
+    error,
+    setInput: setChatInput,
+    emptySubmit,
+  } = useChatContext();
   const { files, setFiles } = useFileStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageSupport = model.features?.some((feature) => feature.name === "Images");
@@ -100,9 +107,8 @@ const InputForm = forwardRef<
     if (status !== "ready") return;
 
     if (pathname === "/chat") {
-      const conversationId = uuidv4();
       const optimisticConversation: PartialConversation = {
-        id: conversationId,
+        id: id,
         title: "New Chat",
         model: model.id,
         messages: [
@@ -125,9 +131,9 @@ const InputForm = forwardRef<
         lastMessageAt: new Date(),
       };
       await createConversation.mutateAsync(optimisticConversation);
-      setChatInput(input);
+      emptySubmit();
       setInput("");
-      router.push(`/chat/${conversationId}`);
+      router.push(`/chat/${id}`);
     } else {
       setChatInput(input);
       await addMessage.mutateAsync({

@@ -144,8 +144,7 @@ export async function POST(req: NextRequest) {
 
   let messages = existingMessages;
 
-  // Length > 1 to avoid saving the first message twice
-  if (message.content && messages.length > 1) {
+  if (message.content) {
     const [newMessage] = await appendMessageToConversation(textMessage, id);
     existingMessages = [...existingMessages, newMessage];
 
