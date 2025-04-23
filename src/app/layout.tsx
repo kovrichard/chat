@@ -6,8 +6,8 @@ import { Providers } from "@/components/providers";
 import conf from "@/lib/config";
 import { canonicalUrl, metaDescription, metaTitle, openGraph } from "@/lib/metadata";
 import { cn } from "@/lib/utils";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Viewport } from "next";
-import { ThemeProvider } from "next-themes";
 import React from "react";
 import { Toaster } from "sonner";
 
@@ -64,6 +64,7 @@ export default function RootLayout({
       >
         <Providers>
           {children}
+          <SpeedInsights />
           <Toaster />
         </Providers>
       </body>
