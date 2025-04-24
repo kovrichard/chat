@@ -152,12 +152,10 @@ const InputForm = forwardRef<
   function handlePaste(e: ClipboardEvent<HTMLTextAreaElement>) {
     const clipboardItems = e.clipboardData.items;
 
-    // Check if clipboard contains any non-text content
-    const hasNonTextContent = Array.from(clipboardItems).some(
-      (item) => !item.type.startsWith("text/")
-    );
+    // Check if clipboard contains any files
+    const hasFiles = Array.from(clipboardItems).some((item) => item.kind === "file");
 
-    if (hasNonTextContent) {
+    if (hasFiles) {
       e.preventDefault();
 
       const newFiles = new DataTransfer();
