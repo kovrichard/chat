@@ -52,7 +52,7 @@ export function SearchField() {
       />
       <div
         className={cn(
-          "flex items-center justify-center absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none px-1 py-0.5 rounded-[4px] bg-muted border",
+          "hidden md:flex items-center justify-center absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none px-1 py-0.5 rounded-[4px] bg-muted border",
           isMac === undefined && "opacity-0"
         )}
       >
