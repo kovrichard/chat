@@ -33,6 +33,11 @@ export default function ProfileMenu({
     queryKey: ["subscription"],
     queryFn: async () => {
       const response = await fetch("/api/subscription");
+
+      if (!response.ok) {
+        return null;
+      }
+
       const data = await response.json();
       return data;
     },
