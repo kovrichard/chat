@@ -5,6 +5,8 @@ import prisma from "@/lib/prisma/prisma";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 
+const unauthenticatedRedirect = "/chat?register=true";
+
 export async function getUserByEmail(email: string) {
   const user = await prisma.user.findUnique({
     where: {
@@ -29,7 +31,7 @@ export const getUserIdFromSession = cache(async (): Promise<number> => {
   const session = await auth();
 
   if (!session || !session.user || !session.user.id) {
-    return redirect("/login");
+    return redirect(unauthenticatedRedirect);
   }
 
   return parseInt(session.user.id);
@@ -39,7 +41,7 @@ export const getUserFromSession = cache(async (): Promise<SessionUser> => {
   const session = await auth();
 
   if (!session) {
-    return redirect("/login");
+    return redirect(unauthenticatedRedirect);
   }
 
   const user = await prisma.user.findUnique({
@@ -58,8 +60,33 @@ export const getUserFromSession = cache(async (): Promise<SessionUser> => {
   });
 
   if (!user) {
-    return redirect("/login");
+    return redirect(unauthenticatedRedirect);
   }
+
+  return user;
+});
+
+export const getUserFromSessionPublic = cache(async (): Promise<SessionUser | null> => {
+  const session = await auth();
+
+  if (!session) {
+    return null;
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session.user?.email || "",
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      picture: true,
+      subscription: true,
+      freeMessages: true,
+      customerId: true,
+    },
+  });
 
   return user;
 });

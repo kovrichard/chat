@@ -8,7 +8,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { getConversations } from "@/lib/dao/conversations";
-import { getUserFromSession } from "@/lib/dao/users";
+import { getUserFromSession, getUserFromSessionPublic } from "@/lib/dao/users";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -23,10 +23,8 @@ import ProfileMenu from "./profile-menu";
 import { SearchField } from "./search-field";
 
 export async function AppSidebar() {
-  const [user, conversations] = await Promise.all([
-    getUserFromSession(),
-    getConversations(1, 15),
-  ]);
+  const user = await getUserFromSessionPublic();
+  const conversations = user ? await getConversations(1, 15) : [];
 
   return (
     <Sidebar className="border-none">
@@ -60,11 +58,14 @@ export async function AppSidebar() {
                         .join("")}
                     </AvatarFallback>
                   </Avatar>
-                  <p>{user.name || "User"}</p>
+                  <p>{user?.name || "User"}</p>
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-64 md:w-[15rem]">
-                <ProfileMenu hasCustomerId={Boolean(user.customerId)} />
+                <ProfileMenu
+                  authorized={Boolean(user)}
+                  hasCustomerId={Boolean(user?.customerId)}
+                />
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>

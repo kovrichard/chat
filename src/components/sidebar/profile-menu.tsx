@@ -7,11 +7,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "../ui/dropdown-menu";
+import { SignIn } from "./signin-button";
 import { SignOut } from "./signout-button";
 
 export default function ProfileMenu({
+  authorized,
   hasCustomerId,
 }: {
+  authorized: boolean;
   hasCustomerId: boolean;
 }) {
   const { data: billingPortalUrl } = useQuery({
@@ -59,9 +62,7 @@ export default function ProfileMenu({
         </>
       )}
       <DropdownMenuSeparator />
-      <DropdownMenuItem asChild>
-        <SignOut />
-      </DropdownMenuItem>
+      <DropdownMenuItem asChild>{authorized ? <SignOut /> : <SignIn />}</DropdownMenuItem>
     </>
   );
 }

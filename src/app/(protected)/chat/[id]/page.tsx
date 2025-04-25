@@ -2,6 +2,7 @@ import { MessagesList } from "@/components/message-list";
 import MessagesScrollArea from "@/components/messages-scroll-area";
 import { getConversation } from "@/lib/dao/conversations";
 import { getMessages } from "@/lib/dao/messages";
+import { getUserIdFromSession } from "@/lib/dao/users";
 import { processMessages } from "@/lib/message-processor";
 import { redirect } from "next/navigation";
 
@@ -10,6 +11,8 @@ export default async function ChatPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await getUserIdFromSession();
+
   const { id } = await params;
 
   const conversationData = getConversation(id);

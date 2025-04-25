@@ -1,6 +1,6 @@
 import InputForm from "@/components/input-form";
 import { ChatProvider } from "@/lib/contexts/chat-context";
-import { getUserFromSession } from "@/lib/dao/users";
+import { getUserFromSessionPublic } from "@/lib/dao/users";
 import { ReactNode } from "react";
 
 export default async function ChatLayout({
@@ -8,7 +8,7 @@ export default async function ChatLayout({
 }: {
   children: ReactNode;
 }) {
-  const user = await getUserFromSession();
+  const user = await getUserFromSessionPublic();
 
   return (
     <ChatProvider>
@@ -16,7 +16,10 @@ export default async function ChatLayout({
         {children}
         <div className="absolute bottom-0 left-0 right-0">
           <div className="relative h-6 max-w-5xl mx-auto bg-gradient-to-t from-background to-transparent pointer-events-none z-10" />
-          <InputForm plan={user.subscription} freeMessages={user?.freeMessages} />
+          <InputForm
+            plan={user?.subscription || "free"}
+            freeMessages={user?.freeMessages || 10}
+          />
         </div>
       </div>
     </ChatProvider>
