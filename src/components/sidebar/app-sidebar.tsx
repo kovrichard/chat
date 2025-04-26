@@ -58,7 +58,7 @@ export async function AppSidebar() {
                         .join("")}
                     </AvatarFallback>
                   </Avatar>
-                  <p>{user?.name || "User"}</p>
+                  <p>{user?.name || "Anonymous"}</p>
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-64 md:w-[15rem]">
