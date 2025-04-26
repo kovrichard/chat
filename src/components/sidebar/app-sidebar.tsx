@@ -55,7 +55,7 @@ export async function AppSidebar() {
                       {user?.name
                         ?.split(" ")
                         .map((n) => n[0])
-                        .join("")}
+                        .join("") || "A"}
                     </AvatarFallback>
                   </Avatar>
                   <p>{user?.name || "Anonymous"}</p>
