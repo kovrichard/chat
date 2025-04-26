@@ -6,17 +6,15 @@ import useToast from "@/hooks/use-toast";
 import { registerUser } from "@/lib/actions/users";
 import publicConf from "@/lib/public-config";
 import { FormState, initialState } from "@/lib/utils";
-import { useRouter } from "next/navigation";
 import { useActionState } from "react";
 import PendingSubmitButton from "./pending-submit-button";
 
 export default function RegisterForm() {
   const [state, formAction, isPending] = useActionState(registerUser, initialState);
-  const router = useRouter();
 
   const toastCallback = (state: FormState) => {
     if (state.message === "Registered successfully") {
-      router.push(publicConf.redirectPath);
+      window.location.href = publicConf.redirectPath;
     }
   };
 
