@@ -311,7 +311,7 @@ const InputForm = forwardRef<
           <ModelMenu />
           <div className="flex items-center ml-auto">
             {subscription && subscription.plan === "free" && (
-              <p className="text-sm text-muted-foreground font-medium h-9 px-4 py-2">
+              <p className="hidden sm:block text-sm text-muted-foreground font-medium h-9 px-4 py-2">
                 {subscription.freeMessages <= 0 ? (
                   <span>Out of messages</span>
                 ) : subscription.freeMessages === 1 ? (
