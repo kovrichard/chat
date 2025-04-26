@@ -26,7 +26,11 @@ export const conversationKeys = {
   },
 };
 
-export function useConversations(conversations: any, search?: string) {
+export function useConversations(
+  conversations: any,
+  search?: string,
+  authorized?: boolean
+) {
   return useInfiniteQuery({
     queryKey: conversationKeys.list(search),
     queryFn: async ({ pageParam = 1 }) => {
@@ -35,6 +39,13 @@ export function useConversations(conversations: any, search?: string) {
         limit: "15",
         ...(search ? { search } : {}),
       });
+
+      if (!authorized) {
+        return {
+          conversations: [],
+          nextPage: undefined,
+        };
+      }
 
       const response = await fetch(`/api/conversations?${searchParams.toString()}`);
       const data = await response.json();

@@ -57,12 +57,19 @@ function groupConversationsByTime(conversations: PartialConversation[]) {
   return groups;
 }
 
-export default function ChatSidebar({ conversations }: { conversations: any }) {
+export default function ChatSidebar({
+  conversations,
+  authorized,
+}: {
+  conversations: any;
+  authorized: boolean;
+}) {
   const { id } = useParams();
   const { searchQuery } = useSearchStore();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useConversations(
     conversations,
-    searchQuery
+    searchQuery,
+    authorized
   );
   const allConversations = data?.pages.flatMap((page) => page.conversations) || [];
   const groupedConversations = groupConversationsByTime(allConversations);

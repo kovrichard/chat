@@ -32,6 +32,10 @@ export default function ProfileMenu({
   const { data: subscription } = useQuery({
     queryKey: ["subscription"],
     queryFn: async () => {
+      if (!authorized) {
+        return null;
+      }
+
       const response = await fetch("/api/subscription");
 
       if (!response.ok) {
@@ -49,7 +53,7 @@ export default function ProfileMenu({
       <DropdownMenuSeparator />
       <div className="flex items-center gap-2 h-9 px-2 py-1.5 text-muted-foreground text-sm">
         <MessageSquare className="shrink-0" size={16} />
-        <span>Messages left: {subscription.freeMessages}</span>
+        <span>Messages left: {subscription?.freeMessages || 10}</span>
       </div>
       {hasCustomerId && (
         <>

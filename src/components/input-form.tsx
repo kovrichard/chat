@@ -57,8 +57,13 @@ async function fileToBase64(file: File): Promise<string> {
 
 const InputForm = forwardRef<
   HTMLTextAreaElement,
-  { plan: string; freeMessages: number; className?: string }
->(({ plan, freeMessages, className }, ref) => {
+  {
+    plan: string;
+    freeMessages: number;
+    authorized: boolean;
+    className?: string;
+  }
+>(({ plan, freeMessages, authorized, className }, ref) => {
   const router = useRouter();
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width: 640px)");
@@ -82,6 +87,13 @@ const InputForm = forwardRef<
   const { data: subscription } = useQuery({
     queryKey: ["subscription"],
     queryFn: async () => {
+      if (!authorized) {
+        return {
+          plan: "free",
+          freeMessages: 10,
+        };
+      }
+
       const response = await fetch("/api/subscription");
       return response.json();
     },
