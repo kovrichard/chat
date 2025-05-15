@@ -231,7 +231,7 @@ const InputForm = forwardRef<
         onSubmit={handleSendMessage}
         className={cn(
           "flex flex-col items-end border rounded-t-xl sm:rounded-b-xl p-4 bg-card transition-colors",
-          temporaryChat && "bg-black"
+          temporaryChat && "dark:bg-black"
         )}
       >
         <div
