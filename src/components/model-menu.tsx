@@ -10,6 +10,7 @@ import { ChevronDown, MessageCircleDashed } from "lucide-react";
 import { useState } from "react";
 import React from "react";
 import { HoverPopover } from "./hover-popover";
+import TemporaryChatIcon from "./temporary-chat-icon";
 import { TemporaryChatSwitch } from "./temporary-chat-switch";
 import { Button } from "./ui/button";
 import {
@@ -28,10 +29,8 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "./ui/drawer";
-import { Label } from "./ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Separator } from "./ui/separator";
-import { Switch } from "./ui/switch";
 
 function getProviderIcon(modelId: string) {
   const provider = providers.find((p) => p.models.some((m) => m.id === modelId));
@@ -46,47 +45,53 @@ export function ModelMenu() {
 
   if (isDesktop) {
     return (
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild className="hidden md:block">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="md:flex items-center gap-2 -ml-2 -mb-4"
-          >
-            <span>{model.name}</span>
-            <ChevronDown size={16} />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-[300px] p-0" align="start">
-          <StatusList setOpen={setOpen} />
-          <Separator />
-          {/* <TemporaryChatSwitch /> */}
-        </PopoverContent>
-      </Popover>
+      <>
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild className="hidden md:block">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="md:flex items-center gap-2 -ml-2 -mb-4"
+            >
+              <span>{model.name}</span>
+              <ChevronDown size={16} />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[300px] p-0" align="start">
+            <StatusList setOpen={setOpen} />
+            <Separator />
+            {/* <TemporaryChatSwitch /> */}
+          </PopoverContent>
+        </Popover>
+        <TemporaryChatIcon className="-mb-4" />
+      </>
     );
   }
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild className="md:hidden">
-        <Button variant="outline" size="icon" className="size-9">
-          {providerIcon && React.createElement(providerIcon)}
-        </Button>
-      </DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader className="sr-only">
-          <DrawerTitle>Select a model</DrawerTitle>
-          <DrawerDescription>
-            Choose a model to use for your conversation.
-          </DrawerDescription>
-        </DrawerHeader>
-        <div className="mt-4 border-t">
-          <StatusList setOpen={setOpen} />
-          <Separator />
-          {/* <TemporaryChatSwitch /> */}
-        </div>
-      </DrawerContent>
-    </Drawer>
+    <>
+      <Drawer open={open} onOpenChange={setOpen}>
+        <DrawerTrigger asChild className="md:hidden">
+          <Button variant="outline" size="icon" className="size-9">
+            {providerIcon && React.createElement(providerIcon)}
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <DrawerHeader className="sr-only">
+            <DrawerTitle>Select a model</DrawerTitle>
+            <DrawerDescription>
+              Choose a model to use for your conversation.
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="mt-4 border-t">
+            <StatusList setOpen={setOpen} />
+            <Separator />
+            {/* <TemporaryChatSwitch /> */}
+          </div>
+        </DrawerContent>
+      </Drawer>
+      <TemporaryChatIcon className="size-7" />
+    </>
   );
 }
 

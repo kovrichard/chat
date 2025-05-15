@@ -4,7 +4,7 @@ import IconPlayerStop from "@/components/icons/icon-player-stop";
 import { Button } from "@/components/ui/button";
 import { useChatContext } from "@/lib/contexts/chat-context";
 import { useAddMessage, useCreateConversation } from "@/lib/queries/conversations";
-import { FileText, Paperclip, Send, Trash } from "lucide-react";
+import { FileText, Paperclip, Send, Trash, VenetianMask } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   ClipboardEvent,
@@ -70,7 +70,7 @@ const InputForm = forwardRef<
   const createConversation = useCreateConversation();
   const addMessage = useAddMessage();
   const { input, setInput } = useInputStore();
-  const { model } = useModelStore();
+  const { model, temporaryChat } = useModelStore();
   const {
     id,
     status,
@@ -229,7 +229,10 @@ const InputForm = forwardRef<
     >
       <form
         onSubmit={handleSendMessage}
-        className="flex flex-col items-end border rounded-t-xl sm:rounded-b-xl p-4 bg-card"
+        className={cn(
+          "flex flex-col items-end border rounded-t-xl sm:rounded-b-xl p-4 bg-card transition-colors",
+          temporaryChat && "bg-black"
+        )}
       >
         <div
           className="flex items-center w-full gap-2 transition-all duration-300"
