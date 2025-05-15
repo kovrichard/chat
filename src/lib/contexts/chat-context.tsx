@@ -29,7 +29,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const conversationId = (params.id as string) || uuidv4();
   const queryClient = useQueryClient();
   const addMessage = useAddMessage();
-  const { model } = useModelStore();
+  const { model, temporaryChat } = useModelStore();
   const sentRef = useRef(false);
   const { files, setFiles } = useFileStore();
 
@@ -40,6 +40,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         message: messages[messages.length - 1],
         id,
         model: model.id,
+        temporaryChat,
       };
     },
     sendExtraMessageFields: true,
