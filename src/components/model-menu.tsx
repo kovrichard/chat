@@ -6,10 +6,11 @@ import { Feature, providers } from "@/lib/providers";
 import { useUpdateConversationModel } from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
 import { useModelStore } from "@/stores/model-store";
-import { ChevronDown, Info } from "lucide-react";
+import { ChevronDown, MessageCircleDashed } from "lucide-react";
 import { useState } from "react";
 import React from "react";
 import { HoverPopover } from "./hover-popover";
+import { TemporaryChatSwitch } from "./temporary-chat-switch";
 import { Button } from "./ui/button";
 import {
   Command,
@@ -27,7 +28,10 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "./ui/drawer";
+import { Label } from "./ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Separator } from "./ui/separator";
+import { Switch } from "./ui/switch";
 
 function getProviderIcon(modelId: string) {
   const provider = providers.find((p) => p.models.some((m) => m.id === modelId));
@@ -55,6 +59,8 @@ export function ModelMenu() {
         </PopoverTrigger>
         <PopoverContent className="w-[300px] p-0" align="start">
           <StatusList setOpen={setOpen} />
+          <Separator />
+          {/* <TemporaryChatSwitch /> */}
         </PopoverContent>
       </Popover>
     );
@@ -76,6 +82,8 @@ export function ModelMenu() {
         </DrawerHeader>
         <div className="mt-4 border-t">
           <StatusList setOpen={setOpen} />
+          <Separator />
+          {/* <TemporaryChatSwitch /> */}
         </div>
       </DrawerContent>
     </Drawer>
