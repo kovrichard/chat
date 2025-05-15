@@ -20,16 +20,20 @@ export function TemporaryChatSwitch() {
 
   return (
     <div>
-      <div className="flex px-3 py-2.5 items-center gap-2 text-sm justify-between bg-popover">
-        <Label htmlFor="temporary-chat" className="flex items-center gap-2">
+      <div className="flex p-1 items-center gap-2 text-sm bg-popover">
+        <Label
+          htmlFor="temporary-chat"
+          className="flex items-center gap-2 w-full px-2 py-1.5"
+        >
           <MessageCircleDashed size={16} />
           <p>Temporary chat</p>
+          <Switch
+            id="temporary-chat"
+            className="ml-auto"
+            checked={temporaryChat}
+            onCheckedChange={handleCheckedChange}
+          />
         </Label>
-        <Switch
-          id="temporary-chat"
-          checked={temporaryChat}
-          onCheckedChange={handleCheckedChange}
-        />
       </div>
     </div>
   );
