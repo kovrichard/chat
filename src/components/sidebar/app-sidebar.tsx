@@ -8,17 +8,15 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { getConversations } from "@/lib/dao/conversations";
-import { getUserFromSession, getUserFromSessionPublic } from "@/lib/dao/users";
-import { Plus } from "lucide-react";
-import Link from "next/link";
+import { getUserFromSessionPublic } from "@/lib/dao/users";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import ChatSidebar from "./chat-sidebar";
+import { NewChatButton } from "./new-chat-button";
 import ProfileMenu from "./profile-menu";
 import { SearchField } from "./search-field";
 
@@ -30,12 +28,7 @@ export async function AppSidebar() {
     <Sidebar className="border-none">
       <SidebarHeader className="flex-col items-center gap-4 py-4 pl-4 pr-4 md:pr-2">
         <p className="text-lg font-bold flex-1 text-center">Fyzz.chat</p>
-        <Button asChild className="w-full gap-2">
-          <Link href="/chat" prefetch>
-            <Plus className="h-4 w-4" />
-            New Chat
-          </Link>
-        </Button>
+        <NewChatButton />
         <SearchField />
       </SidebarHeader>
       <SidebarContent className="relative pl-2 pr-2 md:pr-0">

@@ -21,7 +21,12 @@ import {
 } from "../ui/alert-dialog";
 import { AnimatedTitle } from "../ui/animated-title";
 import { Button } from "../ui/button";
-import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel } from "../ui/sidebar";
+import {
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  useSidebar,
+} from "../ui/sidebar";
 
 function groupConversationsByTime(conversations: PartialConversation[]) {
   const now = new Date();
@@ -162,6 +167,7 @@ function ConversationLink({
 }) {
   const deleteConversation = useDeleteConversation();
   const router = useRouter();
+  const { isMobile, setOpenMobile } = useSidebar();
 
   return (
     <div className="group/chat relative">
@@ -172,6 +178,7 @@ function ConversationLink({
           "flex w-full flex-col items-start gap-1 rounded-lg p-3 text-left text-sm transition-colors",
           currentId === chat.id ? "bg-accent text-accent-foreground" : "hover:bg-muted"
         )}
+        onClick={() => isMobile && setOpenMobile(false)}
       >
         <div className="flex w-full items-center gap-2">
           <MessageSquare size={16} className="shrink-0" />

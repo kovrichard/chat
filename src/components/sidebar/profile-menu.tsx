@@ -1,5 +1,6 @@
 "use client";
 
+import { useSidebar } from "@/components/ui/sidebar";
 import { useQuery } from "@tanstack/react-query";
 import { CreditCard, FileText, MessageSquare } from "lucide-react";
 import {
@@ -17,6 +18,7 @@ export default function ProfileMenu({
   authorized: boolean;
   hasCustomerId: boolean;
 }) {
+  const { isMobile, setOpenMobile } = useSidebar();
   const { data: billingPortalUrl } = useQuery({
     queryKey: ["billing-portal-url"],
     queryFn: async () => {
@@ -76,6 +78,7 @@ export default function ProfileMenu({
           href="/privacy-policy"
           target="_blank"
           className="flex items-center gap-2 size-full px-2 py-1.5"
+          onClick={() => isMobile && setOpenMobile(false)}
         >
           <FileText className="shrink-0" />
           <span>Privacy Policy</span>
