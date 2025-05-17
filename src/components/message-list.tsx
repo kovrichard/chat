@@ -39,7 +39,7 @@ export function MessagesList({
   }, [conversation]);
 
   const memoizedConversationMessages = useMemo(() => {
-    return messages.map((message: any) => (
+    return messages?.map((message: any) => (
       <MemoizedMessageItem key={message.id} message={message} />
     ));
   }, [messages]);

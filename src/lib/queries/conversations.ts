@@ -182,7 +182,6 @@ export function useAddMessage() {
       // Optimistically update the cache
       const optimisticMessage = {
         ...message,
-        id: message.id,
         createdAt: message.createdAt || new Date(),
       };
 
