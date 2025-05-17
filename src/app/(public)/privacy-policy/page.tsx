@@ -2,16 +2,19 @@ import { canonicalUrl, openGraph } from "@/lib/metadata";
 import { Metadata } from "next";
 
 const path = "/privacy-policy";
+const title = "Privacy Policy | Fyzz.chat";
+const description = "Privacy Policy for Fyzz.chat";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Fyzz.chat",
-  description: "Privacy Policy for Fyzz.chat",
+  title,
+  description,
   alternates: {
     canonical: `${canonicalUrl}${path}`,
   },
   openGraph: {
     ...openGraph,
-    title: "Privacy Policy | Fyzz.chat",
+    title,
+    description,
     url: path,
   },
 };

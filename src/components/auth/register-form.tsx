@@ -7,7 +7,6 @@ import { registerUser } from "@/lib/actions/users";
 import publicConf from "@/lib/public-config";
 import { FormState, initialState } from "@/lib/utils";
 import { ExternalLink } from "lucide-react";
-import Link from "next/link";
 import { useActionState } from "react";
 import PendingSubmitButton from "./pending-submit-button";
 
@@ -57,14 +56,14 @@ export default function RegisterForm() {
       </Label>
       <div className="text-xs text-muted-foreground mt-2">
         By signing up, you agree to our{" "}
-        <Link
+        <a
           href="/privacy-policy"
           target="_blank"
           className="text-primary hover:underline inline-flex items-center relative"
         >
           <span>Privacy Policy</span>
           <ExternalLink size={10} className="ml-1 relative top-[-1px]" />
-        </Link>
+        </a>
       </div>
       <PendingSubmitButton isPending={isPending} text="Sign up" className="mt-[18px]" />
     </form>
