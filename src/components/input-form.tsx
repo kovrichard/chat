@@ -3,7 +3,11 @@
 import IconPlayerStop from "@/components/icons/icon-player-stop";
 import { Button } from "@/components/ui/button";
 import { useChatContext } from "@/lib/contexts/chat-context";
-import { useAddMessage, useCreateConversation } from "@/lib/queries/conversations";
+import {
+  useAddMessage,
+  useCreateConversation,
+  useCreateConversationOptimistic,
+} from "@/lib/queries/conversations";
 import { FileText, Paperclip, Send, Trash, VenetianMask } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -11,6 +15,7 @@ import {
   FormEvent,
   KeyboardEvent,
   forwardRef,
+  memo,
   useEffect,
   useRef,
 } from "react";
@@ -30,6 +35,8 @@ import { ModelMenu } from "./model-menu";
 import { AspectRatio } from "./ui/aspect-ratio";
 import { Input } from "./ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+
+const MemoizedModelMenu = memo(ModelMenu);
 
 function fileToAttachment(file: File): Attachment {
   return {
@@ -68,6 +75,7 @@ const InputForm = forwardRef<
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width: 640px)");
   const createConversation = useCreateConversation();
+  const createConversationOptimistic = useCreateConversationOptimistic();
   const addMessage = useAddMessage();
   const { input, setInput } = useInputStore();
   const { model, temporaryChat } = useModelStore();
@@ -142,10 +150,22 @@ const InputForm = forwardRef<
         ],
         lastMessageAt: new Date(),
       };
-      await createConversation.mutateAsync(optimisticConversation);
-      emptySubmit();
+
+      if (temporaryChat) {
+        await createConversationOptimistic.mutateAsync(optimisticConversation);
+      } else {
+        await createConversation.mutateAsync(optimisticConversation);
+      }
+
+      const url = temporaryChat ? `/chat/${id}/temp` : `/chat/${id}`;
+      router.push(url);
+
+      if (temporaryChat) {
+        setChatInput(input);
+      } else {
+        emptySubmit();
+      }
       setInput("");
-      router.push(`/chat/${id}`);
     } else {
       setChatInput(input);
       await addMessage.mutateAsync({
@@ -311,7 +331,7 @@ const InputForm = forwardRef<
           className="hidden"
         />
         <div className="flex items-center w-full gap-2">
-          <ModelMenu />
+          <MemoizedModelMenu />
           <div className="flex items-center ml-auto">
             {subscription && subscription.plan === "free" && (
               <p className="hidden sm:block text-sm text-muted-foreground font-medium h-9 px-4 py-2">

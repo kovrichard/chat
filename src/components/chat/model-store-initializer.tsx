@@ -4,10 +4,11 @@ import { useModelStore } from "@/stores/model-store";
 import { useEffect } from "react";
 
 export default function ModelStoreInitializer() {
-  const { setModel } = useModelStore();
+  const { setModel, setTemporaryChat } = useModelStore();
 
   useEffect(() => {
     setModel("4o-mini");
+    setTemporaryChat(false);
   }, []);
 
   return null;

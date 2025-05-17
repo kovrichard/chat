@@ -3,6 +3,7 @@ import {
   saveConversation,
   saveConversationModel,
 } from "@/lib/actions/conversations";
+import { useModelStore } from "@/stores/model-store";
 import { PartialConversation } from "@/types/chat";
 import {
   useInfiniteQuery,
@@ -72,10 +73,17 @@ export function useConversations(
 }
 
 export function useConversation(id: string, initialConversation?: any) {
+  const { temporaryChat } = useModelStore();
+  const queryClient = useQueryClient();
+
   return useQuery({
     queryKey: conversationKeys.details(id),
     queryFn: async () => {
       if (!id) return null;
+
+      if (temporaryChat) {
+        return queryClient.getQueryData<any>(conversationKeys.details(id));
+      }
 
       const response = await fetch(`/api/conversations/${id}`);
       const data = await response.json();
@@ -88,13 +96,23 @@ export function useConversation(id: string, initialConversation?: any) {
       }
       return null;
     },
+    refetchOnMount: !temporaryChat,
+    refetchOnWindowFocus: !temporaryChat,
+    refetchOnReconnect: !temporaryChat,
   });
 }
 
 export function useMessages(id: string, initialMessages?: any) {
+  const { temporaryChat } = useModelStore();
+  const queryClient = useQueryClient();
+
   return useQuery({
     queryKey: conversationKeys.messages(id),
     queryFn: async () => {
+      if (temporaryChat) {
+        return queryClient.getQueryData<any>(conversationKeys.messages(id));
+      }
+
       const response = await fetch(`/api/conversations/${id}/messages`);
       const data = await response.json();
       return processMessages(data.messages);
@@ -105,6 +123,9 @@ export function useMessages(id: string, initialMessages?: any) {
       }
       return null;
     },
+    refetchOnMount: !temporaryChat,
+    refetchOnWindowFocus: !temporaryChat,
+    refetchOnReconnect: !temporaryChat,
   });
 }
 
@@ -284,6 +305,19 @@ export function useCreateConversation() {
         queryKey: conversationKeys.messages(newConversation.id),
       });
       queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
+    },
+  });
+}
+export function useCreateConversationOptimistic() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (conversation: PartialConversation) => {
+      queryClient.setQueryData(conversationKeys.details(conversation.id), conversation);
+      queryClient.setQueryData(
+        conversationKeys.messages(conversation.id),
+        conversation.messages
+      );
     },
   });
 }

@@ -1,6 +1,8 @@
 import { updateConversationTitle } from "@/lib/actions/conversations";
 import { awsConfigured } from "@/lib/aws/s3";
+import { allowedModels, getProviderOptions } from "@/lib/backend/models";
 import systemPrompt from "@/lib/backend/prompts/system-prompt";
+import { filterMessages } from "@/lib/backend/utils";
 import {
   appendMessageToConversation,
   getConversation,
@@ -9,102 +11,19 @@ import {
 } from "@/lib/dao/conversations";
 import { getMessages, saveMessage, uploadAttachments } from "@/lib/dao/messages";
 import { decrementFreeMessages, getUserFromSession } from "@/lib/dao/users";
-import { getModel } from "@/lib/providers";
 import rateLimit from "@/lib/rate-limiter";
-import { AnthropicProviderOptions, anthropic } from "@ai-sdk/anthropic";
-import { createAzure } from "@ai-sdk/azure";
-import { fireworks } from "@ai-sdk/fireworks";
-import { google } from "@ai-sdk/google";
-import { perplexity } from "@ai-sdk/perplexity";
-import { xai } from "@ai-sdk/xai";
 import {
-  Attachment,
   Message,
   appendClientMessage,
   appendResponseMessages,
-  extractReasoningMiddleware,
   smoothStream,
   streamText,
-  wrapLanguageModel,
 } from "ai";
 import { NextRequest } from "next/server";
-import { v4 as uuidv4 } from "uuid";
 
 const limiter = rateLimit(50, 60);
 
 export const maxDuration = 55;
-
-const azure = createAzure({
-  apiVersion: "2024-12-01-preview",
-});
-
-const azure41 = createAzure({
-  apiVersion: "2024-12-01-preview",
-  apiKey: process.env.AZURE_GPT41_API_KEY,
-  resourceName: process.env.AZURE_GPT41_RESOURCE_NAME,
-});
-
-const reasoningFireworks = (model: string) => {
-  return wrapLanguageModel({
-    model: fireworks(model),
-    middleware: extractReasoningMiddleware({ tagName: "think" }),
-  });
-};
-
-const allowedModels = {
-  // OpenAI
-  "o4-mini": azure41("o4-mini"),
-  "gpt-4.1": azure41("gpt-4.1"),
-  "4.1-mini": azure41("gpt-4.1-mini"),
-  "4o-mini": azure("gpt-4o-mini"),
-  "o3-mini": azure("o3-mini"),
-
-  // Anthropic
-  "claude-3-7-sonnet": anthropic("claude-3-7-sonnet-20250219"),
-  "claude-3-7-sonnet-reasoning": anthropic("claude-3-7-sonnet-20250219"),
-  "claude-3-5-sonnet": anthropic("claude-3-5-sonnet-20240620"),
-  "claude-3-5-haiku": anthropic("claude-3-5-haiku-20241022"),
-
-  // Google
-  "gemini-2.5-pro-preview": google("gemini-2.5-pro-exp-03-25"),
-  "gemini-2.5-flash-preview": google("gemini-2.5-flash-preview-04-17", {
-    useSearchGrounding: true,
-  }),
-  "gemini-2.0-flash": google("gemini-2.0-flash", { useSearchGrounding: true }),
-  "gemini-2.0-flash-lite": google("gemini-2.0-flash-lite"),
-
-  // xAI
-  "grok-3-beta": xai("grok-3-beta"),
-  "grok-3-mini-beta": xai("grok-3-mini-beta"),
-  "grok-2-1212": xai("grok-2-1212"),
-
-  // Fireworks
-  "llama-3.1-405b": fireworks("accounts/fireworks/models/llama-v3p1-405b-instruct"),
-  "llama-4-scout": fireworks("accounts/fireworks/models/llama4-scout-instruct-basic"),
-  "llama-4-maverick": fireworks(
-    "accounts/fireworks/models/llama4-maverick-instruct-basic"
-  ),
-  "deepseek-r1": reasoningFireworks("accounts/fireworks/models/deepseek-r1"),
-  "deepseek-v3": fireworks("accounts/fireworks/models/deepseek-v3"),
-  sonar: perplexity("sonar"),
-  "sonar-pro": perplexity("sonar-pro"),
-};
-
-function getProviderOptions(model: string) {
-  const providerOptions: any = {};
-
-  if (model === "deepseek-r1") {
-    providerOptions.groq = { reasoningFormat: "parsed" };
-  }
-
-  if (model === "claude-3-7-sonnet-reasoning") {
-    providerOptions.anthropic = {
-      thinking: { type: "enabled", budgetTokens: 12000 },
-    } satisfies AnthropicProviderOptions;
-  }
-
-  return providerOptions;
-}
 
 export async function POST(req: NextRequest) {
   const response = limiter(req);
@@ -229,32 +148,4 @@ async function acquireConversationLock(conversationId: string): Promise<boolean>
     await new Promise((resolve) => setTimeout(resolve, 200));
   }
   return false;
-}
-
-function filterMessages(messages: Message[], modelId: string) {
-  const model = getModel(modelId);
-  const imageSupport =
-    model?.features?.some((feature) => feature.name === "Images") || false;
-  const pdfSupport = model?.features?.some((feature) => feature.name === "PDFs") || false;
-
-  return messages.map((message: Message) => ({
-    ...message,
-    experimental_attachments: filterUnsupportedAttachments(
-      message.experimental_attachments || [],
-      imageSupport,
-      pdfSupport
-    ),
-  }));
-}
-
-function filterUnsupportedAttachments(
-  attachments: Attachment[],
-  imageSupport: boolean,
-  pdfSupport: boolean
-) {
-  return attachments.filter((attachment) => {
-    if (imageSupport && attachment.contentType?.startsWith("image/")) return true;
-    if (pdfSupport && attachment.contentType?.startsWith("application/pdf")) return true;
-    return false;
-  });
 }

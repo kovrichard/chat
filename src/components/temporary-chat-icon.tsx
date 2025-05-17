@@ -2,8 +2,9 @@
 
 import { cn } from "@/lib/utils";
 import { useModelStore } from "@/stores/model-store";
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import IconSpy from "./icons/icon-spy";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 
 export default function TemporaryChatIcon({
@@ -11,7 +12,14 @@ export default function TemporaryChatIcon({
 }: {
   className?: string;
 }) {
-  const { temporaryChat } = useModelStore();
+  const { temporaryChat, setTemporaryChat } = useModelStore();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (pathname !== "/chat" && !pathname.includes("/temp")) {
+      setTemporaryChat(false);
+    }
+  }, [pathname]);
 
   return (
     temporaryChat && (

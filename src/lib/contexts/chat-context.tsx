@@ -27,17 +27,24 @@ const ChatContext = createContext<ChatContextType | null>(null);
 export function ChatProvider({ children }: { children: ReactNode }) {
   const params = useParams();
   const conversationId = (params.id as string) || uuidv4();
+  const conversationIdRef = useRef(conversationId);
   const queryClient = useQueryClient();
   const addMessage = useAddMessage();
   const { model, temporaryChat } = useModelStore();
   const sentRef = useRef(false);
   const { files, setFiles } = useFileStore();
 
+  useEffect(() => {
+    conversationIdRef.current = conversationId;
+  }, [conversationId]);
+
   const { id, messages, status, input, setInput, handleSubmit, error, stop } = useChat({
-    id: conversationId,
+    api: temporaryChat ? "/api/chat/temp" : "/api/chat",
+    id: conversationIdRef.current,
     experimental_prepareRequestBody: ({ messages, id }) => {
       return {
         message: messages[messages.length - 1],
+        messages: temporaryChat ? messages : null,
         id,
         model: model.id,
         temporaryChat,
@@ -49,14 +56,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
       await addMessage.mutateAsync({
         message,
-        conversationId,
+        conversationId: conversationIdRef.current,
       });
       const conversation = queryClient.getQueryData<{
         id: string;
         model: string;
         title: string;
         messages: Message[];
-      }>(conversationKeys.details(conversationId));
+      }>(conversationKeys.details(conversationIdRef.current));
 
       if (conversation?.title === "New Chat") {
         queryClient.invalidateQueries({
@@ -67,7 +74,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    if (status === "ready" && input && conversationId && !sentRef.current) {
+    if (status === "ready" && input && conversationIdRef.current && !sentRef.current) {
       sentRef.current = true;
       handleSubmit(new Event("submit"), {
         experimental_attachments: files,
@@ -78,7 +85,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     if (!input) {
       sentRef.current = false;
     }
-  }, [status, input, handleSubmit, conversationId]);
+  }, [status, input, handleSubmit, conversationIdRef.current]);
 
   function emptySubmit() {
     handleSubmit(new Event("submit"), {
