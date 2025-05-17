@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { CreditCard, MessageCircle, MessageSquare } from "lucide-react";
+import { CreditCard, FileText, MessageSquare } from "lucide-react";
 import {
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -70,6 +70,17 @@ export default function ProfileMenu({
           </DropdownMenuItem>
         </>
       )}
+      <DropdownMenuSeparator />
+      <DropdownMenuItem className="p-0 h-10">
+        <a
+          href="/privacy-policy"
+          target="_blank"
+          className="flex items-center gap-2 size-full px-2 py-1.5"
+        >
+          <FileText className="shrink-0" />
+          <span>Privacy Policy</span>
+        </a>
+      </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem asChild>{authorized ? <SignOut /> : <SignIn />}</DropdownMenuItem>
     </>

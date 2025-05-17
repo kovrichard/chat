@@ -30,7 +30,7 @@ export default function AuthCard({
   const hasGoogle = Boolean(conf.googleId) && Boolean(conf.googleSecret);
 
   return (
-    <Card className="w-80">
+    <Card className="w-[23rem] p-3">
       <CardHeader className="text-center">
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
@@ -45,8 +45,8 @@ export default function AuthCard({
       </CardContent>
       <CardFooter>
         <p className="mx-auto">
-          <span className="text-muted-foreground">{ctaQuestion}</span>{" "}
-          <Link href={ctaLink} className="font-semibold">
+          <span className="text-muted-foreground text-sm">{ctaQuestion}</span>{" "}
+          <Link href={ctaLink} className="font-semibold text-sm">
             {ctaText}
           </Link>
         </p>
