@@ -35,7 +35,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             throw new Error("User already exists");
           }
 
-          const passwordHash = await hashPassword(credentials.password as string);
+          const passwordHash = hashPassword(credentials.password as string);
 
           const newUser = await createNewUser(
             credentials.name as string,
@@ -125,7 +125,7 @@ async function createNewUser(
   return user;
 }
 
-async function hashPassword(plainPassword: string) {
+export function hashPassword(plainPassword: string) {
   try {
     const salt = randomBytes(32).toString("hex");
     const hash = scryptSync(plainPassword, salt, 64).toString("hex");
@@ -135,7 +135,7 @@ async function hashPassword(plainPassword: string) {
   }
 }
 
-async function verifyPassword(plainPassword: string, hashedPassword: string) {
+export async function verifyPassword(plainPassword: string, hashedPassword: string) {
   const bcrypt = require("bcryptjs");
 
   try {

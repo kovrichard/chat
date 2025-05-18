@@ -2,7 +2,8 @@
 
 import { useSidebar } from "@/components/ui/sidebar";
 import { useQuery } from "@tanstack/react-query";
-import { CreditCard, FileText, MessageSquare } from "lucide-react";
+import { CreditCard, FileText, MessageSquare, Settings } from "lucide-react";
+import Link from "next/link";
 import {
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -72,7 +73,6 @@ export default function ProfileMenu({
           </DropdownMenuItem>
         </>
       )}
-      <DropdownMenuSeparator />
       <DropdownMenuItem className="p-0 h-10">
         <a
           href="/privacy-policy"
@@ -83,6 +83,13 @@ export default function ProfileMenu({
           <FileText className="shrink-0" />
           <span>Privacy Policy</span>
         </a>
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem className="p-0 h-10">
+        <Link href="/settings" className="flex items-center gap-2 size-full px-2 py-1.5">
+          <Settings className="shrink-0" />
+          <span>Settings</span>
+        </Link>
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem asChild>{authorized ? <SignOut /> : <SignIn />}</DropdownMenuItem>
