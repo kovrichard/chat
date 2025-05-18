@@ -16,6 +16,7 @@ export default function RegisterForm() {
   const toastCallback = (state: FormState) => {
     if (state.message === "Registered successfully") {
       window.location.href = publicConf.redirectPath;
+      localStorage.setItem("fyzz-auth-method", "password");
     }
   };
 

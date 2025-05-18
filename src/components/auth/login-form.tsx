@@ -15,6 +15,7 @@ export default function LoginForm() {
   const toastCallback = (state: FormState) => {
     if (state.message === "Signed in successfully") {
       window.location.href = publicConf.redirectPath;
+      localStorage.setItem("fyzz-auth-method", "password");
     }
   };
 

@@ -1,5 +1,7 @@
+import { cn } from "@/lib/utils";
 import { LoaderCircle } from "lucide-react";
 import { Button, ButtonProps } from "../ui/button";
+import LastUsedIndicator from "./last-used-indicator";
 
 export default function PendingSubmitButton({
   isPending,
@@ -13,8 +15,9 @@ export default function PendingSubmitButton({
   }
 >) {
   return (
-    <Button disabled={isPending} className={className} {...props}>
+    <Button disabled={isPending} className={cn("relative", className)} {...props}>
       {isPending ? <LoaderCircle className="animate-spin" size={18} /> : text}
+      <LastUsedIndicator provider="password" />
     </Button>
   );
 }
