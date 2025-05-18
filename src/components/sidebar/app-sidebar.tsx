@@ -47,6 +47,7 @@ export async function AppSidebar() {
                     <AvatarFallback className="text-muted-foreground">
                       {user?.name
                         ?.split(" ")
+                        .slice(0, 2)
                         .map((n) => n[0])
                         .join("") || "A"}
                     </AvatarFallback>

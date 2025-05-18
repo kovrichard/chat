@@ -1,7 +1,7 @@
+import LastUsedIndicator from "@/components/auth/last-used-indicator";
+import { Button, ButtonProps } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { LoaderCircle } from "lucide-react";
-import { Button, ButtonProps } from "../ui/button";
-import LastUsedIndicator from "./last-used-indicator";
 
 export default function PendingSubmitButton({
   isPending,
