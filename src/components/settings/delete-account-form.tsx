@@ -17,10 +17,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
+import { Input } from "../ui/input";
 
 export default function DeleteAccountForm() {
   const [state, formAction] = useActionState(deleteUser, initialState);
   const [open, setOpen] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+  const isConfirmed = confirmText === "delete my account";
 
   const successCallback = async (state: FormState) => {
     if (state.message === "User deleted") {
@@ -34,28 +37,43 @@ export default function DeleteAccountForm() {
   useToast(state, successCallback);
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 p-4 border border-red-300 bg-red-50 dark:bg-red-950/20 dark:border-red-900 rounded-lg">
       <h4 className="text-lg font-semibold">Delete Account</h4>
-      <p className="text-sm text-muted-foreground">
-        This action is irreversible. All your data will be permanently deleted.
+      <p className="text-sm">
+        If you no longer wish to use this service, you can request account deletion. This
+        action requires additional confirmation steps.
       </p>
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTrigger asChild>
-          <Button type="submit" variant="destructive" className="w-fit">
-            Delete Account
+          <Button type="button" variant="destructive" className="w-fit mt-2 self-end">
+            Delete
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>Confirm Account Deletion</AlertDialogTitle>{" "}
             <AlertDialogDescription>
-              This action is irreversible. All your data will be permanently deleted.
+              <span className="text-red-600 dark:text-red-400 font-medium block">
+                Warning: This action cannot be undone.
+              </span>
+              <span className="mt-4 block">
+                <span className="text-sm font-medium mb-2 block">
+                  For security, please type "delete my account" to proceed:
+                </span>
+                <Input
+                  value={confirmText}
+                  onChange={(e) => setConfirmText(e.target.value)}
+                  placeholder="delete my account"
+                />
+              </span>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <form action={formAction}>
-              <Button type="submit">Delete</Button>
+              <Button type="submit" variant="destructive" disabled={!isConfirmed}>
+                Delete Account
+              </Button>
             </form>
           </AlertDialogFooter>
         </AlertDialogContent>
