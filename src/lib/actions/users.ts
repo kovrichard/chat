@@ -135,3 +135,18 @@ export async function updateUserPassword(_prevState: any, formData: FormData) {
     description: "Your password has been updated.",
   };
 }
+
+export async function deleteUser() {
+  const userId = await getUserIdFromSession();
+
+  await prisma.user.delete({
+    where: {
+      id: userId,
+    },
+  });
+
+  return {
+    message: "User deleted",
+    description: "Your account has been deleted.",
+  };
+}

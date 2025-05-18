@@ -1,3 +1,4 @@
+import DeleteAccountForm from "@/components/settings/delete-account-form";
 import PasswordForm from "@/components/settings/password-form";
 import {
   Card,
@@ -6,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getUserFromSession, getUserIdFromSession } from "@/lib/dao/users";
+import { getUserIdFromSession } from "@/lib/dao/users";
 import prisma from "@/lib/prisma/prisma";
 
 export default async function SettingsPage() {
@@ -31,6 +32,7 @@ export default async function SettingsPage() {
         <CardContent>
           <div className="grid gap-4">
             <PasswordForm hasPassword={hasPassword} />
+            <DeleteAccountForm />
           </div>
         </CardContent>
       </Card>
