@@ -25,6 +25,13 @@ export default function DeleteAccountForm() {
   const [confirmText, setConfirmText] = useState("");
   const isConfirmed = confirmText === "delete my account";
 
+  function handleOpenChange(open: boolean) {
+    setOpen(open);
+    if (!open) {
+      setConfirmText("");
+    }
+  }
+
   const successCallback = async (state: FormState) => {
     if (state.message === "User deleted") {
       setOpen(false);
@@ -43,7 +50,7 @@ export default function DeleteAccountForm() {
         If you no longer wish to use this service, you can request account deletion. This
         action requires additional confirmation steps.
       </p>
-      <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialog open={open} onOpenChange={handleOpenChange}>
         <AlertDialogTrigger asChild>
           <Button type="button" variant="destructive" className="w-fit mt-2 self-end">
             Delete
