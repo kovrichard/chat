@@ -56,6 +56,7 @@
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "cmdk": "1.1.1",
+    "exa-js": "1.7.2",
     "javascript-time-ago": "2.5.11",
     "lucide-react": "0.501.0",
     "marked": "15.0.8",
