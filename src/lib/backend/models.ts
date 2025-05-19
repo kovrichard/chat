@@ -38,7 +38,7 @@ export const allowedModels = {
   "claude-3-5-haiku": anthropic("claude-3-5-haiku-20241022"),
 
   // Google
-  "gemini-2.5-pro-preview": google("gemini-2.5-pro-exp-03-25"),
+  "gemini-2.5-pro-preview": google("models/gemini-2.5-pro-preview-03-25"),
   "gemini-2.5-flash-preview": google("gemini-2.5-flash-preview-04-17", {
     useSearchGrounding: true,
   }),
