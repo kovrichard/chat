@@ -11,9 +11,9 @@ import {
 import { FileText, Paperclip, Send, Trash, VenetianMask } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  ClipboardEvent,
-  FormEvent,
-  KeyboardEvent,
+  type ClipboardEvent,
+  type FormEvent,
+  type KeyboardEvent,
   forwardRef,
   memo,
   useEffect,
@@ -26,9 +26,9 @@ import { cn } from "@/lib/utils";
 import { useFileStore } from "@/stores/file-store";
 import { useInputStore } from "@/stores/input-store";
 import { useModelStore } from "@/stores/model-store";
-import { PartialConversation } from "@/types/chat";
+import type { PartialConversation } from "@/types/chat";
 import { useQuery } from "@tanstack/react-query";
-import { Attachment } from "ai";
+import type { Attachment } from "ai";
 import Image from "next/image";
 import { v4 as uuidv4 } from "uuid";
 import { ModelMenu } from "./model-menu";

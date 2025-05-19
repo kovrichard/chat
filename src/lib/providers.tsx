@@ -1,6 +1,6 @@
-import { Brain, CodeXml, FileText, Globe, Image, LucideProps } from "lucide-react";
+import { Brain, CodeXml, FileText, Globe, Image, type LucideProps } from "lucide-react";
 import dynamic from "next/dynamic";
-import { ComponentType, ForwardRefExoticComponent, RefAttributes } from "react";
+import type { ComponentType, ForwardRefExoticComponent, RefAttributes } from "react";
 
 const LazyAnthropic = dynamic(() => import("@/components/icons/anthropic"));
 const LazyDeepSeek = dynamic(() => import("@/components/icons/deepseek"));

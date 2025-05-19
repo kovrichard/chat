@@ -13,13 +13,13 @@ import { getMessages, saveMessage, uploadAttachments } from "@/lib/dao/messages"
 import { decrementFreeMessages, getUserFromSession } from "@/lib/dao/users";
 import rateLimit from "@/lib/rate-limiter";
 import {
-  Message,
+  type Message,
   appendClientMessage,
   appendResponseMessages,
   smoothStream,
   streamText,
 } from "ai";
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 
 const limiter = rateLimit(50, 60);
 

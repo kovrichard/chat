@@ -4,7 +4,7 @@ import { filterMessages } from "@/lib/backend/utils";
 import { decrementFreeMessages, getUserFromSession } from "@/lib/dao/users";
 import rateLimit from "@/lib/rate-limiter";
 import { smoothStream, streamText } from "ai";
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 
 const limiter = rateLimit(50, 60);
 

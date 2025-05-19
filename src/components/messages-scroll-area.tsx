@@ -2,7 +2,7 @@
 
 import { useChatContext } from "@/lib/contexts/chat-context";
 import { cn } from "@/lib/utils";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { ScrollArea } from "./ui/scroll-area";
 
 export default function MessagesScrollArea({

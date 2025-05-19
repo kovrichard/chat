@@ -1,6 +1,6 @@
 "use client";
 
-import { FormState } from "@/lib/utils";
+import type { FormState } from "@/lib/utils";
 import { useEffect } from "react";
 import { toast } from "sonner";
 

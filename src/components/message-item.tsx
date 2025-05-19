@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Message } from "ai";
+import type { Message } from "ai";
 import { Copy } from "lucide-react";
 import { MessageContent } from "./message-content";
 import { Button } from "./ui/button";

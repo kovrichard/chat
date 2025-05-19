@@ -3,7 +3,7 @@ import CatalystBadge from "@/components/footer/catalyst-badge";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import type React from "react";
 
 export default async function Layout({
   children,

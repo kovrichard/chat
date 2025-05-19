@@ -4,14 +4,14 @@ import {
   saveConversationModel,
 } from "@/lib/actions/conversations";
 import { useModelStore } from "@/stores/model-store";
-import { PartialConversation } from "@/types/chat";
+import type { PartialConversation } from "@/types/chat";
 import {
   useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { Message } from "ai";
+import type { Message } from "ai";
 import { deleteMessageChainAfter } from "../actions/messages";
 import { processMessages } from "../message-processor";
 

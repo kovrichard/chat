@@ -8,7 +8,7 @@ import { canonicalUrl, metaDescription, metaTitle, openGraph } from "@/lib/metad
 import { cn } from "@/lib/utils";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Viewport } from "next";
-import React from "react";
+import type React from "react";
 import { Toaster } from "sonner";
 
 export const viewport: Viewport = {

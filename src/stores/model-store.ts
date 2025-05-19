@@ -1,4 +1,4 @@
-import { Model, getModel } from "@/lib/providers";
+import { type Model, getModel } from "@/lib/providers";
 import { create } from "zustand";
 
 interface ModelStore {

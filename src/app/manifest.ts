@@ -1,4 +1,4 @@
-import { MetadataRoute } from "next";
+import type { MetadataRoute } from "next";
 
 // Create a type that includes our experimental properties
 type ManifestWithExtensions = MetadataRoute.Manifest & {

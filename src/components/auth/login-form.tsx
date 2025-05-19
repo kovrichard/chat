@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import useToast from "@/hooks/use-toast";
 import { signInUser } from "@/lib/actions/users";
 import publicConf from "@/lib/public-config";
-import { FormState, initialState } from "@/lib/utils";
+import { type FormState, initialState } from "@/lib/utils";
 import { useActionState } from "react";
 import PendingSubmitButton from "./pending-submit-button";
 

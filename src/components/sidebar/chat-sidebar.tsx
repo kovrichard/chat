@@ -3,7 +3,7 @@
 import { useConversations, useDeleteConversation } from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
 import { useSearchStore } from "@/stores/search-store";
-import { PartialConversation } from "@/types/chat";
+import type { PartialConversation } from "@/types/chat";
 import { MessageSquare, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";

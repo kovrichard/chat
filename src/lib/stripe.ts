@@ -1,5 +1,5 @@
 import conf from "@/lib/config";
-import { User } from "@/lib/prisma/client";
+import type { User } from "@/lib/prisma/client";
 import Stripe from "stripe";
 import { getUserIdFromSession } from "./dao/users";
 import { ensure } from "./utils";

@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 
 export const metaTitle = "Fyzz.chat - Chat with the best AI models, all in one place";
 export const metaDescription =

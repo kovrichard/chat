@@ -1,4 +1,4 @@
-import { AnthropicProviderOptions, anthropic } from "@ai-sdk/anthropic";
+import { type AnthropicProviderOptions, anthropic } from "@ai-sdk/anthropic";
 import { createAzure } from "@ai-sdk/azure";
 import { fireworks } from "@ai-sdk/fireworks";
 import { google } from "@ai-sdk/google";

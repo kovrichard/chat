@@ -1,5 +1,5 @@
 import { getModel } from "@/lib/providers";
-import { Attachment, Message } from "ai";
+import type { Attachment, Message } from "ai";
 
 export function filterMessages(messages: Message[], modelId: string) {
   const model = getModel(modelId);

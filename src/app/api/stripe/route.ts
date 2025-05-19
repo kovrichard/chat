@@ -3,7 +3,7 @@ import { setFreeMessages, updateSubscription } from "@/lib/dao/users";
 import { logger } from "@/lib/logger";
 import { stripe } from "@/lib/stripe";
 import { ensure } from "@/lib/utils";
-import Stripe from "stripe";
+import type Stripe from "stripe";
 
 export async function POST(req: Request) {
   try {

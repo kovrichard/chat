@@ -1,7 +1,7 @@
 import InputForm from "@/components/input-form";
 import { ChatProvider } from "@/lib/contexts/chat-context";
 import { getUserFromSessionPublic } from "@/lib/dao/users";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 export default async function ChatLayout({
   children,

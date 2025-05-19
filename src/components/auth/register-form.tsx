@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import useToast from "@/hooks/use-toast";
 import { registerUser } from "@/lib/actions/users";
 import publicConf from "@/lib/public-config";
-import { FormState, initialState } from "@/lib/utils";
+import { type FormState, initialState } from "@/lib/utils";
 import { ExternalLink } from "lucide-react";
 import { useActionState } from "react";
 import PendingSubmitButton from "./pending-submit-button";

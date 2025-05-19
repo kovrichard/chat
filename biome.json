@@ -50,7 +50,8 @@
       },
       "style": {
         "useBlockStatements": "off",
-        "useTemplate": "error"
+        "useTemplate": "error",
+        "useImportType": "error"
       },
       "suspicious": {
         "noAssignInExpressions": "error",

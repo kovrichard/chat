@@ -9,7 +9,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Message } from "ai";
+import type { Message } from "ai";
 import { Copy, FileText } from "lucide-react";
 import { marked } from "marked";
 import { memo, useEffect, useMemo, useRef, useState } from "react";

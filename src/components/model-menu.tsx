@@ -2,7 +2,7 @@
 
 import { useChatContext } from "@/lib/contexts/chat-context";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
-import { Feature, providers } from "@/lib/providers";
+import { type Feature, providers } from "@/lib/providers";
 import { useUpdateConversationModel } from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
 import { useModelStore } from "@/stores/model-store";

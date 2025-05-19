@@ -4,9 +4,15 @@ import { useFileStore } from "@/stores/file-store";
 import { useModelStore } from "@/stores/model-store";
 import { useChat } from "@ai-sdk/react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Message } from "ai";
+import type { Message } from "ai";
 import { useParams } from "next/navigation";
-import React, { createContext, useContext, ReactNode, useEffect, useRef } from "react";
+import React, {
+  createContext,
+  useContext,
+  type ReactNode,
+  useEffect,
+  useRef,
+} from "react";
 import { v4 as uuidv4 } from "uuid";
 import { conversationKeys, useAddMessage } from "../queries/conversations";
 

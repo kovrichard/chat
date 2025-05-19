@@ -3,7 +3,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { getUserIdFromSession } from "@/lib/dao/users";
 import { cookies } from "next/headers";
-import React from "react";
+import type React from "react";
 
 export default async function Layout({
   children,

@@ -1,5 +1,5 @@
 import LastUsedIndicator from "@/components/auth/last-used-indicator";
-import { Button, ButtonProps } from "@/components/ui/button";
+import { Button, type ButtonProps } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { LoaderCircle } from "lucide-react";
 

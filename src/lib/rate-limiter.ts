@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 function rateLimit(limit: number, intervalSeconds: number) {
   const msInterval = intervalSeconds * 1000;

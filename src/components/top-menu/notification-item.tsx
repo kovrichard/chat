@@ -2,11 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import { readNotification } from "@/lib/actions/notifications";
-import { Notification } from "@/lib/prisma/client";
+import type { Notification } from "@/lib/prisma/client";
 import { formatTimeAgo } from "@/lib/utils";
 import { Ellipsis } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import type React from "react";
 
 export function NotificationItem({
   notification,

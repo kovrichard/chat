@@ -7,10 +7,10 @@ import { uploadAttachments } from "@/lib/dao/messages";
 import { getUserIdFromSession } from "@/lib/dao/users";
 import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma/prisma";
-import { PartialConversation } from "@/types/chat";
+import type { PartialConversation } from "@/types/chat";
 import { openai } from "@ai-sdk/openai";
-import { JsonValue } from "@prisma/client/runtime/library";
-import { Message, generateText } from "ai";
+import type { JsonValue } from "@prisma/client/runtime/library";
+import { type Message, generateText } from "ai";
 
 export async function saveConversation(conversation: PartialConversation) {
   const userId = await getUserIdFromSession();

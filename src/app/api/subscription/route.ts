@@ -1,6 +1,6 @@
 import { getUserFromSession } from "@/lib/dao/users";
 import rateLimit from "@/lib/rate-limiter";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 const limiter = rateLimit(100, 60);
 
