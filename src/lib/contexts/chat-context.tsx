@@ -12,6 +12,7 @@ import React, {
   type ReactNode,
   useEffect,
   useRef,
+  useState,
 } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { conversationKeys, useAddMessage } from "../queries/conversations";
@@ -26,6 +27,8 @@ interface ChatContextType {
   error?: Error;
   stop: () => void;
   emptySubmit: () => void;
+  browse: boolean;
+  setBrowse: (browse: boolean) => void;
 }
 
 const ChatContext = createContext<ChatContextType | null>(null);
@@ -39,6 +42,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const { model, temporaryChat } = useModelStore();
   const sentRef = useRef(false);
   const { files, setFiles } = useFileStore();
+  const [browse, setBrowse] = useState(false);
 
   useEffect(() => {
     conversationIdRef.current = conversationId;
@@ -54,6 +58,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         id,
         model: model.id,
         temporaryChat,
+        browse,
       };
     },
     sendExtraMessageFields: true,
@@ -110,6 +115,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         error,
         stop,
         emptySubmit,
+        browse,
+        setBrowse,
       }}
     >
       {children}

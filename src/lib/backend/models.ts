@@ -1,10 +1,10 @@
-import { type AnthropicProviderOptions, anthropic } from "@ai-sdk/anthropic";
-import { createAzure } from "@ai-sdk/azure";
-import { fireworks } from "@ai-sdk/fireworks";
+import { type AnthropicProvider, anthropic } from "@ai-sdk/anthropic";
+import { type AzureOpenAIProvider, createAzure } from "@ai-sdk/azure";
+import { type FireworksProvider, fireworks } from "@ai-sdk/fireworks";
 import { google } from "@ai-sdk/google";
-import { perplexity } from "@ai-sdk/perplexity";
-import { xai } from "@ai-sdk/xai";
-import { extractReasoningMiddleware, wrapLanguageModel } from "ai";
+import { type PerplexityProvider, perplexity } from "@ai-sdk/perplexity";
+import { type XaiProvider, xai } from "@ai-sdk/xai";
+import { type LanguageModelV1, extractReasoningMiddleware, wrapLanguageModel } from "ai";
 
 const azure = createAzure({
   apiVersion: "2024-12-01-preview",
@@ -16,64 +16,98 @@ const azure41 = createAzure({
   resourceName: process.env.AZURE_GPT41_RESOURCE_NAME,
 });
 
-const reasoningFireworks = (model: string) => {
+function wrappedGoogle(model: string, browse: boolean) {
+  return google(model, { useSearchGrounding: browse });
+}
+
+function wrappedModel(
+  provider:
+    | AzureOpenAIProvider
+    | AnthropicProvider
+    | XaiProvider
+    | FireworksProvider
+    | PerplexityProvider
+) {
+  return function (model: string, _browse: boolean) {
+    return provider(model);
+  };
+}
+
+const reasoningFireworks = (model: string, _browse: boolean) => {
   return wrapLanguageModel({
     model: fireworks(model),
     middleware: extractReasoningMiddleware({ tagName: "think" }),
   });
 };
 
-export const allowedModels = {
+const allowedModels = {
   // OpenAI
-  "o4-mini": azure41("o4-mini"),
-  "gpt-4.1": azure41("gpt-4.1"),
-  "4.1-mini": azure41("gpt-4.1-mini"),
-  "4o-mini": azure("gpt-4o-mini"),
-  "o3-mini": azure("o3-mini"),
+  "o4-mini": { id: "o4-mini", provider: wrappedModel(azure41) },
+  "gpt-4.1": { id: "gpt-4.1", provider: wrappedModel(azure41) },
+  "4.1-mini": { id: "gpt-4.1-mini", provider: wrappedModel(azure41) },
+  "4o-mini": { id: "gpt-4o-mini", provider: wrappedModel(azure) },
+  "o3-mini": { id: "o3-mini", provider: wrappedModel(azure) },
 
   // Anthropic
-  "claude-3-7-sonnet": anthropic("claude-3-7-sonnet-20250219"),
-  "claude-3-7-sonnet-reasoning": anthropic("claude-3-7-sonnet-20250219"),
-  "claude-3-5-sonnet": anthropic("claude-3-5-sonnet-20240620"),
-  "claude-3-5-haiku": anthropic("claude-3-5-haiku-20241022"),
+  "claude-3-7-sonnet": {
+    id: "claude-3-7-sonnet-20250219",
+    provider: wrappedModel(anthropic),
+  },
+  "claude-3-5-sonnet": {
+    id: "claude-3-5-sonnet-20240620",
+    provider: wrappedModel(anthropic),
+  },
+  "claude-3-5-haiku": {
+    id: "claude-3-5-haiku-20241022",
+    provider: wrappedModel(anthropic),
+  },
 
   // Google
-  "gemini-2.5-pro-preview": google("models/gemini-2.5-pro-preview-03-25"),
-  "gemini-2.5-flash-preview": google("gemini-2.5-flash-preview-04-17", {
-    useSearchGrounding: true,
-  }),
-  "gemini-2.0-flash": google("gemini-2.0-flash", { useSearchGrounding: true }),
-  "gemini-2.0-flash-lite": google("gemini-2.0-flash-lite"),
+  "gemini-2.5-pro-preview": {
+    id: "models/gemini-2.5-pro-preview-03-25",
+    provider: wrappedGoogle,
+  },
+  "gemini-2.5-flash-preview": {
+    id: "gemini-2.5-flash-preview-04-17",
+    provider: wrappedGoogle,
+  },
+  "gemini-2.0-flash": { id: "gemini-2.0-flash", provider: wrappedGoogle },
+  "gemini-2.0-flash-lite": { id: "gemini-2.0-flash-lite", provider: wrappedGoogle },
 
   // xAI
-  "grok-3-beta": xai("grok-3-beta"),
-  "grok-3-mini-beta": xai("grok-3-mini-beta"),
-  "grok-2-1212": xai("grok-2-1212"),
+  "grok-3-beta": { id: "grok-3-beta", provider: wrappedModel(xai) },
+  "grok-3-mini-beta": { id: "grok-3-mini-beta", provider: wrappedModel(xai) },
+  "grok-2-1212": { id: "grok-2-1212", provider: wrappedModel(xai) },
 
   // Fireworks
-  "llama-3.1-405b": fireworks("accounts/fireworks/models/llama-v3p1-405b-instruct"),
-  "llama-4-scout": fireworks("accounts/fireworks/models/llama4-scout-instruct-basic"),
-  "llama-4-maverick": fireworks(
-    "accounts/fireworks/models/llama4-maverick-instruct-basic"
-  ),
-  "deepseek-r1": reasoningFireworks("accounts/fireworks/models/deepseek-r1"),
-  "deepseek-v3": fireworks("accounts/fireworks/models/deepseek-v3"),
-  sonar: perplexity("sonar"),
-  "sonar-pro": perplexity("sonar-pro"),
+  "llama-3.1-405b": {
+    id: "accounts/fireworks/models/llama-v3p1-405b-instruct",
+    provider: wrappedModel(fireworks),
+  },
+  "llama-4-scout": {
+    id: "accounts/fireworks/models/llama4-scout-instruct-basic",
+    provider: wrappedModel(fireworks),
+  },
+  "llama-4-maverick": {
+    id: "accounts/fireworks/models/llama4-maverick-instruct-basic",
+    provider: wrappedModel(fireworks),
+  },
+  "deepseek-r1": {
+    id: "accounts/fireworks/models/deepseek-r1",
+    provider: reasoningFireworks,
+  },
+  "deepseek-v3": {
+    id: "accounts/fireworks/models/deepseek-v3",
+    provider: wrappedModel(fireworks),
+  },
+
+  // Perplexity
+  sonar: { id: "sonar", provider: wrappedModel(perplexity) },
+  "sonar-pro": { id: "sonar-pro", provider: wrappedModel(perplexity) },
 };
 
-export function getProviderOptions(model: string) {
-  const providerOptions: any = {};
+export function getModel(modelId: string, browse: boolean) {
+  const { id, provider } = allowedModels[modelId as keyof typeof allowedModels];
 
-  if (model === "deepseek-r1") {
-    providerOptions.groq = { reasoningFormat: "parsed" };
-  }
-
-  if (model === "claude-3-7-sonnet-reasoning") {
-    providerOptions.anthropic = {
-      thinking: { type: "enabled", budgetTokens: 12000 },
-    } satisfies AnthropicProviderOptions;
-  }
-
-  return providerOptions;
+  return provider(id, browse);
 }

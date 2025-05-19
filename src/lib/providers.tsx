@@ -114,11 +114,6 @@ export const providers: Provider[] = [
         name: "Claude 3.7 Sonnet",
         features: [images, pdf],
       },
-      // {
-      //   id: "claude-3-7-sonnet-reasoning",
-      //   name: "Claude 3.7 Sonnet Reasoning",
-      //   features: [reasoning],
-      // },
       {
         id: "claude-3-5-sonnet",
         name: "Claude 3.5 Sonnet",

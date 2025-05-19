@@ -1,4 +1,4 @@
-import { allowedModels, getProviderOptions } from "@/lib/backend/models";
+import { getModel } from "@/lib/backend/models";
 import systemPrompt from "@/lib/backend/prompts/system-prompt";
 import { filterMessages } from "@/lib/backend/utils";
 import { decrementFreeMessages, getUserFromSession } from "@/lib/dao/users";
@@ -23,8 +23,8 @@ export async function POST(req: NextRequest) {
     return new Response("Out of available messages", { status: 400 });
   }
 
-  const { messages, model: modelId } = await req.json();
-  const model = allowedModels[modelId as keyof typeof allowedModels];
+  const { messages, model: modelId, browse } = await req.json();
+  const model = getModel(modelId, browse);
 
   if (!model) {
     return new Response("Invalid model", { status: 400 });
@@ -38,7 +38,6 @@ export async function POST(req: NextRequest) {
     maxSteps: 5,
     system: systemPrompt,
     temperature: modelId === "o4-mini" ? 1 : undefined,
-    providerOptions: getProviderOptions(modelId),
     experimental_transform: smoothStream({
       delayInMs: 10,
     }),

@@ -8,7 +8,7 @@ import {
   useCreateConversation,
   useCreateConversationOptimistic,
 } from "@/lib/queries/conversations";
-import { FileText, Paperclip, Send, Trash, VenetianMask } from "lucide-react";
+import { FileText, Globe, Paperclip, Send, Trash, VenetianMask } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   type ClipboardEvent,
@@ -34,6 +34,7 @@ import { v4 as uuidv4 } from "uuid";
 import { ModelMenu } from "./model-menu";
 import { AspectRatio } from "./ui/aspect-ratio";
 import { Input } from "./ui/input";
+import { Toggle } from "./ui/toggle";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 
 const MemoizedModelMenu = memo(ModelMenu);
@@ -85,6 +86,8 @@ const InputForm = forwardRef<
     stop,
     error,
     setInput: setChatInput,
+    browse,
+    setBrowse,
     emptySubmit,
   } = useChatContext();
   const { files, setFiles } = useFileStore();
@@ -332,6 +335,15 @@ const InputForm = forwardRef<
         />
         <div className="flex items-center w-full gap-2">
           <MemoizedModelMenu />
+          <Toggle
+            variant="outline"
+            className="md:-mb-4 w-9 sm:w-auto h-9 min-w-9 data-[state=on]:bg-background data-[state=on]:text-blue-500"
+            pressed={browse}
+            onPressedChange={setBrowse}
+          >
+            <Globe size={16} />
+            <span className="sr-only sm:not-sr-only">Browse</span>
+          </Toggle>
           <div className="flex items-center ml-auto">
             {subscription && subscription.plan === "free" && (
               <p className="hidden sm:block text-sm text-muted-foreground font-medium h-9 px-4 py-2">
