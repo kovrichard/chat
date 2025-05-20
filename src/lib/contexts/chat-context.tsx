@@ -29,6 +29,8 @@ interface ChatContextType {
   emptySubmit: () => void;
   browse: boolean;
   setBrowse: (browse: boolean) => void;
+  academic: boolean;
+  setAcademic: (academic: boolean) => void;
 }
 
 const ChatContext = createContext<ChatContextType | null>(null);
@@ -43,6 +45,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const sentRef = useRef(false);
   const { files, setFiles } = useFileStore();
   const [browse, setBrowse] = useState(false);
+  const [academic, setAcademic] = useState(false);
 
   useEffect(() => {
     conversationIdRef.current = conversationId;
@@ -59,6 +62,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         model: model.id,
         temporaryChat,
         browse,
+        academic,
       };
     },
     sendExtraMessageFields: true,
@@ -117,6 +121,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         emptySubmit,
         browse,
         setBrowse,
+        academic,
+        setAcademic,
       }}
     >
       {children}

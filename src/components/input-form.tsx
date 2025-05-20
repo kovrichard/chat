@@ -8,7 +8,7 @@ import {
   useCreateConversation,
   useCreateConversationOptimistic,
 } from "@/lib/queries/conversations";
-import { FileText, Globe, Paperclip, Send, Trash, VenetianMask } from "lucide-react";
+import { FileText, Paperclip, Send, Telescope, Trash } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   type ClipboardEvent,
@@ -86,9 +86,9 @@ const InputForm = forwardRef<
     stop,
     error,
     setInput: setChatInput,
-    browse,
-    setBrowse,
     emptySubmit,
+    academic,
+    setAcademic,
   } = useChatContext();
   const { files, setFiles } = useFileStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -338,11 +338,11 @@ const InputForm = forwardRef<
           <Toggle
             variant="outline"
             className="md:-mb-4 w-9 sm:w-auto h-9 min-w-9 data-[state=on]:bg-background data-[state=on]:text-blue-500"
-            pressed={browse}
-            onPressedChange={setBrowse}
+            pressed={academic}
+            onPressedChange={setAcademic}
           >
-            <Globe size={16} />
-            <span className="sr-only sm:not-sr-only">Browse</span>
+            <Telescope size={16} />
+            <span className="sr-only sm:not-sr-only">Academic</span>
           </Toggle>
           <div className="flex items-center ml-auto">
             {subscription && subscription.plan === "free" && (
