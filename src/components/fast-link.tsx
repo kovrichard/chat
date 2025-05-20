@@ -29,12 +29,19 @@ export const FastLink = React.forwardRef<HTMLAnchorElement, FastLinkProps>(
       props.onClick?.(e);
     }
 
+    function handleKeyDown(e: React.KeyboardEvent<HTMLAnchorElement>) {
+      if (e.key === "Enter") {
+        router.push(props.href.toString());
+      }
+    }
+
     return (
       <Link
         ref={ref}
         {...props}
         onMouseDown={handleMouseDown}
         onClick={handleClick}
+        onKeyDown={handleKeyDown}
         className={className}
       >
         {children}
