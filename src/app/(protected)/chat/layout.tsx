@@ -1,3 +1,4 @@
+import { ChangeDetector } from "@/components/chat/change-detector";
 import InputForm from "@/components/input-form";
 import { ChatProvider } from "@/lib/contexts/chat-context";
 import { getUserFromSessionPublic } from "@/lib/dao/users";
@@ -23,6 +24,7 @@ export default async function ChatLayout({
           />
         </div>
       </div>
+      <ChangeDetector />
     </ChatProvider>
   );
 }
