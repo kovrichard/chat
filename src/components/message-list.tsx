@@ -62,7 +62,9 @@ export function MessagesList({
         </div>
       )}
       <LastMessage />
-      {status === "submitted" && <LoadingDots className="text-muted-foreground" />}
+      {(status === "submitted" || (messages.length === 1 && status !== "streaming")) && (
+        <LoadingDots className="text-muted-foreground" />
+      )}
       <div id="messages-end" className="h-4" />
       {files && files.length > 0 && <div className="h-[54px] w-1" />}
     </div>
