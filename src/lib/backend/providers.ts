@@ -2,16 +2,51 @@ import "server-only";
 
 import type { Feature, Model, Provider } from "@/types/provider";
 
+const openaiConfigured =
+  process.env.AZURE_API_KEY !== undefined &&
+  process.env.AZURE_RESOURCE_NAME !== undefined &&
+  process.env.AZURE_GPT41_API_KEY !== undefined &&
+  process.env.AZURE_GPT41_RESOURCE_NAME !== undefined;
+const anthropicConfigured = process.env.ANTHROPIC_API_KEY !== undefined;
+const googleConfigured = process.env.GOOGLE_GENERATIVE_AI_API_KEY !== undefined;
+const xaiConfigured = process.env.XAI_API_KEY !== undefined;
+const metaConfigured = process.env.FIREWORKS_API_KEY !== undefined;
+const deepseekConfigured = process.env.FIREWORKS_API_KEY !== undefined;
+const perplexityConfigured = process.env.PERPLEXITY_API_KEY !== undefined;
+
 export function getProviders() {
-  return providers;
+  return providers.filter((provider) => {
+    if (provider.name === "OpenAI" && !openaiConfigured) {
+      return false;
+    }
+    if (provider.name === "Anthropic" && !anthropicConfigured) {
+      return false;
+    }
+    if (provider.name === "Google" && !googleConfigured) {
+      return false;
+    }
+    if (provider.name === "xAI" && !xaiConfigured) {
+      return false;
+    }
+    if (provider.name === "Meta" && !metaConfigured) {
+      return false;
+    }
+    if (provider.name === "DeepSeek" && !deepseekConfigured) {
+      return false;
+    }
+    if (provider.name === "Perplexity" && !perplexityConfigured) {
+      return false;
+    }
+    return true;
+  });
 }
 
 export function countModels() {
-  return providers.flatMap((provider) => provider.models).length;
+  return getProviders().flatMap((provider) => provider.models).length;
 }
 
 export function getModel(modelId: string): Model | undefined {
-  return providers
+  return getProviders()
     .flatMap((provider) => provider.models)
     .find((model) => model.id === modelId);
 }
