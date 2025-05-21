@@ -19,7 +19,6 @@ jobs:
 
       ## General
       AUTHORITY: https://chat2.richardkovacs.dev
-      EXA_API_KEY: ${{ secrets.EXA_API_KEY }}
 
     steps:
       - name: Checkout code
