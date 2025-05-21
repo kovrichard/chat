@@ -71,9 +71,10 @@ const InputForm = forwardRef<
     freeMessages: number;
     authorized: boolean;
     providers: Provider[];
+    exaConfigured: boolean;
     className?: string;
   }
->(({ plan, freeMessages, authorized, providers, className }, ref) => {
+>(({ plan, freeMessages, authorized, providers, exaConfigured, className }, ref) => {
   const router = useRouter();
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width: 640px)");
@@ -337,15 +338,17 @@ const InputForm = forwardRef<
         />
         <div className="flex items-center w-full gap-2">
           <MemoizedModelMenu providers={providers} />
-          <Toggle
-            variant="outline"
-            className="md:-mb-4 w-9 sm:w-auto h-9 min-w-9 data-[state=on]:bg-background data-[state=on]:text-blue-500"
-            pressed={academic}
-            onPressedChange={setAcademic}
-          >
-            <Telescope size={16} />
-            <span className="sr-only sm:not-sr-only">Academic</span>
-          </Toggle>
+          {exaConfigured && (
+            <Toggle
+              variant="outline"
+              className="md:-mb-4 w-9 sm:w-auto h-9 min-w-9 data-[state=on]:bg-background data-[state=on]:text-blue-500"
+              pressed={academic}
+              onPressedChange={setAcademic}
+            >
+              <Telescope size={16} />
+              <span className="sr-only sm:not-sr-only">Academic</span>
+            </Toggle>
+          )}
           <div className="flex items-center ml-auto">
             {subscription && subscription.plan === "free" && (
               <p className="hidden sm:block text-sm text-muted-foreground font-medium h-9 px-4 py-2">

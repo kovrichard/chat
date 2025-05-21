@@ -1,6 +1,7 @@
 import { ChangeDetector } from "@/components/chat/change-detector";
 import InputForm from "@/components/input-form";
 import { getProviders } from "@/lib/backend/providers";
+import { exaConfigured } from "@/lib/backend/tools";
 import { ChatProvider } from "@/lib/contexts/chat-context";
 import { getUserFromSessionPublic } from "@/lib/dao/users";
 import type { ReactNode } from "react";
@@ -25,6 +26,7 @@ export default async function ChatLayout({
             freeMessages={user?.freeMessages || 10}
             authorized={Boolean(user)}
             providers={providers}
+            exaConfigured={exaConfigured}
           />
         </div>
       </div>

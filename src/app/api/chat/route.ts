@@ -2,6 +2,7 @@ import { updateConversationTitle } from "@/lib/actions/conversations";
 import { awsConfigured } from "@/lib/aws/s3";
 import { getModel } from "@/lib/backend/models";
 import systemPrompt from "@/lib/backend/prompts/system-prompt";
+import { exaConfigured } from "@/lib/backend/tools";
 import {
   buildAcademicPrompt,
   retrieveSources,
@@ -90,7 +91,7 @@ export async function POST(req: NextRequest) {
   const filteredMessages = filterMessages(messages, modelId);
   let academicPrompt = "";
 
-  if (academic) {
+  if (academic && exaConfigured) {
     const academicSources = await retrieveSources(filteredMessages);
     academicPrompt = buildAcademicPrompt(academicSources);
 

@@ -4,6 +4,10 @@ import { z } from "zod";
 import { exa } from ".";
 
 async function academicSearch(query: string) {
+  if (!exa) {
+    return [];
+  }
+
   const result = await exa.searchAndContents(query, {
     type: "auto",
     category: "research paper",
@@ -47,6 +51,10 @@ export async function retrieveSources(messages: Message[]) {
 export function buildAcademicPrompt(
   sources: { title: string | null; url: string; summary: string }[]
 ) {
+  if (!exa) {
+    return "There are no academic sources available because the academic search tool is not configured.";
+  }
+
   let academicPrompt =
     "\n\nThe current conversation is focused on academic research. Here are some sources that are relevant to the conversation:\n\n";
   sources.forEach((source) => {
