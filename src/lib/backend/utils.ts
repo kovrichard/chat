@@ -1,4 +1,4 @@
-import { getModel } from "@/lib/providers";
+import { getModel } from "@/lib/backend/providers";
 import type { Attachment, Message } from "ai";
 
 export function filterMessages(messages: Message[], modelId: string) {

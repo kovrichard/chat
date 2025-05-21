@@ -1,5 +1,6 @@
 import { ChangeDetector } from "@/components/chat/change-detector";
 import InputForm from "@/components/input-form";
+import { getProviders } from "@/lib/backend/providers";
 import { ChatProvider } from "@/lib/contexts/chat-context";
 import { getUserFromSessionPublic } from "@/lib/dao/users";
 import type { ReactNode } from "react";
@@ -11,6 +12,8 @@ export default async function ChatLayout({
 }) {
   const user = await getUserFromSessionPublic();
 
+  const providers = getProviders();
+
   return (
     <ChatProvider>
       <div className="relative flex flex-1 flex-col min-w-[320px] max-h-svh bg-background md:rounded-[20px]">
@@ -21,6 +24,7 @@ export default async function ChatLayout({
             plan={user?.subscription || "free"}
             freeMessages={user?.freeMessages || 10}
             authorized={Boolean(user)}
+            providers={providers}
           />
         </div>
       </div>

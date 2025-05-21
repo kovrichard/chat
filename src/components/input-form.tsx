@@ -27,6 +27,7 @@ import { useFileStore } from "@/stores/file-store";
 import { useInputStore } from "@/stores/input-store";
 import { useModelStore } from "@/stores/model-store";
 import type { PartialConversation } from "@/types/chat";
+import type { Provider } from "@/types/provider";
 import { useQuery } from "@tanstack/react-query";
 import type { Attachment } from "ai";
 import Image from "next/image";
@@ -69,9 +70,10 @@ const InputForm = forwardRef<
     plan: string;
     freeMessages: number;
     authorized: boolean;
+    providers: Provider[];
     className?: string;
   }
->(({ plan, freeMessages, authorized, className }, ref) => {
+>(({ plan, freeMessages, authorized, providers, className }, ref) => {
   const router = useRouter();
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width: 640px)");
@@ -334,7 +336,7 @@ const InputForm = forwardRef<
           className="hidden"
         />
         <div className="flex items-center w-full gap-2">
-          <MemoizedModelMenu />
+          <MemoizedModelMenu providers={providers} />
           <Toggle
             variant="outline"
             className="md:-mb-4 w-9 sm:w-auto h-9 min-w-9 data-[state=on]:bg-background data-[state=on]:text-blue-500"

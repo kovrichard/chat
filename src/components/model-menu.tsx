@@ -2,10 +2,12 @@
 
 import { useChatContext } from "@/lib/contexts/chat-context";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
-import { type Feature, countModels, providers } from "@/lib/providers";
+import { featureIcons, providerIcons } from "@/lib/providers";
+import { getProviderIcon } from "@/lib/providers";
 import { useUpdateConversationModel } from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
 import { useModelStore } from "@/stores/model-store";
+import type { Feature, Provider } from "@/types/provider";
 import { ChevronDown, MessageCircleDashed } from "lucide-react";
 import { useState } from "react";
 import React from "react";
@@ -32,16 +34,11 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Separator } from "./ui/separator";
 
-function getProviderIcon(modelId: string) {
-  const provider = providers.find((p) => p.models.some((m) => m.id === modelId));
-  return provider?.icon;
-}
-
-export function ModelMenu() {
+export function ModelMenu({ providers }: { providers: Provider[] }) {
   const [open, setOpen] = useState(false);
   const { model } = useModelStore();
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const providerIcon = getProviderIcon(model.id);
+  const providerIcon = getProviderIcon(providers, model.id);
 
   if (isDesktop) {
     return (
@@ -58,7 +55,7 @@ export function ModelMenu() {
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[300px] p-0" align="start">
-            <StatusList setOpen={setOpen} />
+            <StatusList setOpen={setOpen} providers={providers} />
             <Separator />
             {/* <TemporaryChatSwitch /> */}
           </PopoverContent>
@@ -73,7 +70,11 @@ export function ModelMenu() {
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger asChild className="md:hidden">
           <Button variant="outline" size="icon" className="size-9">
-            {providerIcon && React.createElement(providerIcon)}
+            {providerIcon &&
+              React.createElement(
+                providerIcons[providerIcon as keyof typeof providerIcons],
+                { size: 16 }
+              )}
           </Button>
         </DrawerTrigger>
         <DrawerContent>
@@ -84,7 +85,7 @@ export function ModelMenu() {
             </DrawerDescription>
           </DrawerHeader>
           <div className="mt-4 border-t">
-            <StatusList setOpen={setOpen} />
+            <StatusList setOpen={setOpen} providers={providers} />
             <Separator />
             {/* <TemporaryChatSwitch /> */}
           </div>
@@ -95,7 +96,13 @@ export function ModelMenu() {
   );
 }
 
-function StatusList({ setOpen }: { setOpen: (open: boolean) => void }) {
+function StatusList({
+  setOpen,
+  providers,
+}: {
+  setOpen: (open: boolean) => void;
+  providers: Provider[];
+}) {
   const { id } = useChatContext();
 
   const { model, setModel } = useModelStore();
@@ -109,7 +116,7 @@ function StatusList({ setOpen }: { setOpen: (open: boolean) => void }) {
     }
   };
 
-  const modelCount = countModels();
+  const modelCount = providers.flatMap((provider) => provider.models).length;
 
   return (
     <Command className="rounded-none md:rounded-md" defaultValue={model.name}>
@@ -121,7 +128,10 @@ function StatusList({ setOpen }: { setOpen: (open: boolean) => void }) {
             key={provider.name}
             heading={
               <div className="flex items-center gap-2">
-                <provider.icon />
+                {React.createElement(
+                  providerIcons[provider.icon as keyof typeof providerIcons],
+                  { size: 16 }
+                )}
                 {provider.name}
               </div>
             }
@@ -143,13 +153,16 @@ function StatusList({ setOpen }: { setOpen: (open: boolean) => void }) {
                       className="rounded-full p-1"
                       onClick={(e) => e.stopPropagation()} // Prevent triggering the CommandItem's onSelect
                     >
-                      <feature.icon
-                        size={16}
-                        className={cn(
-                          feature.color,
-                          "group-data-[selected='true']:text-accent-foreground"
-                        )}
-                      />
+                      {React.createElement(
+                        featureIcons[feature.icon as keyof typeof featureIcons],
+                        {
+                          size: 16,
+                          className: cn(
+                            feature.color,
+                            "group-data-[selected='true']:text-accent-foreground"
+                          ),
+                        }
+                      )}
                     </div>
                   </HoverPopover>
                 ))}

@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { countModels } from "@/lib/providers";
+import { countModels } from "@/lib/backend/providers";
 import { Brain, CodeXml, FileText, Globe, Image } from "lucide-react";
 import IntroDialogDescription from "./intro-dialog-description";
 
