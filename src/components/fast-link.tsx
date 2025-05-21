@@ -2,7 +2,7 @@
 
 import Link, { type LinkProps } from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useRef } from "react";
 
 type FastLinkProps = LinkProps & {
   children: React.ReactNode;
@@ -18,21 +18,20 @@ type FastLinkProps = LinkProps & {
 export const FastLink = React.forwardRef<HTMLAnchorElement, FastLinkProps>(
   ({ className, children, ...props }, ref) => {
     const router = useRouter();
+    const navigatedRef = useRef(false);
 
     function handleMouseDown(e: React.MouseEvent<HTMLAnchorElement>) {
       e.preventDefault();
+      navigatedRef.current = true;
       router.push(props.href.toString());
     }
 
     function handleClick(e: React.MouseEvent<HTMLAnchorElement>) {
-      e.preventDefault();
-      props.onClick?.(e);
-    }
-
-    function handleKeyDown(e: React.KeyboardEvent<HTMLAnchorElement>) {
-      if (e.key === "Enter") {
-        router.push(props.href.toString());
+      if (navigatedRef.current) {
+        e.preventDefault();
+        navigatedRef.current = false;
       }
+      props.onClick?.(e);
     }
 
     return (
@@ -41,7 +40,6 @@ export const FastLink = React.forwardRef<HTMLAnchorElement, FastLinkProps>(
         {...props}
         onMouseDown={handleMouseDown}
         onClick={handleClick}
-        onKeyDown={handleKeyDown}
         className={className}
       >
         {children}
