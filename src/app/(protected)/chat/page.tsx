@@ -2,8 +2,7 @@ import AuthCard from "@/components/auth/auth-card";
 import LoginForm from "@/components/auth/login-form";
 import RegisterForm from "@/components/auth/register-form";
 import ExampleButton from "@/components/chat/example-button";
-import ModelStoreInitializer from "@/components/chat/model-store-initializer";
-import { getProviders } from "@/lib/backend/providers";
+import ModelStoreSetter from "@/components/chat/model-store-setter";
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
 
@@ -22,7 +21,6 @@ export default async function ChatPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { login, register } = await searchParams;
-  const providers = getProviders();
 
   return (
     <div className="flex-1 flex items-center justify-center p-4">
@@ -39,7 +37,7 @@ export default async function ChatPage({
             </li>
           ))}
         </ul>
-        <ModelStoreInitializer providers={providers} />
+        <ModelStoreSetter />
       </div>
       <div
         className={cn(

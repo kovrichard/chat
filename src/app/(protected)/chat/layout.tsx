@@ -1,4 +1,5 @@
 import { ChangeDetector } from "@/components/chat/change-detector";
+import ModelStoreInitializer from "@/components/chat/model-store-initializer";
 import InputForm from "@/components/input-form";
 import { getProviders } from "@/lib/backend/providers";
 import { exaConfigured } from "@/lib/backend/tools";
@@ -17,6 +18,7 @@ export default async function ChatLayout({
 
   return (
     <ChatProvider>
+      <ModelStoreInitializer providers={providers} />
       <div className="relative flex flex-1 flex-col min-w-[320px] max-h-svh bg-background md:rounded-[20px]">
         {children}
         <div className="absolute bottom-0 left-0 right-0">
