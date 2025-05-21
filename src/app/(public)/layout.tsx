@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import CatalystBadge from "@/components/footer/catalyst-badge";
+import GitHub from "@/components/icons/github";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
@@ -36,8 +37,17 @@ export default async function Layout({
         )}
       </header>
       {children}
-      <footer className="flex w-full p-4 justify-start">
+      <footer className="flex w-full p-4 justify-between items-center">
         <CatalystBadge />
+        <div className="flex size-6 text-foreground">
+          <a
+            href="https://github.com/kovrichard/chat"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <GitHub size={24} />
+          </a>
+        </div>
       </footer>
     </div>
   );
