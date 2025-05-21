@@ -5,6 +5,7 @@ import ExampleButton from "@/components/chat/example-button";
 import ModelStoreInitializer from "@/components/chat/model-store-initializer";
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
+
 const LazyIntroDialog = dynamic(() => import("@/components/chat/intro-dialog"));
 
 const examples = [

@@ -10,6 +10,10 @@ const LazyMeta = dynamic(() => import("@/components/icons/meta"));
 const LazyOpenAI = dynamic(() => import("@/components/icons/openai"));
 const LazyPerplexity = dynamic(() => import("@/components/icons/perplexity"));
 
+export function countModels() {
+  return providers.flatMap((provider) => provider.models).length;
+}
+
 export function getModel(modelId: string): Model | undefined {
   return providers
     .flatMap((provider) => provider.models)

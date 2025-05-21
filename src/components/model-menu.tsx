@@ -2,7 +2,7 @@
 
 import { useChatContext } from "@/lib/contexts/chat-context";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
-import { type Feature, providers } from "@/lib/providers";
+import { type Feature, countModels, providers } from "@/lib/providers";
 import { useUpdateConversationModel } from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
 import { useModelStore } from "@/stores/model-store";
@@ -109,7 +109,7 @@ function StatusList({ setOpen }: { setOpen: (open: boolean) => void }) {
     }
   };
 
-  const modelCount = providers.reduce((acc, provider) => acc + provider.models.length, 0);
+  const modelCount = countModels();
 
   return (
     <Command className="rounded-none md:rounded-md" defaultValue={model.name}>

@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,15 +8,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useMediaQuery } from "@/lib/hooks/use-media-query";
-import { providers } from "@/lib/providers";
+import { countModels } from "@/lib/providers";
 import { Brain, CodeXml, FileText, Globe, Image } from "lucide-react";
-
-const models = providers.map((provider) => provider.models).flat();
-const numModels = models.length;
+import IntroDialogDescription from "./intro-dialog-description";
 
 export default function Examples() {
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const numModels = countModels();
 
   return (
     <Dialog>
@@ -57,8 +52,8 @@ export default function Examples() {
               fit for you.
             </p>
             <p>
-              Click the model's {isMobile ? "icon" : "name"} in the lower left corner of
-              the input field to switch models.
+              Click the model's <IntroDialogDescription /> in the lower left corner of the
+              input field to switch models.
             </p>
           </div>
         </ScrollArea>
