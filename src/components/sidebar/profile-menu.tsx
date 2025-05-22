@@ -61,7 +61,7 @@ export default function ProfileMenu({
       {hasCustomerId && (
         <>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="p-0 h-10">
+          <DropdownMenuItem className="p-0 h-10 cursor-pointer" asChild>
             <a
               href={billingPortalUrl}
               target="_blank"
@@ -73,21 +73,9 @@ export default function ProfileMenu({
           </DropdownMenuItem>
         </>
       )}
-      <DropdownMenuItem className="p-0 h-10">
-        <a
-          href="/privacy-policy"
-          target="_blank"
-          className="flex items-center gap-2 size-full px-2 py-1.5"
-          onClick={() => isMobile && setOpenMobile(false)}
-        >
-          <FileText className="shrink-0" />
-          <span>Privacy Policy</span>
-        </a>
-      </DropdownMenuItem>
-      <DropdownMenuSeparator />
       {authorized && (
         <>
-          <DropdownMenuItem className="p-0 h-10" asChild>
+          <DropdownMenuItem className="p-0 h-10 cursor-pointer" asChild>
             <Link
               href="/settings"
               className="flex items-center gap-2 size-full px-2 py-1.5"
@@ -100,6 +88,19 @@ export default function ProfileMenu({
           <DropdownMenuSeparator />
         </>
       )}
+      <DropdownMenuSeparator />
+      <DropdownMenuItem className="p-0 h-10">
+        <a
+          href="/privacy-policy"
+          target="_blank"
+          className="flex items-center gap-2 size-full px-2 py-1.5"
+          onClick={() => isMobile && setOpenMobile(false)}
+        >
+          <FileText className="shrink-0" />
+          <span>Privacy Policy</span>
+        </a>
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
       <DropdownMenuItem asChild>{authorized ? <SignOut /> : <SignIn />}</DropdownMenuItem>
     </>
   );
