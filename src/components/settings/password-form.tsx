@@ -33,7 +33,7 @@ export default function PasswordForm({
         <Label htmlFor="confirm-password">Confirm Password</Label>
         <Input type="password" id="confirm-password" name="confirm-password" required />
       </div>
-      <Button type="submit" className="mt-4 self-end px-5" disabled={isPending}>
+      <Button type="submit" className="self-start mt-4 px-5" disabled={isPending}>
         Save
       </Button>
     </form>
