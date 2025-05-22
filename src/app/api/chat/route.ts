@@ -1,12 +1,14 @@
 import { updateConversationTitle } from "@/lib/actions/conversations";
 import { awsConfigured } from "@/lib/aws/s3";
 import { getModel } from "@/lib/backend/models";
+import { getMemoryPrompt } from "@/lib/backend/prompts/memory-prompt";
 import systemPrompt from "@/lib/backend/prompts/system-prompt";
 import { exaConfigured } from "@/lib/backend/tools";
 import {
   buildAcademicPrompt,
   retrieveSources,
 } from "@/lib/backend/tools/academic-search";
+import { memoryTool } from "@/lib/backend/tools/memory";
 import { filterMessages } from "@/lib/backend/utils";
 import {
   appendMessageToConversation,
@@ -98,14 +100,27 @@ export async function POST(req: NextRequest) {
     await decrementFreeMessages(user.id);
   }
 
+  const tools: any = {};
+
+  let memoryPrompt = "";
+
+  if (user.memoryEnabled) {
+    memoryPrompt = await getMemoryPrompt();
+    tools.memory = memoryTool;
+  }
+
+  const extendedSystemPrompt = `${systemPrompt}${memoryPrompt}${academicPrompt}`;
+
   const result = streamText({
     model,
     messages: filteredMessages,
-    system: systemPrompt + academicPrompt,
+    system: extendedSystemPrompt,
+    maxSteps: 2,
     temperature: modelId === "o4-mini" ? 1 : undefined,
     experimental_transform: smoothStream({
       delayInMs: 10,
     }),
+    tools,
     onFinish: async ({ response }) => {
       try {
         const updatedMessages = appendResponseMessages({
