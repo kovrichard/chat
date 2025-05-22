@@ -4,11 +4,33 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { updateUserMemoryEnabled } from "@/lib/actions/users";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
-export default function MemoryForm({ memory }: { memory?: string }) {
+export default function MemoryForm({
+  memory,
+  memoryEnabled,
+}: {
+  memory?: string;
+  memoryEnabled: boolean;
+}) {
   const [content, setContent] = useState(memory ?? "");
-  const [enabled, setEnabled] = useState(true);
+  const [enabled, setEnabled] = useState(memoryEnabled);
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    updateUserMemoryEnabled(enabled).then((message: string) => {
+      toast(message, {
+        description: "Your memory settings have been updated.",
+      });
+    });
+  }, [enabled]);
 
   return (
     <div className="flex flex-col gap-4 items-start">

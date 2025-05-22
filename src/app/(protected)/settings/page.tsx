@@ -20,7 +20,8 @@ export default async function SettingsPage() {
     },
     select: {
       password: true,
-      // memory: true,
+      memory: true,
+      memoryEnabled: true,
     },
   });
   const hasPassword = Boolean(user?.password);
@@ -49,7 +50,10 @@ export default async function SettingsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <MemoryForm memory={/*user?.memory ?? undefined*/ ""} />
+                <MemoryForm
+                  memory={user?.memory ?? undefined}
+                  memoryEnabled={user?.memoryEnabled ?? false}
+                />
               </CardContent>
             </Card>
           </TabsContent>

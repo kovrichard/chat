@@ -150,3 +150,16 @@ export async function deleteUser() {
     description: "Your account has been deleted.",
   };
 }
+
+export async function updateUserMemoryEnabled(memoryEnabled: boolean) {
+  const userId = await getUserIdFromSession();
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      memoryEnabled,
+    },
+  });
+
+  return `Memory ${memoryEnabled ? "enabled" : "disabled"}`;
+}
