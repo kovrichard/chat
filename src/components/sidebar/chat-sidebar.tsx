@@ -1,13 +1,6 @@
 "use client";
 
-import { useConversations, useDeleteConversation } from "@/lib/queries/conversations";
-import { cn } from "@/lib/utils";
-import { useSearchStore } from "@/stores/search-store";
-import type { PartialConversation } from "@/types/chat";
-import { MessageSquare, Trash2 } from "lucide-react";
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { useInView } from "react-intersection-observer";
+import { FastLink } from "@/components/fast-link";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,15 +11,22 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "../ui/alert-dialog";
-import { AnimatedTitle } from "../ui/animated-title";
-import { Button } from "../ui/button";
+} from "@/components/ui/alert-dialog";
+import { AnimatedTitle } from "@/components/ui/animated-title";
+import { Button } from "@/components/ui/button";
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
   useSidebar,
-} from "../ui/sidebar";
+} from "@/components/ui/sidebar";
+import { useConversations, useDeleteConversation } from "@/lib/queries/conversations";
+import { cn } from "@/lib/utils";
+import { useSearchStore } from "@/stores/search-store";
+import type { PartialConversation } from "@/types/chat";
+import { MessageSquare, Trash2 } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { useInView } from "react-intersection-observer";
 
 function groupConversationsByTime(conversations: PartialConversation[]) {
   const now = new Date();
@@ -171,14 +171,14 @@ function ConversationLink({
 
   return (
     <div className="group/chat relative">
-      <Link
+      <FastLink
         href={`/chat/${chat.id}`}
         prefetch
         className={cn(
           "flex w-full flex-col items-start gap-1 rounded-lg p-3 text-left text-sm transition-colors",
           currentId === chat.id ? "bg-accent text-accent-foreground" : "hover:bg-muted"
         )}
-        onNavigate={() => isMobile && setOpenMobile(false)}
+        onClick={() => isMobile && setOpenMobile(false)}
       >
         <div className="flex w-full items-center gap-2">
           <MessageSquare size={16} className="shrink-0" />
@@ -195,7 +195,7 @@ function ConversationLink({
             {chat.messages[chat.messages.length - 1]?.content}
           </p>
         )}
-      </Link>
+      </FastLink>
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button
