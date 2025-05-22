@@ -246,6 +246,16 @@ export function MessageContent({ message }: { message: Message }) {
     return (
       <div className="flex flex-col gap-4">
         {message.parts?.map((part, index) => {
+          if (
+            part.type === "tool-invocation" &&
+            part.toolInvocation.toolName === "memory"
+          ) {
+            return (
+              <div key={`${message.id}-tool-result-${index}`}>
+                <p className="text-sm text-muted-foreground">Memory updated</p>
+              </div>
+            );
+          }
           if (part.type === "reasoning") {
             return (
               <Sheet key={`${message.id}-reasoning-${index}`}>
