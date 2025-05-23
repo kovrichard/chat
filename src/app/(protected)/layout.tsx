@@ -1,7 +1,6 @@
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { getUserIdFromSession } from "@/lib/dao/users";
 import { cookies } from "next/headers";
 import type React from "react";
 
