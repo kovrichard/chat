@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   }
 
   const { messages, model: modelId, browse } = await req.json();
-  const model = getModel(modelId, browse);
+  const { model } = getModel(modelId, browse);
 
   if (!model) {
     return new Response("Invalid model", { status: 400 });

@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
   }
 
   const { id, message, model: modelId, browse, academic } = await req.json();
-  const model = getModel(modelId, browse);
+  const { model, supportsTools } = getModel(modelId, browse);
 
   if (!model) {
     return new Response("Invalid model", { status: 400 });
@@ -106,7 +106,10 @@ export async function POST(req: NextRequest) {
 
   if (user.memoryEnabled) {
     memoryPrompt = await getMemoryPrompt();
-    tools.memory = memoryTool;
+
+    if (supportsTools) {
+      tools.memory = memoryTool;
+    }
   }
 
   const extendedSystemPrompt = `${systemPrompt}${memoryPrompt}${academicPrompt}`;
