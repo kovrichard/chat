@@ -1,3 +1,13 @@
+import ChatSidebar from "@/components/sidebar/chat-sidebar";
+import { NewChatButton } from "@/components/sidebar/new-chat-button";
+import ProfileMenu from "@/components/sidebar/profile-menu";
+import { SearchField } from "@/components/sidebar/search-field";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -9,16 +19,6 @@ import {
 } from "@/components/ui/sidebar";
 import { getConversations } from "@/lib/dao/conversations";
 import { getUserFromSessionPublic } from "@/lib/dao/users";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import ChatSidebar from "./chat-sidebar";
-import { NewChatButton } from "./new-chat-button";
-import ProfileMenu from "./profile-menu";
-import { SearchField } from "./search-field";
 
 export async function AppSidebar() {
   const user = await getUserFromSessionPublic();
