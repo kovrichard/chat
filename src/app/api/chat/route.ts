@@ -1,8 +1,8 @@
 import { updateConversationTitle } from "@/lib/actions/conversations";
 import { awsConfigured } from "@/lib/aws/s3";
-import { getModel } from "@/lib/backend/models";
 import { getMemoryPrompt } from "@/lib/backend/prompts/memory-prompt";
 import systemPrompt from "@/lib/backend/prompts/system-prompt";
+import { getModel } from "@/lib/backend/providers";
 import { exaConfigured } from "@/lib/backend/tools";
 import {
   buildAcademicPrompt,
@@ -115,9 +115,9 @@ export async function POST(req: NextRequest) {
 
   const extendedSystemPrompt = `${systemPrompt}${memoryPrompt}${academicPrompt}`;
   const anthropicThinking =
-    modelId === "claude-sonnet-4" ||
-    modelId === "claude-opus-4" ||
-    modelId === "claude-3-7-sonnet";
+    modelId === "claude-sonnet-4-20250514" ||
+    modelId === "claude-opus-4-20250514" ||
+    modelId === "claude-3-7-sonnet-20250219";
 
   const result = streamText({
     model,

@@ -1,7 +1,7 @@
 import { ChangeDetector } from "@/components/chat/change-detector";
 import ModelStoreInitializer from "@/components/chat/model-store-initializer";
 import InputForm from "@/components/input-form";
-import { getProviders } from "@/lib/backend/providers";
+import { getProvidersPublic } from "@/lib/backend/providers";
 import { exaConfigured } from "@/lib/backend/tools";
 import { ChatProvider } from "@/lib/contexts/chat-context";
 import { getUserFromSessionPublic } from "@/lib/dao/users";
@@ -14,7 +14,7 @@ export default async function ChatLayout({
 }) {
   const user = await getUserFromSessionPublic();
 
-  const providers = getProviders();
+  const providers = getProvidersPublic();
 
   return (
     <ChatProvider>

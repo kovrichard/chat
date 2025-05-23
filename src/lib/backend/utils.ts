@@ -1,8 +1,8 @@
-import { getModel } from "@/lib/backend/providers";
+import { getModelPublic } from "@/lib/backend/providers";
 import type { Attachment, Message } from "ai";
 
 export function filterMessages(messages: Message[], modelId: string) {
-  const model = getModel(modelId);
+  const model = getModelPublic(modelId);
   const imageSupport =
     model?.features?.some((feature) => feature.name === "Images") || false;
   const pdfSupport = model?.features?.some((feature) => feature.name === "PDFs") || false;

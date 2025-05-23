@@ -1,6 +1,21 @@
 import "server-only";
 
-import type { Feature, Model, Provider } from "@/types/provider";
+import type {
+  Feature,
+  Model,
+  Provider,
+  PublicModel,
+  PublicProvider,
+} from "@/types/provider";
+import { type AnthropicProvider, anthropic } from "@ai-sdk/anthropic";
+import type { AzureOpenAIProvider } from "@ai-sdk/azure";
+import { createAzure } from "@ai-sdk/azure";
+import { type FireworksProvider, fireworks } from "@ai-sdk/fireworks";
+import { google } from "@ai-sdk/google";
+import { type PerplexityProvider, perplexity } from "@ai-sdk/perplexity";
+import { type XaiProvider, xai } from "@ai-sdk/xai";
+import { wrapLanguageModel } from "ai";
+import { extractReasoningMiddleware } from "ai";
 
 const openaiConfigured =
   process.env.AZURE_API_KEY !== undefined &&
@@ -14,7 +29,40 @@ const metaConfigured = process.env.FIREWORKS_API_KEY !== undefined;
 const deepseekConfigured = process.env.FIREWORKS_API_KEY !== undefined;
 const perplexityConfigured = process.env.PERPLEXITY_API_KEY !== undefined;
 
-export function getProviders() {
+export function getProvidersPublic(): PublicProvider[] {
+  return filterProviders().map((provider) => ({
+    ...provider,
+    models: provider.models.map(({ provider, ...rest }) => ({
+      ...rest,
+    })),
+  }));
+}
+
+export function countModels() {
+  return getProvidersPublic().flatMap((provider) => provider.models).length;
+}
+
+export function getModelPublic(modelId: string): PublicModel | undefined {
+  return getProvidersPublic()
+    .flatMap((provider) => provider.models)
+    .find((model) => model.id === modelId);
+}
+
+export function getModel(modelId: string, browse: boolean) {
+  const model = filterProviders()
+    .flatMap((provider) => provider.models)
+    .find((model) => model.id === modelId);
+
+  if (!model) {
+    throw new Error(`Model ${modelId} not found`);
+  }
+
+  const { id, provider, tools } = model;
+
+  return { model: provider(id, browse), supportsTools: tools };
+}
+
+function filterProviders(): Provider[] {
   return providers.filter((provider) => {
     if (provider.name === "OpenAI" && !openaiConfigured) {
       return false;
@@ -41,15 +89,39 @@ export function getProviders() {
   });
 }
 
-export function countModels() {
-  return getProviders().flatMap((provider) => provider.models).length;
+const azure = createAzure({
+  apiVersion: "2024-12-01-preview",
+});
+
+const azure41 = createAzure({
+  apiVersion: "2024-12-01-preview",
+  apiKey: process.env.AZURE_GPT41_API_KEY,
+  resourceName: process.env.AZURE_GPT41_RESOURCE_NAME,
+});
+
+function wrappedGoogle(model: string, browse: boolean) {
+  return google(model, { useSearchGrounding: browse });
 }
 
-export function getModel(modelId: string): Model | undefined {
-  return getProviders()
-    .flatMap((provider) => provider.models)
-    .find((model) => model.id === modelId);
+function wrappedModel(
+  provider:
+    | AzureOpenAIProvider
+    | AnthropicProvider
+    | XaiProvider
+    | FireworksProvider
+    | PerplexityProvider
+) {
+  return function (model: string, _browse: boolean) {
+    return provider(model);
+  };
 }
+
+const reasoningFireworks = (model: string, _browse: boolean) => {
+  return wrapLanguageModel({
+    model: fireworks(model),
+    middleware: extractReasoningMiddleware({ tagName: "think" }),
+  });
+};
 
 const reasoning: Feature = {
   name: "Reasoning",
@@ -95,26 +167,36 @@ const providers: Provider[] = [
         id: "o4-mini",
         name: "o4-mini",
         features: [images, reasoning],
+        provider: wrappedModel(azure41),
+        tools: true,
       },
       {
         id: "gpt-4.1",
         name: "GPT-4.1",
         features: [images, coding],
+        provider: wrappedModel(azure41),
+        tools: true,
       },
       {
-        id: "4.1-mini",
+        id: "gpt-4.1-mini",
         name: "GPT-4.1 mini",
         features: [images, coding],
+        provider: wrappedModel(azure41),
+        tools: true,
       },
       {
-        id: "4o-mini",
+        id: "gpt-4o-mini",
         name: "GPT-4o mini",
         features: [images],
+        provider: wrappedModel(azure),
+        tools: true,
       },
       {
         id: "o3-mini",
         name: "o3-mini",
         features: [reasoning],
+        provider: wrappedModel(azure),
+        tools: true,
       },
     ],
   },
@@ -123,29 +205,39 @@ const providers: Provider[] = [
     icon: "anthropic",
     models: [
       {
-        id: "claude-sonnet-4",
+        id: "claude-sonnet-4-20250514",
         name: "Claude Sonnet 4",
         features: [images, pdf, reasoning],
+        provider: wrappedModel(anthropic),
+        tools: true,
       },
       {
-        id: "claude-opus-4",
+        id: "claude-opus-4-20250514",
         name: "Claude Opus 4",
         features: [images, pdf, reasoning],
+        provider: wrappedModel(anthropic),
+        tools: true,
       },
       {
-        id: "claude-3-7-sonnet",
+        id: "claude-3-7-sonnet-20250219",
         name: "Claude 3.7 Sonnet",
         features: [images, pdf, reasoning],
+        provider: wrappedModel(anthropic),
+        tools: true,
       },
       {
-        id: "claude-3-5-sonnet",
+        id: "claude-3-5-sonnet-20240620",
         name: "Claude 3.5 Sonnet",
         features: [images, pdf],
+        provider: wrappedModel(anthropic),
+        tools: true,
       },
       {
-        id: "claude-3-5-haiku",
+        id: "claude-3-5-haiku-20241022",
         name: "Claude 3.5 Haiku",
         features: [images, pdf],
+        provider: wrappedModel(anthropic),
+        tools: true,
       },
     ],
   },
@@ -154,24 +246,32 @@ const providers: Provider[] = [
     icon: "google",
     models: [
       {
-        id: "gemini-2.5-pro-preview",
+        id: "models/gemini-2.5-pro-preview-03-25",
         name: "Gemini 2.5 Pro",
         features: [images, pdf, reasoning],
+        provider: wrappedGoogle,
+        tools: true,
       },
       {
-        id: "gemini-2.5-flash-preview",
+        id: "gemini-2.5-flash-preview-04-17",
         name: "Gemini 2.5 Flash",
         features: [images, pdf, search],
+        provider: wrappedGoogle,
+        tools: true,
       },
       {
         id: "gemini-2.0-flash",
         name: "Gemini 2.0 Flash",
         features: [images, pdf, search],
+        provider: wrappedGoogle,
+        tools: true,
       },
       {
         id: "gemini-2.0-flash-lite",
         name: "Gemini 2.0 Flash Lite",
         features: [images, pdf],
+        provider: wrappedGoogle,
+        tools: true,
       },
     ],
   },
@@ -182,11 +282,15 @@ const providers: Provider[] = [
       {
         id: "grok-3-beta",
         name: "Grok 3",
+        provider: wrappedModel(xai),
+        tools: true,
       },
       {
         id: "grok-3-mini-beta",
         name: "Grok 3 mini",
         features: [reasoning],
+        provider: wrappedModel(xai),
+        tools: true,
       },
     ],
   },
@@ -195,18 +299,24 @@ const providers: Provider[] = [
     icon: "meta",
     models: [
       {
-        id: "llama-3.1-405b",
+        id: "accounts/fireworks/models/llama-v3p1-405b-instruct",
         name: "Llama 3.1 405B",
+        provider: wrappedModel(fireworks),
+        tools: true,
       },
       {
-        id: "llama-4-scout",
+        id: "accounts/fireworks/models/llama4-scout-instruct-basic",
         name: "Llama 4 Scout",
         features: [images],
+        provider: wrappedModel(fireworks),
+        tools: true,
       },
       {
-        id: "llama-4-maverick",
+        id: "accounts/fireworks/models/llama4-maverick-instruct-basic",
         name: "Llama 4 Maverick",
         features: [images],
+        provider: wrappedModel(fireworks),
+        tools: true,
       },
     ],
   },
@@ -215,13 +325,17 @@ const providers: Provider[] = [
     icon: "deepseek",
     models: [
       {
-        id: "deepseek-r1",
+        id: "accounts/fireworks/models/deepseek-r1",
         name: "DeepSeek R1",
         features: [reasoning],
+        provider: reasoningFireworks,
+        tools: false,
       },
       {
-        id: "deepseek-v3",
+        id: "accounts/fireworks/models/deepseek-v3",
         name: "DeepSeek V3",
+        provider: wrappedModel(fireworks),
+        tools: true,
       },
     ],
   },
@@ -233,11 +347,15 @@ const providers: Provider[] = [
         id: "sonar",
         name: "Sonar",
         features: [search],
+        provider: wrappedModel(perplexity),
+        tools: false,
       },
       {
         id: "sonar-pro",
         name: "Sonar Pro",
         features: [search],
+        provider: wrappedModel(perplexity),
+        tools: false,
       },
     ],
   },

@@ -1,4 +1,4 @@
-import type { Provider } from "@/types/provider";
+import type { PublicProvider } from "@/types/provider";
 import { Brain, CodeXml, FileText, Globe, Image } from "lucide-react";
 import dynamic from "next/dynamic";
 
@@ -28,7 +28,7 @@ export const providerIcons = {
   perplexity: LazyPerplexity,
 };
 
-export function getProviderIcon(providers: Provider[], modelId: string) {
+export function getProviderIcon(providers: PublicProvider[], modelId: string) {
   const provider = providers.find((p) => p.models.some((m) => m.id === modelId));
   return provider?.icon;
 }

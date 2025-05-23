@@ -1,13 +1,13 @@
 "use client";
 
 import { useModelStore } from "@/stores/model-store";
-import type { Provider } from "@/types/provider";
+import type { PublicProvider } from "@/types/provider";
 import { useEffect } from "react";
 
 export default function ModelStoreInitializer({
   providers,
 }: {
-  providers: Provider[];
+  providers: PublicProvider[];
 }) {
   const { setTemporaryChat, setAvailableModels } = useModelStore();
 

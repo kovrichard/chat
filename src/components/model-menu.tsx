@@ -7,7 +7,7 @@ import { getProviderIcon } from "@/lib/providers";
 import { useUpdateConversationModel } from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
 import { useModelStore } from "@/stores/model-store";
-import type { Feature, Provider } from "@/types/provider";
+import type { Feature, PublicModel, PublicProvider } from "@/types/provider";
 import { ChevronDown, MessageCircleDashed } from "lucide-react";
 import { useState } from "react";
 import React from "react";
@@ -34,7 +34,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Separator } from "./ui/separator";
 
-export function ModelMenu({ providers }: { providers: Provider[] }) {
+export function ModelMenu({ providers }: { providers: PublicProvider[] }) {
   const [open, setOpen] = useState(false);
   const { model } = useModelStore();
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -101,7 +101,7 @@ function StatusList({
   providers,
 }: {
   setOpen: (open: boolean) => void;
-  providers: Provider[];
+  providers: PublicProvider[];
 }) {
   const { id } = useChatContext();
 
@@ -136,7 +136,7 @@ function StatusList({
               </div>
             }
           >
-            {provider.models.map((model) => (
+            {provider.models.map((model: PublicModel) => (
               <CommandItem
                 key={model.name}
                 value={model.name}

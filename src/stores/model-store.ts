@@ -1,21 +1,21 @@
-import type { Model } from "@/types/provider";
+import type { PublicModel } from "@/types/provider";
 import { create } from "zustand";
 
 interface ModelStore {
-  model: Model;
+  model: PublicModel;
   setModel: (model: string) => void;
   temporaryChat: boolean;
   setTemporaryChat: (temporaryChat: boolean) => void;
-  availableModels: Model[];
-  setAvailableModels: (availableModels: Model[]) => void;
+  availableModels: PublicModel[];
+  setAvailableModels: (availableModels: PublicModel[]) => void;
 }
 
-function getModelById(models: Model[], modelId: string): Model {
+function getModelById(models: PublicModel[], modelId: string): PublicModel {
   return models.find((m) => m.id === modelId) || models[0];
 }
 
 export const useModelStore = create<ModelStore>((set) => ({
-  model: {} as Model,
+  model: {} as PublicModel,
   setModel: (modelId: string) =>
     set((state) => ({
       model: getModelById(state.availableModels, modelId),
@@ -23,9 +23,9 @@ export const useModelStore = create<ModelStore>((set) => ({
   temporaryChat: false,
   setTemporaryChat: (temporaryChat: boolean) => set({ temporaryChat }),
   availableModels: [],
-  setAvailableModels: (availableModels: Model[]) =>
+  setAvailableModels: (availableModels: PublicModel[]) =>
     set(() => ({
       availableModels,
-      model: getModelById(availableModels, "4o-mini"),
+      model: getModelById(availableModels, "gpt-4o-mini"),
     })),
 }));

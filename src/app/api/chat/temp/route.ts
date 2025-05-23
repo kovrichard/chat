@@ -1,5 +1,5 @@
-import { getModel } from "@/lib/backend/models";
 import systemPrompt from "@/lib/backend/prompts/system-prompt";
+import { getModel } from "@/lib/backend/providers";
 import { filterMessages } from "@/lib/backend/utils";
 import { decrementFreeMessages, getUserFromSession } from "@/lib/dao/users";
 import rateLimit from "@/lib/rate-limiter";
