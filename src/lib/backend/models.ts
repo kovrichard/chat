@@ -49,6 +49,11 @@ const allowedModels = {
   "o3-mini": { id: "o3-mini", provider: wrappedModel(azure), tools: true },
 
   // Anthropic
+  "claude-sonnet-4": {
+    id: "claude-sonnet-4-20250514",
+    provider: wrappedModel(anthropic),
+    tools: true,
+  },
   "claude-3-7-sonnet": {
     id: "claude-3-7-sonnet-20250219",
     provider: wrappedModel(anthropic),
