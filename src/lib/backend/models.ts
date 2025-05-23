@@ -54,6 +54,11 @@ const allowedModels = {
     provider: wrappedModel(anthropic),
     tools: true,
   },
+  "claude-opus-4": {
+    id: "claude-opus-4-20250514",
+    provider: wrappedModel(anthropic),
+    tools: true,
+  },
   "claude-3-7-sonnet": {
     id: "claude-3-7-sonnet-20250219",
     provider: wrappedModel(anthropic),

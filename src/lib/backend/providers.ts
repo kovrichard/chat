@@ -128,6 +128,11 @@ const providers: Provider[] = [
         features: [images, pdf],
       },
       {
+        id: "claude-opus-4",
+        name: "Claude Opus 4",
+        features: [images, pdf],
+      },
+      {
         id: "claude-3-7-sonnet",
         name: "Claude 3.7 Sonnet",
         features: [images, pdf],
