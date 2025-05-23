@@ -90,7 +90,6 @@ const allowedModels = {
     provider: wrappedModel(xai),
     tools: true,
   },
-  "grok-2-1212": { id: "grok-2-1212", provider: wrappedModel(xai), tools: false },
 
   // Fireworks
   "llama-3.1-405b": {

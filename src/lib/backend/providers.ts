@@ -178,10 +178,6 @@ const providers: Provider[] = [
         name: "Grok 3 mini",
         features: [reasoning],
       },
-      {
-        id: "grok-2-1212",
-        name: "Grok 2",
-      },
     ],
   },
   {
