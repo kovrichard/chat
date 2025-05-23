@@ -19,6 +19,7 @@ import {
 import { getMessages, saveMessage, uploadAttachments } from "@/lib/dao/messages";
 import { decrementFreeMessages, getUserFromSession } from "@/lib/dao/users";
 import rateLimit from "@/lib/rate-limiter";
+import type { AnthropicProviderOptions } from "@ai-sdk/anthropic";
 import {
   type Message,
   appendClientMessage,
@@ -113,6 +114,10 @@ export async function POST(req: NextRequest) {
   }
 
   const extendedSystemPrompt = `${systemPrompt}${memoryPrompt}${academicPrompt}`;
+  const anthropicThinking =
+    modelId === "claude-sonnet-4" ||
+    modelId === "claude-opus-4" ||
+    modelId === "claude-3-7-sonnet";
 
   const result = streamText({
     model,
@@ -124,6 +129,13 @@ export async function POST(req: NextRequest) {
       delayInMs: 10,
     }),
     tools,
+    providerOptions: {
+      anthropic: {
+        thinking: anthropicThinking
+          ? { type: "enabled", budgetTokens: 5000 }
+          : { type: "disabled" },
+      } satisfies AnthropicProviderOptions,
+    },
     onFinish: async ({ response }) => {
       try {
         const updatedMessages = appendResponseMessages({
