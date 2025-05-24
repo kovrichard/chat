@@ -10,6 +10,7 @@ const scaleImageToMaxSize = async (file: File, maxSizeKB = 4000): Promise<Blob> 
 
   // If the file is already small enough, return it as is
   if (file.size <= maxSize) {
+    console.debug("Image fits the size limit");
     return file;
   }
 
@@ -38,6 +39,7 @@ const scaleImageToMaxSize = async (file: File, maxSizeKB = 4000): Promise<Blob> 
   let scale = 0.9; // Start with 90% of original size since we know it's too big
 
   while (scale > 0.1) {
+    console.debug("Scaling image to", scale.toFixed(2));
     // Set canvas dimensions
     canvas.width = img.width * scale;
     canvas.height = img.height * scale;
@@ -57,6 +59,7 @@ const scaleImageToMaxSize = async (file: File, maxSizeKB = 4000): Promise<Blob> 
     });
 
     if (blob.size <= maxSize) {
+      console.debug(`New size is ${(blob.size / 1024).toFixed(2)}KB`);
       return blob; // Return the scaled image if it's under the size limit
     }
 
