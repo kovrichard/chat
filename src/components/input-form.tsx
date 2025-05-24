@@ -8,9 +8,10 @@ import {
   useCreateConversation,
   useCreateConversationOptimistic,
 } from "@/lib/queries/conversations";
-import { FileText, Paperclip, Send, Telescope, Trash } from "lucide-react";
+import { Camera, FileText, Paperclip, Send, Telescope, Trash } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import {
+  type ChangeEvent,
   type ClipboardEvent,
   type FormEvent,
   type KeyboardEvent,
@@ -34,6 +35,12 @@ import Image from "next/image";
 import { v4 as uuidv4 } from "uuid";
 import { ModelMenu } from "./model-menu";
 import { AspectRatio } from "./ui/aspect-ratio";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 import { Input } from "./ui/input";
 import { Toggle } from "./ui/toggle";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
@@ -95,6 +102,7 @@ const InputForm = forwardRef<
   } = useChatContext();
   const { files, setFiles } = useFileStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
   const imageSupport = model.features?.some((feature) => feature.name === "Images");
   const pdfSupport = model.features?.some((feature) => feature.name === "PDFs");
 
@@ -240,9 +248,46 @@ const InputForm = forwardRef<
     }
   }
 
+  function handleCameraClick() {
+    cameraInputRef.current?.click();
+  }
+
+  function handlePhotoCapture(event: ChangeEvent<HTMLInputElement>) {
+    if (event.target.files && event.target.files.length > 0) {
+      try {
+        // Ensure we have a valid file
+        const file = event.target.files[0];
+        if (!file.type.startsWith("image/")) {
+          console.error("Invalid file type from camera");
+          return;
+        }
+
+        // Create a new File object to ensure proper handling
+        const processedFile = new File(
+          [file],
+          `camera-${Date.now()}.${file.type.split("/")[1]}`,
+          {
+            type: file.type,
+          }
+        );
+
+        // Create a new FileList with the processed file
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(processedFile);
+
+        setFiles(dataTransfer.files);
+      } catch (error) {
+        console.error("Error processing camera input:", error);
+      }
+    }
+  }
+
   useEffect(() => {
     if (!files && fileInputRef.current) {
       fileInputRef.current.value = "";
+    }
+    if (files && cameraInputRef.current) {
+      cameraInputRef.current.value = "";
     }
   }, [files]);
 
@@ -325,6 +370,14 @@ const InputForm = forwardRef<
           className="flex min-h-10 max-h-80 w-full bg-transparent placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 text-sm resize-none"
         />
         <Input
+          ref={cameraInputRef}
+          type="file"
+          capture="environment"
+          accept="image/*"
+          className="hidden"
+          onChange={handlePhotoCapture}
+        />
+        <Input
           ref={fileInputRef}
           type="file"
           multiple
@@ -364,18 +417,37 @@ const InputForm = forwardRef<
           </div>
           <TooltipProvider>
             <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="ghost"
-                  className="shrink-0 size-9"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={!imageSupport && !pdfSupport}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="ghost"
+                      className="shrink-0 size-9"
+                      disabled={!imageSupport && !pdfSupport}
+                    >
+                      <Paperclip size={16} />
+                    </Button>
+                  </TooltipTrigger>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  onCloseAutoFocus={(e) => e.preventDefault()}
                 >
-                  <Paperclip size={16} />
-                </Button>
-              </TooltipTrigger>
+                  <DropdownMenuItem
+                    onClick={handleCameraClick}
+                    className="flex lg:hidden"
+                  >
+                    <Camera size={16} />
+                    <span>Take photo</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => fileInputRef.current?.click()}>
+                    <Paperclip size={16} />
+                    <span>Upload files</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <TooltipContent>
                 <p>Attach files</p>
               </TooltipContent>
