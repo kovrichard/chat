@@ -5,7 +5,7 @@ interface FileStore {
   setFiles: (files: FileList | undefined) => void;
 }
 
-const scaleImageToMaxSize = async (file: File, maxSizeKB = 4000): Promise<Blob> => {
+const scaleImageToMaxSize = async (file: File, maxSizeKB = 3000): Promise<Blob> => {
   const maxSize = maxSizeKB * 1024; // Convert KB to bytes
 
   // If the file is already small enough, return it as is
@@ -36,7 +36,7 @@ const scaleImageToMaxSize = async (file: File, maxSizeKB = 4000): Promise<Blob> 
         ? "image/webp"
         : "image/jpeg"; // Default to JPEG
 
-  let scale = 0.9; // Start with 90% of original size since we know it's too big
+  let scale = 0.8; // Start with 80% of original size since we know it's too big
 
   while (scale > 0.1) {
     console.debug("Scaling image to", scale.toFixed(2));
@@ -63,10 +63,10 @@ const scaleImageToMaxSize = async (file: File, maxSizeKB = 4000): Promise<Blob> 
       return blob; // Return the scaled image if it's under the size limit
     }
 
-    scale *= 0.9; // Scale down by 10%
+    scale *= 0.8; // Scale down by 20%
   }
 
-  throw new Error("Unable to reduce image size below 4000KB");
+  throw new Error("Unable to reduce image size below 3000KB");
 };
 
 export const useFileStore = create<FileStore>((set) => ({
