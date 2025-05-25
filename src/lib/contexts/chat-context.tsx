@@ -37,7 +37,8 @@ const ChatContext = createContext<ChatContextType | null>(null);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
   const params = useParams();
-  const conversationId = (params.id as string) || uuidv4();
+  const [stableId] = useState(() => uuidv4()); // Generate once and keep it stable
+  const conversationId = (params.id as string) || stableId;
   const conversationIdRef = useRef(conversationId);
   const queryClient = useQueryClient();
   const addMessage = useAddMessage();

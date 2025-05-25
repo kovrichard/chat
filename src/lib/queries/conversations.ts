@@ -115,6 +115,11 @@ export function useMessages(id: string, initialMessages?: any) {
 
       const response = await fetch(`/api/conversations/${id}/messages`);
       const data = await response.json();
+
+      if (data.messages.length === 0) {
+        return queryClient.getQueryData<any>(conversationKeys.messages(id));
+      }
+
       return processMessages(data.messages);
     },
     initialData: () => {

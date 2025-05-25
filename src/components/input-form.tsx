@@ -55,22 +55,6 @@ function fileToAttachment(file: File): Attachment {
   };
 }
 
-async function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onloadend = () => {
-      resolve(reader.result as string); // Cast to string
-    };
-
-    reader.onerror = (error) => {
-      reject(error);
-    };
-
-    reader.readAsDataURL(file); // Read the file as a data URL
-  });
-}
-
 const InputForm = forwardRef<
   HTMLTextAreaElement,
   {
@@ -96,7 +80,6 @@ const InputForm = forwardRef<
     stop,
     error,
     setInput: setChatInput,
-    emptySubmit,
     academic,
     setAcademic,
   } = useChatContext();
@@ -145,23 +128,7 @@ const InputForm = forwardRef<
         id: id,
         title: "New Chat",
         model: model.id,
-        messages: [
-          {
-            id: uuidv4(),
-            content: input,
-            role: "user",
-            parts: [{ type: "text", text: input }],
-            experimental_attachments: files
-              ? await Promise.all(
-                  Array.from(files).map(async (file: File) => ({
-                    name: file.name,
-                    contentType: file.type,
-                    url: await fileToBase64(file),
-                  }))
-                )
-              : [],
-          },
-        ],
+        messages: [],
         lastMessageAt: new Date(),
       };
 
@@ -173,26 +140,19 @@ const InputForm = forwardRef<
 
       const url = temporaryChat ? `/chat/${id}/temp` : `/chat/${id}`;
       router.push(url);
-
-      if (temporaryChat) {
-        setChatInput(input);
-      } else {
-        emptySubmit();
-      }
-      setInput("");
-    } else {
-      setChatInput(input);
-      await addMessage.mutateAsync({
-        message: {
-          id: uuidv4(),
-          content: input,
-          role: "user",
-          experimental_attachments: files ? Array.from(files).map(fileToAttachment) : [],
-        },
-        conversationId: id,
-      });
-      setInput("");
     }
+
+    setChatInput(input);
+    await addMessage.mutateAsync({
+      message: {
+        id: uuidv4(),
+        content: input,
+        role: "user",
+        experimental_attachments: files ? Array.from(files).map(fileToAttachment) : [],
+      },
+      conversationId: id,
+    });
+    setInput("");
   }
 
   function handlePaste(e: ClipboardEvent<HTMLTextAreaElement>) {
