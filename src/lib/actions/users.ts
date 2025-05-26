@@ -161,7 +161,7 @@ export async function updateUserMemoryEnabled(memoryEnabled: boolean) {
     },
   });
 
-  return `Memory ${memoryEnabled ? "enabled" : "disabled"}`;
+  return memoryEnabled;
 }
 
 export async function updateUserMemory(_prevState: any, formData: FormData) {

@@ -30,9 +30,14 @@ export default function MemoryForm({
       return;
     }
 
-    updateUserMemoryEnabled(enabled).then((message: string) => {
-      toast(message, {
-        description: "Your memory settings have been updated.",
+    updateUserMemoryEnabled(enabled).then((enabled: boolean) => {
+      const title = enabled ? "Memory enabled" : "Memory disabled";
+      const description = enabled
+        ? "Models will now store information about you."
+        : "Models will no longer store information about you.";
+
+      toast(title, {
+        description,
       });
     });
   }, [enabled]);
