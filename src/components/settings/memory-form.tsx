@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { updateUserMemoryEnabled } from "@/lib/actions/users";
-import { useEffect, useRef, useState } from "react";
+import useToast from "@/hooks/use-toast";
+import { updateUserMemory, updateUserMemoryEnabled } from "@/lib/actions/users";
+import { initialState } from "@/lib/utils";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export default function MemoryForm({
@@ -15,9 +17,12 @@ export default function MemoryForm({
   memory?: string;
   memoryEnabled: boolean;
 }) {
+  const [state, formAction, isPending] = useActionState(updateUserMemory, initialState);
   const [content, setContent] = useState(memory ?? "");
   const [enabled, setEnabled] = useState(memoryEnabled);
   const isFirstRender = useRef(true);
+
+  useToast(state);
 
   useEffect(() => {
     if (isFirstRender.current) {
@@ -45,19 +50,24 @@ export default function MemoryForm({
           to improve the quality of its responses.
         </p>
         <p className="text-sm text-muted-foreground">
-          {enabled ? "You can edit the memory here manually." : "Enable memory to edit."}
+          {enabled
+            ? "You can edit the memory here manually. Press Save when you're done."
+            : "Enable memory to edit."}
         </p>
       </div>
-      <Textarea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        disabled={!enabled}
-        rows={8}
-        className="resize-none"
-      />
-      <Button className="px-5" disabled={!enabled}>
-        Save
-      </Button>
+      <form action={formAction} className="flex flex-col gap-4 w-full items-start">
+        <Textarea
+          name="memory"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          disabled={!enabled}
+          rows={8}
+          className="resize-none"
+        />
+        <Button type="submit" className="px-5" disabled={!enabled || isPending}>
+          Save
+        </Button>
+      </form>
     </div>
   );
 }

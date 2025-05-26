@@ -163,3 +163,21 @@ export async function updateUserMemoryEnabled(memoryEnabled: boolean) {
 
   return `Memory ${memoryEnabled ? "enabled" : "disabled"}`;
 }
+
+export async function updateUserMemory(_prevState: any, formData: FormData) {
+  const userId = await getUserIdFromSession();
+
+  const memory = formData.get("memory") as string;
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      memory,
+    },
+  });
+
+  return {
+    message: "Memory updated",
+    description: "Your memory has been updated.",
+  };
+}
