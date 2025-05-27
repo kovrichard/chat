@@ -31,6 +31,9 @@ COPY --from=install /temp/dev/node_modules ./node_modules
 COPY --from=install /temp/dev/src/lib/prisma/client ./src/lib/prisma/client
 COPY . .
 
+ARG AUTHORITY="localhost:3000"
+ENV AUTHORITY=${AUTHORITY}
+
 RUN bun run build
 
 FROM base AS release
