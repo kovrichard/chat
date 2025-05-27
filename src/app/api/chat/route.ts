@@ -3,7 +3,7 @@ import { awsConfigured } from "@/lib/aws/s3";
 import { getMemoryPrompt } from "@/lib/backend/prompts/memory-prompt";
 import systemPrompt from "@/lib/backend/prompts/system-prompt";
 import { getModel } from "@/lib/backend/providers";
-import { exaConfigured } from "@/lib/backend/tools";
+import { academicSearchConfigured } from "@/lib/backend/tools/academic-search";
 import {
   buildAcademicPrompt,
   retrieveSources,
@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
   const filteredMessages = filterMessages(messages, modelId);
   let academicPrompt = "";
 
-  if (academic && exaConfigured) {
+  if (academic && academicSearchConfigured) {
     const academicSources = await retrieveSources(filteredMessages);
     academicPrompt = buildAcademicPrompt(academicSources);
 

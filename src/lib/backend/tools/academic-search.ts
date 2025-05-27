@@ -1,7 +1,10 @@
-import { azure } from "@ai-sdk/azure";
+import { openai } from "@ai-sdk/openai";
 import { type Message, generateText, tool } from "ai";
 import { z } from "zod";
-import { exa } from ".";
+import { exa, exaConfigured } from ".";
+
+const openaiConfigured = process.env.OPENAI_API_KEY !== undefined;
+export const academicSearchConfigured = exaConfigured && openaiConfigured;
 
 async function academicSearch(query: string) {
   if (!exa) {
@@ -34,7 +37,7 @@ const academicSearchTool = tool({
 
 export async function retrieveSources(messages: Message[]) {
   const response = await generateText({
-    model: azure("gpt-4o-mini"),
+    model: openai("gpt-4o-mini"),
     messages,
     maxSteps: 1,
     tools: {

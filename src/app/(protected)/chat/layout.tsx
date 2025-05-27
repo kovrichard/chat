@@ -2,7 +2,7 @@ import { ChangeDetector } from "@/components/chat/change-detector";
 import ModelStoreInitializer from "@/components/chat/model-store-initializer";
 import InputForm from "@/components/input-form";
 import { getProvidersPublic } from "@/lib/backend/providers";
-import { exaConfigured } from "@/lib/backend/tools";
+import { academicSearchConfigured } from "@/lib/backend/tools/academic-search";
 import { ChatProvider } from "@/lib/contexts/chat-context";
 import { getUserFromSessionPublic } from "@/lib/dao/users";
 import type { ReactNode } from "react";
@@ -28,7 +28,7 @@ export default async function ChatLayout({
             freeMessages={user?.freeMessages || 10}
             authorized={Boolean(user)}
             providers={providers}
-            exaConfigured={exaConfigured}
+            academicSearchConfigured={academicSearchConfigured}
           />
         </div>
       </div>
