@@ -38,7 +38,7 @@ jobs:
       matrix:
         include:
           - tag: latest
-            authority: ""
+            authority: "localhost:3000"
           - tag: hosted
             authority: "www.fyzz.chat"
 
