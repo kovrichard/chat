@@ -14,12 +14,6 @@ jobs:
     permissions: write-all
     runs-on: ubuntu-latest
 
-    env:
-      # Public
-
-      ## General
-      AUTHORITY: https://chat2.richardkovacs.dev
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -54,8 +48,6 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          build-args:
-            AUTHORITY=${{ env.AUTHORITY }}
 
       - name: Deploy to Coolify
         run: | 
