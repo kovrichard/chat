@@ -10,10 +10,8 @@ env:
   IMAGE_NAME: "kovrichard/chat"
 
 jobs:
-  build:
-    permissions: write-all
+  test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -31,6 +29,22 @@ jobs:
         run: bun run db-push
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+  build:
+    needs: test
+    permissions: write-all
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - tag: latest
+            authority: ""
+          - tag: hosted
+            authority: "www.fyzz.chat"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       
       - name: Login to ghcr.io
         uses: docker/login-action@v3
@@ -39,7 +53,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Build open-source image and push to registry
+      - name: Build and push ${{ matrix.tag }} image
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -47,20 +61,14 @@ jobs:
           file: Dockerfile
           platforms: linux/amd64
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-      
-      - name: Build hosted image and push to registry
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          target: release
-          file: Dockerfile
-          platforms: linux/amd64
-          push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:hosted
-          build-args:
-            AUTHORITY=www.fyzz.chat
-          
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.tag }}
+          build-args: |
+            AUTHORITY=${{ matrix.authority }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to Coolify
         run: | 
           curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
