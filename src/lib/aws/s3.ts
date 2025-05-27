@@ -6,12 +6,12 @@ import { ensure } from "../utils";
 let client: S3Client | null = null;
 
 export const awsConfigured =
-  process.env.AWS_ACCESS_KEY_ID &&
-  process.env.AWS_SECRET_ACCESS_KEY &&
-  conf.awsRegion &&
-  conf.awsUploadsBucket &&
-  conf.awsCloudfrontKeyPairId &&
-  conf.awsCloudfrontPrivateKey;
+  process.env.AWS_ACCESS_KEY_ID !== undefined &&
+  process.env.AWS_SECRET_ACCESS_KEY !== undefined &&
+  conf.awsRegion !== "" &&
+  conf.awsUploadsBucket !== "" &&
+  conf.awsCloudfrontKeyPairId !== "" &&
+  conf.awsCloudfrontPrivateKey !== "";
 
 if (awsConfigured) {
   client = new S3Client({
