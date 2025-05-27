@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/sidebar";
 import { getConversations } from "@/lib/dao/conversations";
 import { getUserFromSessionPublic } from "@/lib/dao/users";
+import { stripeConfigured } from "@/lib/stripe";
 import { SwipeDetector } from "./swipe-detector";
 
 export async function AppSidebar() {
@@ -61,6 +62,7 @@ export async function AppSidebar() {
                   <ProfileMenu
                     authorized={Boolean(user)}
                     hasCustomerId={Boolean(user?.customerId)}
+                    stripeConfigured={stripeConfigured}
                   />
                 </DropdownMenuContent>
               </DropdownMenu>

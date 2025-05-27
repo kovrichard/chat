@@ -5,6 +5,7 @@ import { getProvidersPublic } from "@/lib/backend/providers";
 import { academicSearchConfigured } from "@/lib/backend/tools/academic-search";
 import { ChatProvider } from "@/lib/contexts/chat-context";
 import { getUserFromSessionPublic } from "@/lib/dao/users";
+import { stripeConfigured } from "@/lib/stripe";
 import type { ReactNode } from "react";
 
 export default async function ChatLayout({
@@ -29,6 +30,7 @@ export default async function ChatLayout({
             authorized={Boolean(user)}
             providers={providers}
             academicSearchConfigured={academicSearchConfigured}
+            stripeConfigured={stripeConfigured}
           />
         </div>
       </div>

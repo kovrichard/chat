@@ -19,6 +19,7 @@ import {
 import { getMessages, saveMessage, uploadAttachments } from "@/lib/dao/messages";
 import { decrementFreeMessages, getUserFromSession } from "@/lib/dao/users";
 import rateLimit from "@/lib/rate-limiter";
+import { stripeConfigured } from "@/lib/stripe";
 import type { AnthropicProviderOptions } from "@ai-sdk/anthropic";
 import {
   type Message,
@@ -98,7 +99,7 @@ export async function POST(req: NextRequest) {
     const academicSources = await retrieveSources(filteredMessages);
     academicPrompt = buildAcademicPrompt(academicSources);
 
-    await decrementFreeMessages(user.id);
+    stripeConfigured && (await decrementFreeMessages(user.id));
   }
 
   const tools: any = {};
@@ -157,7 +158,7 @@ export async function POST(req: NextRequest) {
         });
 
         await saveMessage(lastMessage, id);
-        await decrementFreeMessages(user.id);
+        stripeConfigured && (await decrementFreeMessages(user.id));
       } finally {
         await unlockConversation(id);
       }

@@ -15,15 +15,17 @@ import { SignOut } from "./signout-button";
 export default function ProfileMenu({
   authorized,
   hasCustomerId,
+  stripeConfigured,
 }: {
   authorized: boolean;
   hasCustomerId: boolean;
+  stripeConfigured: boolean;
 }) {
   const { isMobile, setOpenMobile } = useSidebar();
   const { data: billingPortalUrl } = useQuery({
     queryKey: ["billing-portal-url"],
     queryFn: async () => {
-      if (!hasCustomerId) {
+      if (!stripeConfigured || !hasCustomerId) {
         return null;
       }
 
@@ -35,7 +37,7 @@ export default function ProfileMenu({
   const { data: subscription } = useQuery({
     queryKey: ["subscription"],
     queryFn: async () => {
-      if (!authorized) {
+      if (!stripeConfigured || !authorized) {
         return null;
       }
 
@@ -54,11 +56,13 @@ export default function ProfileMenu({
     <>
       <DropdownMenuLabel>My Account</DropdownMenuLabel>
       <DropdownMenuSeparator />
-      <div className="flex items-center gap-2 h-9 px-2 py-1.5 text-muted-foreground text-sm">
-        <MessageSquare className="shrink-0" size={16} />
-        <span>Messages left: {subscription?.freeMessages || 10}</span>
-      </div>
-      {hasCustomerId && (
+      {stripeConfigured && subscription && (
+        <div className="flex items-center gap-2 h-9 px-2 py-1.5 text-muted-foreground text-sm">
+          <MessageSquare className="shrink-0" size={16} />
+          <span>Messages left: {subscription.freeMessages}</span>
+        </div>
+      )}
+      {stripeConfigured && hasCustomerId && (
         <>
           <DropdownMenuSeparator />
           <DropdownMenuItem className="p-0 h-10 cursor-pointer" asChild>

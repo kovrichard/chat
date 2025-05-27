@@ -9,8 +9,11 @@ import { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
-import conf from "./lib/config";
-import { createStripeCustomer, createStripeTrialSubscription } from "./lib/stripe";
+import {
+  createStripeCustomer,
+  createStripeTrialSubscription,
+  stripeConfigured,
+} from "./lib/stripe";
 
 export class InvalidLoginError extends CredentialsSignin {
   code = "invalid_credentials";
@@ -110,11 +113,6 @@ async function createNewUser(
     password: password,
     picture: picture,
   });
-
-  const stripeConfigured =
-    conf.stripeSecretKey &&
-    conf.stripeWebhookSecret &&
-    conf.stripeTrialSubscriptionPriceId;
 
   if (stripeConfigured) {
     const customer = await createStripeCustomer(user);

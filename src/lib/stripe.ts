@@ -4,9 +4,14 @@ import Stripe from "stripe";
 import { getUserIdFromSession } from "./dao/users";
 import { ensure } from "./utils";
 
+export const stripeConfigured =
+  conf.stripeSecretKey !== "" &&
+  conf.stripeWebhookSecret !== "" &&
+  conf.stripeTrialSubscriptionPriceId !== "";
+
 export let stripe: Stripe | null = null;
 
-if (conf.stripeSecretKey || conf.stripeWebhookSecret) {
+if (stripeConfigured) {
   stripe = new Stripe(conf.stripeSecretKey, {
     apiVersion: "2024-09-30.acacia",
   });
