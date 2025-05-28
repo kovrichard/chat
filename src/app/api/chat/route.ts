@@ -29,6 +29,7 @@ import {
   streamText,
 } from "ai";
 import type { NextRequest } from "next/server";
+import { v4 as uuidv4 } from "uuid";
 
 const limiter = rateLimit(50, 60);
 
@@ -130,6 +131,7 @@ export async function POST(req: NextRequest) {
       delayInMs: 10,
     }),
     tools,
+    experimental_generateMessageId: () => uuidv4(),
     providerOptions: {
       anthropic: {
         thinking: anthropicThinking

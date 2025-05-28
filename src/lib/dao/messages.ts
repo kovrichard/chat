@@ -69,7 +69,6 @@ export async function saveMessage(message: Message | UIMessage, conversationId: 
   const newMessage = await prisma.message.create({
     data: {
       ...message,
-      id: uuidv4(),
       parts: JSON.stringify(message.parts),
       toolInvocations: JSON.stringify(message.toolInvocations),
       conversationId,
