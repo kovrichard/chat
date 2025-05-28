@@ -26,6 +26,6 @@ export const useModelStore = create<ModelStore>((set) => ({
   setAvailableModels: (availableModels: PublicModel[]) =>
     set(() => ({
       availableModels,
-      model: getModelById(availableModels, "gpt-4o-mini"),
+      model: availableModels[0],
     })),
 }));
