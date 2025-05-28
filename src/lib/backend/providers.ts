@@ -164,10 +164,10 @@ const providers: Provider[] = [
     icon: "openai",
     models: [
       {
-        id: "o4-mini",
-        name: "o4-mini",
-        features: [images, reasoning],
-        provider: wrappedModel(azure41),
+        id: "gpt-4o-mini",
+        name: "GPT-4o mini",
+        features: [images],
+        provider: wrappedModel(azure),
         tools: true,
       },
       {
@@ -185,17 +185,17 @@ const providers: Provider[] = [
         tools: true,
       },
       {
-        id: "gpt-4o-mini",
-        name: "GPT-4o mini",
-        features: [images],
-        provider: wrappedModel(azure),
-        tools: true,
-      },
-      {
         id: "o3-mini",
         name: "o3-mini",
         features: [reasoning],
         provider: wrappedModel(azure),
+        tools: true,
+      },
+      {
+        id: "o4-mini",
+        name: "o4-mini",
+        features: [images, reasoning],
+        provider: wrappedModel(azure41),
         tools: true,
       },
     ],
@@ -204,27 +204,6 @@ const providers: Provider[] = [
     name: "Anthropic",
     icon: "anthropic",
     models: [
-      {
-        id: "claude-sonnet-4-20250514",
-        name: "Claude Sonnet 4",
-        features: [images, pdf, reasoning],
-        provider: wrappedModel(anthropic),
-        tools: true,
-      },
-      {
-        id: "claude-opus-4-20250514",
-        name: "Claude Opus 4",
-        features: [images, pdf, reasoning],
-        provider: wrappedModel(anthropic),
-        tools: true,
-      },
-      {
-        id: "claude-3-7-sonnet-20250219",
-        name: "Claude 3.7 Sonnet",
-        features: [images, pdf, reasoning],
-        provider: wrappedModel(anthropic),
-        tools: true,
-      },
       {
         id: "claude-3-5-sonnet-20240620",
         name: "Claude 3.5 Sonnet",
@@ -239,6 +218,27 @@ const providers: Provider[] = [
         provider: wrappedModel(anthropic),
         tools: true,
       },
+      {
+        id: "claude-3-7-sonnet-20250219",
+        name: "Claude 3.7 Sonnet",
+        features: [images, pdf, reasoning],
+        provider: wrappedModel(anthropic),
+        tools: true,
+      },
+      {
+        id: "claude-sonnet-4-20250514",
+        name: "Claude Sonnet 4",
+        features: [images, pdf, reasoning],
+        provider: wrappedModel(anthropic),
+        tools: true,
+      },
+      {
+        id: "claude-opus-4-20250514",
+        name: "Claude Opus 4",
+        features: [images, pdf, reasoning],
+        provider: wrappedModel(anthropic),
+        tools: true,
+      },
     ],
   },
   {
@@ -246,16 +246,9 @@ const providers: Provider[] = [
     icon: "google",
     models: [
       {
-        id: "models/gemini-2.5-pro-preview-03-25",
-        name: "Gemini 2.5 Pro",
-        features: [images, pdf, reasoning],
-        provider: wrappedGoogle,
-        tools: true,
-      },
-      {
-        id: "gemini-2.5-flash-preview-04-17",
-        name: "Gemini 2.5 Flash",
-        features: [images, pdf, search],
+        id: "gemini-2.0-flash-lite",
+        name: "Gemini 2.0 Flash Lite",
+        features: [images, pdf],
         provider: wrappedGoogle,
         tools: true,
       },
@@ -267,9 +260,16 @@ const providers: Provider[] = [
         tools: true,
       },
       {
-        id: "gemini-2.0-flash-lite",
-        name: "Gemini 2.0 Flash Lite",
-        features: [images, pdf],
+        id: "gemini-2.5-flash-preview-04-17",
+        name: "Gemini 2.5 Flash",
+        features: [images, pdf, search],
+        provider: wrappedGoogle,
+        tools: true,
+      },
+      {
+        id: "models/gemini-2.5-pro-preview-03-25",
+        name: "Gemini 2.5 Pro",
+        features: [images, pdf, reasoning],
         provider: wrappedGoogle,
         tools: true,
       },
@@ -280,15 +280,15 @@ const providers: Provider[] = [
     icon: "xai",
     models: [
       {
-        id: "grok-3-beta",
-        name: "Grok 3",
+        id: "grok-3-mini-beta",
+        name: "Grok 3 mini",
+        features: [reasoning],
         provider: wrappedModel(xai),
         tools: true,
       },
       {
-        id: "grok-3-mini-beta",
-        name: "Grok 3 mini",
-        features: [reasoning],
+        id: "grok-3-beta",
+        name: "Grok 3",
         provider: wrappedModel(xai),
         tools: true,
       },
@@ -298,12 +298,6 @@ const providers: Provider[] = [
     name: "Meta",
     icon: "meta",
     models: [
-      {
-        id: "accounts/fireworks/models/llama-v3p1-405b-instruct",
-        name: "Llama 3.1 405B",
-        provider: wrappedModel(fireworks),
-        tools: true,
-      },
       {
         id: "accounts/fireworks/models/llama4-scout-instruct-basic",
         name: "Llama 4 Scout",
@@ -318,6 +312,12 @@ const providers: Provider[] = [
         provider: wrappedModel(fireworks),
         tools: true,
       },
+      {
+        id: "accounts/fireworks/models/llama-v3p1-405b-instruct",
+        name: "Llama 3.1 405B",
+        provider: wrappedModel(fireworks),
+        tools: true,
+      },
     ],
   },
   {
@@ -325,17 +325,17 @@ const providers: Provider[] = [
     icon: "deepseek",
     models: [
       {
+        id: "accounts/fireworks/models/deepseek-v3",
+        name: "DeepSeek V3",
+        provider: wrappedModel(fireworks),
+        tools: true,
+      },
+      {
         id: "accounts/fireworks/models/deepseek-r1",
         name: "DeepSeek R1",
         features: [reasoning],
         provider: reasoningFireworks,
         tools: false,
-      },
-      {
-        id: "accounts/fireworks/models/deepseek-v3",
-        name: "DeepSeek V3",
-        provider: wrappedModel(fireworks),
-        tools: true,
       },
     ],
   },
