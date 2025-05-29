@@ -88,7 +88,6 @@ const InputForm = forwardRef<
     const { input, setInput } = useInputStore();
     const { model, temporaryChat } = useModelStore();
     const {
-      id,
       stableId,
       status,
       stop,
@@ -164,7 +163,7 @@ const InputForm = forwardRef<
           role: "user",
           experimental_attachments: files ? Array.from(files).map(fileToAttachment) : [],
         },
-        conversationId: id,
+        conversationId: stableId,
       });
       setInput("");
     }

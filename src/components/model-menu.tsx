@@ -103,7 +103,7 @@ function StatusList({
   setOpen: (open: boolean) => void;
   providers: PublicProvider[];
 }) {
-  const { id } = useChatContext();
+  const { stableId } = useChatContext();
 
   const { model, setModel } = useModelStore();
   const updateModel = useUpdateConversationModel();
@@ -111,8 +111,8 @@ function StatusList({
   const handleModelChange = (value: string) => {
     setModel(value);
 
-    if (id) {
-      updateModel.mutateAsync({ conversationId: id, model: value });
+    if (stableId) {
+      updateModel.mutateAsync({ conversationId: stableId, model: value });
     }
   };
 

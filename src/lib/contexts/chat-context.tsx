@@ -20,7 +20,6 @@ import { conversationKeys, useAddMessage } from "../queries/conversations";
 type ChatStatus = "submitted" | "streaming" | "ready" | "error";
 
 interface ChatContextType {
-  id: string;
   stableId: string;
   setStableId: (stableId: string) => void;
   messages: Message[];
@@ -40,8 +39,6 @@ const ChatContext = createContext<ChatContextType | null>(null);
 export function ChatProvider({ children }: { children: ReactNode }) {
   const params = useParams();
   const [stableId, setStableId] = useState("");
-  const conversationId = (params.id as string) || stableId;
-  const conversationIdRef = useRef(conversationId);
   const queryClient = useQueryClient();
   const addMessage = useAddMessage();
   const { model, temporaryChat } = useModelStore();
@@ -51,12 +48,16 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [academic, setAcademic] = useState(false);
 
   useEffect(() => {
-    conversationIdRef.current = conversationId;
-  }, [conversationId]);
+    if (params.id) {
+      setStableId(params.id as string);
+    } else {
+      setStableId(uuidv4());
+    }
+  }, [params.id]);
 
-  const { id, messages, status, input, setInput, handleSubmit, error, stop } = useChat({
+  const { messages, status, input, setInput, handleSubmit, error, stop } = useChat({
     api: temporaryChat ? "/api/chat/temp" : "/api/chat",
-    id: conversationIdRef.current,
+    id: stableId,
     experimental_prepareRequestBody: ({ messages, id }) => {
       return {
         message: messages[messages.length - 1],
@@ -74,14 +75,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
       await addMessage.mutateAsync({
         message,
-        conversationId: conversationIdRef.current,
+        conversationId: stableId,
       });
       const conversation = queryClient.getQueryData<{
         id: string;
         model: string;
         title: string;
         messages: Message[];
-      }>(conversationKeys.details(conversationIdRef.current));
+      }>(conversationKeys.details(stableId));
 
       if (conversation?.title === "New Chat") {
         queryClient.invalidateQueries({
@@ -92,7 +93,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    if (status === "ready" && input && conversationIdRef.current && !sentRef.current) {
+    if (status === "ready" && input && stableId && !sentRef.current) {
       sentRef.current = true;
       handleSubmit(new Event("submit"), {
         experimental_attachments: files,
@@ -103,7 +104,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     if (!input) {
       sentRef.current = false;
     }
-  }, [status, input, handleSubmit, conversationIdRef.current]);
+  }, [status, input, handleSubmit, stableId]);
 
   function emptySubmit() {
     handleSubmit(new Event("submit"), {
@@ -115,7 +116,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   return (
     <ChatContext.Provider
       value={{
-        id,
         stableId,
         setStableId,
         messages,
