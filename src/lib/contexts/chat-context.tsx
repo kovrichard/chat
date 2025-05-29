@@ -21,6 +21,8 @@ type ChatStatus = "submitted" | "streaming" | "ready" | "error";
 
 interface ChatContextType {
   id: string;
+  stableId: string;
+  setStableId: (stableId: string) => void;
   messages: Message[];
   setInput: (input: string) => void;
   status: ChatStatus;
@@ -37,7 +39,7 @@ const ChatContext = createContext<ChatContextType | null>(null);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
   const params = useParams();
-  const [stableId] = useState(() => uuidv4()); // Generate once and keep it stable
+  const [stableId, setStableId] = useState("");
   const conversationId = (params.id as string) || stableId;
   const conversationIdRef = useRef(conversationId);
   const queryClient = useQueryClient();
@@ -114,6 +116,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     <ChatContext.Provider
       value={{
         id,
+        stableId,
+        setStableId,
         messages,
         setInput,
         status,

@@ -89,6 +89,7 @@ const InputForm = forwardRef<
     const { model, temporaryChat } = useModelStore();
     const {
       id,
+      stableId,
       status,
       stop,
       error,
@@ -138,7 +139,7 @@ const InputForm = forwardRef<
 
       if (pathname === "/chat") {
         const optimisticConversation: PartialConversation = {
-          id: id,
+          id: stableId,
           title: "New Chat",
           model: model.id,
           messages: [],
@@ -151,7 +152,7 @@ const InputForm = forwardRef<
           await createConversation.mutateAsync(optimisticConversation);
         }
 
-        const url = temporaryChat ? `/chat/${id}/temp` : `/chat/${id}`;
+        const url = temporaryChat ? `/chat/${stableId}/temp` : `/chat/${stableId}`;
         router.push(url);
       }
 
