@@ -84,8 +84,7 @@ export async function POST(req: NextRequest) {
   let messages = existingMessages;
 
   if (message.content) {
-    const [newMessage] = await appendMessageToConversation(textMessage, id);
-    existingMessages = [...existingMessages, newMessage];
+    await appendMessageToConversation(textMessage, id);
 
     messages = appendClientMessage({
       messages: existingMessages,
