@@ -55,6 +55,7 @@ export async function getConversations(
         id: true,
         title: true,
         lastMessageAt: true,
+        model: true,
         messages: {
           select: {
             id: true,
