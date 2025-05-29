@@ -29,7 +29,7 @@ import type { PartialConversation } from "@/types/chat";
 import type { PublicProvider } from "@/types/provider";
 import { MessageSquare, Trash2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { createElement } from "react";
+import { createElement, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
 function groupConversationsByTime(conversations: PartialConversation[]) {
@@ -173,7 +173,12 @@ function ConversationLink({
   const router = useRouter();
   const { isMobile, setOpenMobile } = useSidebar();
   const { providers } = useModelStore();
-  const providerIcon = getProviderIcon(providers, chat.model);
+  const [providerIcon, setProviderIcon] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    const icon = getProviderIcon(providers, chat.model);
+    setProviderIcon(icon);
+  }, [providers, chat.model]);
 
   return (
     <div className="group/chat relative">
