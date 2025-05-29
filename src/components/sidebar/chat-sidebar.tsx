@@ -20,12 +20,15 @@ import {
   SidebarGroupLabel,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { getProviderIcon, providerIcons } from "@/lib/providers";
 import { useConversations, useDeleteConversation } from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
 import { useSearchStore } from "@/stores/search-store";
 import type { PartialConversation } from "@/types/chat";
+import type { PublicProvider } from "@/types/provider";
 import { MessageSquare, Trash2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
+import { createElement } from "react";
 import { useInView } from "react-intersection-observer";
 
 function groupConversationsByTime(conversations: PartialConversation[]) {
@@ -65,9 +68,11 @@ function groupConversationsByTime(conversations: PartialConversation[]) {
 export default function ChatSidebar({
   conversations,
   authorized,
+  providers,
 }: {
   conversations: any;
   authorized: boolean;
+  providers: PublicProvider[];
 }) {
   const { id } = useParams();
   const { searchQuery } = useSearchStore();
@@ -96,7 +101,12 @@ export default function ChatSidebar({
           <SidebarGroupLabel className="text-primary/70">Today</SidebarGroupLabel>
           <SidebarGroupContent className="space-y-1">
             {groupedConversations.today.map((chat: PartialConversation) => (
-              <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
+              <ConversationLink
+                key={chat.id}
+                chat={chat}
+                currentId={id as string}
+                providers={providers}
+              />
             ))}
           </SidebarGroupContent>
         </SidebarGroup>
@@ -106,7 +116,12 @@ export default function ChatSidebar({
           <SidebarGroupLabel className="text-primary/70">Yesterday</SidebarGroupLabel>
           <SidebarGroupContent className="space-y-1">
             {groupedConversations.yesterday.map((chat: PartialConversation) => (
-              <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
+              <ConversationLink
+                key={chat.id}
+                chat={chat}
+                currentId={id as string}
+                providers={providers}
+              />
             ))}
           </SidebarGroupContent>
         </SidebarGroup>
@@ -118,7 +133,12 @@ export default function ChatSidebar({
           </SidebarGroupLabel>
           <SidebarGroupContent className="space-y-1">
             {groupedConversations.lastWeek.map((chat: PartialConversation) => (
-              <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
+              <ConversationLink
+                key={chat.id}
+                chat={chat}
+                currentId={id as string}
+                providers={providers}
+              />
             ))}
           </SidebarGroupContent>
         </SidebarGroup>
@@ -128,7 +148,12 @@ export default function ChatSidebar({
           <SidebarGroupLabel className="text-primary/70">Older</SidebarGroupLabel>
           <SidebarGroupContent className="space-y-1">
             {groupedConversations.older.map((chat: PartialConversation) => (
-              <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
+              <ConversationLink
+                key={chat.id}
+                chat={chat}
+                currentId={id as string}
+                providers={providers}
+              />
             ))}
           </SidebarGroupContent>
         </SidebarGroup>
@@ -161,13 +186,16 @@ export default function ChatSidebar({
 function ConversationLink({
   chat,
   currentId,
+  providers,
 }: {
   chat: PartialConversation;
   currentId: string;
+  providers: PublicProvider[];
 }) {
   const deleteConversation = useDeleteConversation();
   const router = useRouter();
   const { isMobile, setOpenMobile } = useSidebar();
+  const providerIcon = getProviderIcon(providers, chat.model);
 
   return (
     <div className="group/chat relative">
@@ -181,7 +209,13 @@ function ConversationLink({
         onClick={() => isMobile && setOpenMobile(false)}
       >
         <div className="flex w-full items-center gap-2">
-          <MessageSquare size={16} className="shrink-0" />
+          {providerIcon ? (
+            createElement(providerIcons[providerIcon as keyof typeof providerIcons], {
+              size: 16,
+            })
+          ) : (
+            <MessageSquare size={16} />
+          )}
           <AnimatedTitle text={chat.title} />
           <div className="hidden group-hover/chat:inline-flex size-5" />
         </div>
