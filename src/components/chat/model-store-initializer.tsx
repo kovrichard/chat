@@ -9,10 +9,11 @@ export default function ModelStoreInitializer({
 }: {
   providers: PublicProvider[];
 }) {
-  const { setTemporaryChat, setAvailableModels } = useModelStore();
+  const { setTemporaryChat, setAvailableModels, setProviders } = useModelStore();
 
   useEffect(() => {
     setAvailableModels(providers.flatMap((provider) => provider.models));
+    setProviders(providers);
     setTemporaryChat(false);
   }, []);
 

@@ -1,4 +1,4 @@
-import type { PublicModel } from "@/types/provider";
+import type { PublicModel, PublicProvider } from "@/types/provider";
 import { create } from "zustand";
 
 interface ModelStore {
@@ -8,6 +8,8 @@ interface ModelStore {
   setTemporaryChat: (temporaryChat: boolean) => void;
   availableModels: PublicModel[];
   setAvailableModels: (availableModels: PublicModel[]) => void;
+  providers: PublicProvider[];
+  setProviders: (providers: PublicProvider[]) => void;
 }
 
 function getModelById(models: PublicModel[], modelId: string): PublicModel {
@@ -28,4 +30,6 @@ export const useModelStore = create<ModelStore>((set) => ({
       availableModels,
       model: availableModels[0],
     })),
+  providers: [],
+  setProviders: (providers: PublicProvider[]) => set({ providers }),
 }));

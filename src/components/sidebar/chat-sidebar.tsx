@@ -23,6 +23,7 @@ import {
 import { getProviderIcon, providerIcons } from "@/lib/providers";
 import { useConversations, useDeleteConversation } from "@/lib/queries/conversations";
 import { cn } from "@/lib/utils";
+import { useModelStore } from "@/stores/model-store";
 import { useSearchStore } from "@/stores/search-store";
 import type { PartialConversation } from "@/types/chat";
 import type { PublicProvider } from "@/types/provider";
@@ -68,11 +69,9 @@ function groupConversationsByTime(conversations: PartialConversation[]) {
 export default function ChatSidebar({
   conversations,
   authorized,
-  providers,
 }: {
   conversations: any;
   authorized: boolean;
-  providers: PublicProvider[];
 }) {
   const { id } = useParams();
   const { searchQuery } = useSearchStore();
@@ -101,12 +100,7 @@ export default function ChatSidebar({
           <SidebarGroupLabel className="text-primary/70">Today</SidebarGroupLabel>
           <SidebarGroupContent className="space-y-1">
             {groupedConversations.today.map((chat: PartialConversation) => (
-              <ConversationLink
-                key={chat.id}
-                chat={chat}
-                currentId={id as string}
-                providers={providers}
-              />
+              <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
             ))}
           </SidebarGroupContent>
         </SidebarGroup>
@@ -116,12 +110,7 @@ export default function ChatSidebar({
           <SidebarGroupLabel className="text-primary/70">Yesterday</SidebarGroupLabel>
           <SidebarGroupContent className="space-y-1">
             {groupedConversations.yesterday.map((chat: PartialConversation) => (
-              <ConversationLink
-                key={chat.id}
-                chat={chat}
-                currentId={id as string}
-                providers={providers}
-              />
+              <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
             ))}
           </SidebarGroupContent>
         </SidebarGroup>
@@ -133,12 +122,7 @@ export default function ChatSidebar({
           </SidebarGroupLabel>
           <SidebarGroupContent className="space-y-1">
             {groupedConversations.lastWeek.map((chat: PartialConversation) => (
-              <ConversationLink
-                key={chat.id}
-                chat={chat}
-                currentId={id as string}
-                providers={providers}
-              />
+              <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
             ))}
           </SidebarGroupContent>
         </SidebarGroup>
@@ -148,12 +132,7 @@ export default function ChatSidebar({
           <SidebarGroupLabel className="text-primary/70">Older</SidebarGroupLabel>
           <SidebarGroupContent className="space-y-1">
             {groupedConversations.older.map((chat: PartialConversation) => (
-              <ConversationLink
-                key={chat.id}
-                chat={chat}
-                currentId={id as string}
-                providers={providers}
-              />
+              <ConversationLink key={chat.id} chat={chat} currentId={id as string} />
             ))}
           </SidebarGroupContent>
         </SidebarGroup>
@@ -186,15 +165,14 @@ export default function ChatSidebar({
 function ConversationLink({
   chat,
   currentId,
-  providers,
 }: {
   chat: PartialConversation;
   currentId: string;
-  providers: PublicProvider[];
 }) {
   const deleteConversation = useDeleteConversation();
   const router = useRouter();
   const { isMobile, setOpenMobile } = useSidebar();
+  const { providers } = useModelStore();
   const providerIcon = getProviderIcon(providers, chat.model);
 
   return (

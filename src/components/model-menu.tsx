@@ -34,9 +34,9 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Separator } from "./ui/separator";
 
-export function ModelMenu({ providers }: { providers: PublicProvider[] }) {
+export function ModelMenu() {
   const [open, setOpen] = useState(false);
-  const { model } = useModelStore();
+  const { model, providers } = useModelStore();
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const providerIcon = getProviderIcon(providers, model.id);
 

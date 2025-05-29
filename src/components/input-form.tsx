@@ -61,7 +61,6 @@ const InputForm = forwardRef<
     plan: string;
     freeMessages: number;
     authorized: boolean;
-    providers: PublicProvider[];
     academicSearchConfigured: boolean;
     stripeConfigured: boolean;
     className?: string;
@@ -72,7 +71,6 @@ const InputForm = forwardRef<
       plan,
       freeMessages,
       authorized,
-      providers,
       academicSearchConfigured,
       stripeConfigured,
       className,
@@ -363,7 +361,7 @@ const InputForm = forwardRef<
             className="hidden"
           />
           <div className="flex items-center w-full gap-2">
-            <MemoizedModelMenu providers={providers} />
+            <MemoizedModelMenu />
             {academicSearchConfigured && (
               <Toggle
                 variant="outline"

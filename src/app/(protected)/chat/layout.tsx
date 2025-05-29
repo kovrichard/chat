@@ -28,7 +28,6 @@ export default async function ChatLayout({
             plan={user?.subscription || "free"}
             freeMessages={user?.freeMessages || 10}
             authorized={Boolean(user)}
-            providers={providers}
             academicSearchConfigured={academicSearchConfigured}
             stripeConfigured={stripeConfigured}
           />
