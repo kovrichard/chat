@@ -119,6 +119,7 @@ export async function POST(req: NextRequest) {
     modelId === "claude-sonnet-4-20250514" ||
     modelId === "claude-opus-4-20250514" ||
     modelId === "claude-3-7-sonnet-20250219";
+  const openaiThinking = modelId === "o3-mini" || modelId === "o4-mini";
 
   const result = streamText({
     model,
@@ -137,6 +138,9 @@ export async function POST(req: NextRequest) {
           ? { type: "enabled", budgetTokens: 5000 }
           : { type: "disabled" },
       } satisfies AnthropicProviderOptions,
+      openai: {
+        reasoningEffort: openaiThinking ? "low" : null,
+      },
     },
     onFinish: async ({ response }) => {
       try {
